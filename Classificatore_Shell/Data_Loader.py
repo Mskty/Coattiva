@@ -1,7 +1,6 @@
 from Classificatore_Shell.funzioni import *
 from tkinter import filedialog as fd, Tk
 
-
 def load_storic_data():
     """
     permette di caricare il file contenente i dati storici dall'estrazione e li separa in PF e PG
