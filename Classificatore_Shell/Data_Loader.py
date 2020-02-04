@@ -1,4 +1,4 @@
-from Classificatore_Shell.funzioni import *
+from funzioni import *
 from tkinter import filedialog as fd, Tk
 
 def load_storic_data():

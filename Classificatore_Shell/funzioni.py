@@ -22,7 +22,6 @@ from sklearn import datasets, svm, model_selection
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.decomposition import PCA
 from sklearn.feature_selection import SelectFromModel
-from sklearn_features.transformers import DataFrameSelector
 from pandas import DataFrame
 from sklearn.ensemble import RandomForestClassifier, VotingClassifier
 from sklearn.linear_model import LogisticRegression
@@ -31,8 +30,8 @@ from sklearn.model_selection import train_test_split, cross_val_score, cross_val
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score, pairwise, precision_recall_curve, precision_score, recall_score, f1_score, roc_auc_score
 from sklearn import preprocessing
 from sklearn import tree
-from sklearn.preprocessing import Imputer, LabelBinarizer, LabelEncoder, OneHotEncoder, StandardScaler, MinMaxScaler
-from Classificatore_Shell.Modellazione.Model_Trainer import separazione_label
+from sklearn.preprocessing import LabelBinarizer, LabelEncoder, OneHotEncoder, StandardScaler, MinMaxScaler
+from Modellazione.Model_Trainer import separazione_label
 
 """
 in questo script sono contenute le funzioni utilizzate genericamente durante lo svolgimento del progetto e gli import più generali.

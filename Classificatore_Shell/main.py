@@ -1,14 +1,15 @@
 import sys
 import warnings
-from Classificatore_Shell.Data_Loader import *
-from Classificatore_Shell.Pulizia.Storic_PF_Cleaner import *
-from Classificatore_Shell.Pulizia.Storic_PG_Cleaner import *
-from Classificatore_Shell.Preprocessamento.PF_Prepare import *
-from Classificatore_Shell.Preprocessamento.PG_Prepare import *
-from Classificatore_Shell.Preprocessamento.Train_Test_Splitter import *
-from Classificatore_Shell.Preprocessamento.Data_Scaler import *
-from Classificatore_Shell.Preprocessamento.Data_Undersampler import *
-from Classificatore_Shell.Modellazione.Model_Trainer import *
+
+from Data_Loader import *
+from Pulizia.Storic_PF_Cleaner import *
+from Pulizia.Storic_PG_Cleaner import *
+from Preprocessamento.PF_Prepare import *
+from Preprocessamento.PG_Prepare import *
+from Preprocessamento.Train_Test_Splitter import *
+from Preprocessamento.Data_Scaler import *
+from Preprocessamento.Data_Undersampler import *
+from Modellazione.Model_Trainer import *
 
 """
 Script principale da cui runna la shell

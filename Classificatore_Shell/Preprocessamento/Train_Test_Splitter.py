@@ -1,4 +1,4 @@
-from Classificatore_Shell.funzioni import *
+from funzioni import *
 from sklearn.utils import shuffle
 import datetime
 import random as random

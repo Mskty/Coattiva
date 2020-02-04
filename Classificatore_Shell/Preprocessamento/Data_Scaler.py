@@ -1,6 +1,6 @@
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 
-from Classificatore_Shell.funzioni import *
+from funzioni import *
 
 
 def feature_scaling(trainset: pd.DataFrame, testset: pd.DataFrame, minmax=False, tipo="PF"):

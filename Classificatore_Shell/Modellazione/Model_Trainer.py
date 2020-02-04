@@ -1,4 +1,4 @@
-from Classificatore_Shell.funzioni import *
+from funzioni import *
 """
 Quì sono contenute le funzioni riguardanti l'addestramento diretto del modello a partire da training set 
 e la funzione per riportare i risultati su test set

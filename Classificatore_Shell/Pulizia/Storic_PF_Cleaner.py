@@ -1,4 +1,4 @@
-from Classificatore_Shell.funzioni import *
+from funzioni import *
 
 
 def clean_storic_pf(dfPF: pd.DataFrame):

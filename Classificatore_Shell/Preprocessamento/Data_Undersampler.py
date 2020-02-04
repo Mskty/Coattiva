@@ -1,4 +1,4 @@
-from Classificatore_Shell.funzioni import *
+from funzioni import *
 
 def data_undersample(df: DataFrame):
     """
