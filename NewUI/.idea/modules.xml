@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/../Classificatore_Shell/.idea/Classificatore_Shell.iml" filepath="$PROJECT_DIR$/../Classificatore_Shell/.idea/Classificatore_Shell.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/NewUI.iml" filepath="$PROJECT_DIR$/.idea/NewUI.iml" />
     </modules>
   </component>
