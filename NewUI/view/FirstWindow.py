@@ -19,6 +19,7 @@ class FirstWindow(QtWidgets.QDialog):
         super().__init__(parent)
         self.mainwindow = parent
         self.setupUi(self)
+        self.error_dialog = QtWidgets.QErrorMessage(self)
 
         # Inizializzazione variabili proprie
         self.type = ""
@@ -51,7 +52,6 @@ class FirstWindow(QtWidgets.QDialog):
             self.returnToMain()
         except Exception as e:
             # Stampa eccezione
-            self.error_dialog = QtWidgets.QErrorMessage(self)
             self.error_dialog.showMessage(str(e))
 
     def returnToMain(self):
