@@ -8,7 +8,7 @@ from data.DataObject import DataObject
 class TableModel(QAbstractTableModel):
 
 
-    def __init__(self, data): #al momento variabili private
+    def __init__(self, data=None): #al momento variabili private
         # 2 variabili: l'oggetto data su cui effettuare le operazioni e una lista di oggetti data da tenere come cronologia
         #TODO dato che l'app non si apre senza aprire un file csv si dovrebbe passare una stringa e il tipo, ma al momento passo un dataframe per testare
         QAbstractTableModel.__init__(self)
@@ -33,7 +33,7 @@ class TableModel(QAbstractTableModel):
             return self._data.columns[col]
         return None
 
-    def uploadfromfile(self, filename):
+    def loadDataFromFile(self, filename):
         # modifica della tabella da file caricato
         dft=pd.read_csv(filename) # TODO il metodo di lettura da file dovrebbe essere in dataobject
         self._struttura = DataObject(dft)
@@ -60,3 +60,6 @@ class TableModel(QAbstractTableModel):
 
     def provastampa(self):
         print(self._data.head())
+
+    def setType(self, type: str):
+        self._struttura.type = type

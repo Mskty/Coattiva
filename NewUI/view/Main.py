@@ -11,25 +11,26 @@ from PyQt5.QtWidgets import QFileDialog, QMainWindow
 
 from model.TableModel import *
 from functions.utility import *
+from view.FirstWindow import *
 
 
-class Ui_MainWindow(QMainWindow):
+class MainWindow(QMainWindow):
     # Funzioni proprie della mainui
 
     # Contiene la variabile self.table.model
 
+    def __init__(self, tablemodel):
+        # Inizializzazione con modello
+        super().__init__()
+        self.setupUi(self)
+        self.tablemodel = tablemodel
+        self.table.setModel(tablemodel)
 
-    def settablemodel(self, tablemodel: TableModel):
-        self.tablemodel=tablemodel
+    def openFirstWindow(self):
+        # apertura schermata inziale
+        self.hide()
+        FirstWindow(self).show()
 
-    def openFileNameDialog(self):
-        # Apre finesta per recupero file e lo passa al modello se corretto
-        options = QFileDialog.Options()
-        fileName, _ = QFileDialog.getOpenFileName(self, "QFileDialog.getOpenFileName()", "",
-                                                  "All Files (*);;CSV Files (*.csv)", options=options)
-        if fileName:
-            print(fileName)
-        tablemodel.uploadfromfile(fileName) #PROVA
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
@@ -83,17 +84,19 @@ if __name__ == "__main__":
 
     # Instanziazione app e mainwindow
     app = QtWidgets.QApplication(sys.argv)
-    MainWindow = QtWidgets.QMainWindow()
     tablemodel = TableModel(df)
-
-    # Settaggio ui e variabile modello mainwindow
-    ui = Ui_MainWindow()
-    ui.setupUi(MainWindow)
-    ui.table.setModel(tablemodel)
+    mainwindow = MainWindow(tablemodel)
 
     # Visualizzazione mainwindow
-    MainWindow.show()
+    #mainwindow.show()
 
+    #inizializzazione schermata inziale
+    mainwindow.openFirstWindow()
+
+    #altro...
     tablemodel.provastampa()
 
+    #chiusura programma
     sys.exit(app.exec_())
+
+
