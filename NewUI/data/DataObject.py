@@ -1,5 +1,6 @@
 import pandas as pd
 
+from functions.ClassifierEnum import ClassifierEnum
 
 class DataObject:
     # oggetto contenitore alla base del modello che esegue tutte le operazioni di machine learning e caricamento sui dati
@@ -19,8 +20,6 @@ class DataObject:
         # carica da file e fa anche controlli su tipo (pf, pg) e formato dal file
         self.filename=filename
         self.df=pd.read_csv(filename)
-
-
 
     def copy(self):
         #TODO
