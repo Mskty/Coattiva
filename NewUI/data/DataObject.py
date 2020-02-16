@@ -1,6 +1,6 @@
 import pandas as pd
 
-from functions.ClassifierEnum import ClassifierEnum
+from utility.Enums import ClassifierEnum
 
 class DataObject:
     # oggetto contenitore alla base del modello che esegue tutte le operazioni di machine learning e caricamento sui dati

@@ -10,7 +10,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QFileDialog, QMainWindow
 
 from model.TableModel import *
-from functions.utility import *
+from utility.utility import *
 from view.FirstWindow import *
 
 
