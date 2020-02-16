@@ -7,7 +7,9 @@
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-from view.Main import *
+from PyQt5.QtWidgets import QFileDialog
+
+from view.GUI import MainWindow
 
 
 class FirstWindow(QtWidgets.QDialog):
@@ -21,7 +23,7 @@ class FirstWindow(QtWidgets.QDialog):
         self.error_dialog = QtWidgets.QErrorMessage(self)
 
         # Inizializzazione variabili proprie
-        self.type = ""
+        self.type = "PF"
         self.filename = ""
 
     # funzioni setter

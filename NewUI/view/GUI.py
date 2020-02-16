@@ -7,7 +7,7 @@
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QMainWindow
+from PyQt5.QtWidgets import QMainWindow, QFileDialog
 
 from model.TableModel import *
 from functions.utility import *
@@ -28,12 +28,41 @@ class MainWindow(QMainWindow):
         """self.tablemodel = tablemodel
         self.table.setModel(tablemodel)"""
 
+        # variabili di business
+        self.sampling = 0
+        self.scaling = 0
+        self.algorithm = 0
+        self.type = "PF"
+        self.trainfilename = ""
+        self.usefilename = ""
+        self.usefiletype = "OLD"
+
+    """ Funzioni """
+
     def openFirstWindow(self):
         # apertura schermata inziale
         self.hide()
         FirstWindow(self).show()
 
-    # Abilita disabilita tabs
+    def openLoadNewFileWindow(self):
+        # apertura schermata nuovo file per utilizzo
+        self.hide()
+
+
+    def openSaveDialog(self, model):
+        options = QFileDialog.Options()
+        fileName, _ = QFileDialog.getSaveFileName(self, "QFileDialog.getSaveFileName()", "",
+                                                  "Csv Files (*.csv)", options=options)
+        # DEBUG
+        if fileName:
+            print(fileName)
+
+        # TODO GESTIONE ERRORI
+
+        # TODO CHIAMATA TABLEMODEL SAVECSV CON FILENAME
+
+    """Abilita disabilita tabs"""
+
     def enableData(self):
         self.TabWidget.setTabEnabled(1, True)
 
@@ -64,7 +93,8 @@ class MainWindow(QMainWindow):
     def disableUtilizza(self):
         self.TabWidget.setTabEnabled(5, False)
 
-    #Abilita disabilita bottoni
+    """Abilita disabilita bottoni"""
+
     def enableMainButtonTrain(self):
         self.main_button_train.setEnabled(True)
 
@@ -77,46 +107,128 @@ class MainWindow(QMainWindow):
     def disableUseApply(self):
         self.use_apply.setEnabled(False)
 
-    # Set label text
+    """ Set label text """
 
-    #tab main
+    # Tab main
     def setlabelMainType(self, type: str):
-        self.main_type.setText("Tipologia di titoli di credito: "+ type)
+        self.main_type.setText("Tipologia di titoli di credito: " + type)
 
     def setlabelMainFilename(self, filename: str):
         self.main_filename.setText("File aperto per l'addestramento: " + filename)
 
     def setlabelFileLabelRatio(self, positivelabel: float, negativelabel: float):
-        self.filelabelratio.setText("1) I titoli contenuti nel training set hanno label per "+str(positivelabel) +
-                                    "% positiva e "+str(negativelabel) +
+        self.filelabelratio.setText("1) I titoli contenuti nel training set hanno label per " + str(positivelabel) +
+                                    "% positiva e " + str(negativelabel) +
                                     "% negativa, selezionare un algoritmo di sampling per equilibrare gli esempi.")
-    #tab data
+
+    # Tab data
     def setlabelsData(self, tot: int, pos: int, neg: int):
         self.label_data_total.setText(str(tot))
         self.label_data_positive.setText(str(pos))
         self.label_data_negative.setText(str(neg))
-    #tab train
+
+    # Tab train
     def setlabelsTrain(self, tot: int, pos: int, neg: int):
         self.label_train_total.setText(str(tot))
         self.label_train_positive.setText(str(pos))
         self.label_train_negative.setText(str(neg))
-    #tab test
+
+    # Tab test
     def setlabelsTest(self, tot: int, pos: int, neg: int):
         self.label_test_total.setText(str(tot))
         self.label_test_positive.setText(str(pos))
         self.label_test_negative.setText(str(neg))
-    #tab risultati
-    def setlabelsRisultati(self, type: str, totallable: int, positivelabel: float, negativelabel: float, sampling: str, scaling: str, algorithm: str, ignoredcolumns: list):
-        self.results_typep.setText("Tipologia di titoli di credito: "+ type)
+
+    # Tab risultati
+    def setlabelsRisultati(self, type: str, totallable: int, positivelabel: float, negativelabel: float, sampling: str,
+                           scaling: str, algorithm: str, ignoredcolumns: list):
+        self.results_typep.setText("Tipologia di titoli di credito: " + type)
         self.results_number_examples.setText("Numero di esempi utilizzati nell'addestramento:" + str(totallable) +
-                                             ", di cui " +str(positivelabel)+ "% con label positiva e "
-                                             + str(negativelabel) +"% con label negativa")
-        self.results_sampling.setText("Sampling: "+ sampling)
+                                             ", di cui " + str(positivelabel) + "% con label positiva e "
+                                             + str(negativelabel) + "% con label negativa")
+        self.results_sampling.setText("Sampling: " + sampling)
         self.results_scaling.setText("Scaling: " + scaling)
         self.results_algorithm.setText("Algoritmo di apprendimento: " + algorithm)
+        # stampa lista colonne ignorate
+        self.results_ignored.setText("Proprietà o colonne ignorate:".join(ignoredcolumns))
 
+    def setlabelsTrainMetrics(self, acc: float, prec: float, rec: float, f1: float):
+        # punteggi passati in decimale
+        self.train_accuracy.setText("{0:.2f}".format(acc) + "%")
+        self.train_precision.setText("{0:.2f}".format(prec) + "%")
+        self.train_recall.setText("{0:.2f}".format(rec) + "%")
+        self.train_f1.setText("{0:.2f}".format(f1) + "%")
 
+    def setlabelsTestMetrics(self, acc: float, prec: float, rec: float, f1: float):
+        # punteggi passati in decimale
+        self.test_accuracy.setText("{0:.2f}".format(acc) + "%")
+        self.test_precision.setText("{0:.2f}".format(prec) + "%")
+        self.test_recall.setText("{0:.2f}".format(rec) + "%")
+        self.test_f1.setText("{0:.2f}".format(f1) + "%")
 
+    # Tab utilizza
+    def setlabelUtilizzaType(self, type: str):
+        self.use_type.setText("Tipologia di titoli di credito: " + type)
+
+    def setlabelUtilizzaFilename(self, filename: str):
+        self.use_filename.setText("File caricato: " + filename)
+
+    """ Funzioni SLOTS """
+
+    def buttonTrainModel(self):
+        # addestramento modello
+        pass
+
+    def buttonLoadNewTrainFile(self):
+        # apertura nuovo file per addestramento
+        pass
+
+    def buttonReset(self):
+        pass
+
+    def buttonDataExport(self):
+        # openSaveDialog passando il modello corretto
+        pass
+
+    def buttonTrainExport(self):
+        # openSaveDialog passando il modello corretto
+        pass
+
+    def buttonTestExport(self):
+        # openSaveDialog passando il modello corretto
+        pass
+
+    def buttonTrainMatrix(self):
+        # grafico conf matrix train
+        pass
+
+    def buttonTrainRoc(self):
+        # grafico roc train
+        pass
+
+    def buttonTrainPrc(self):
+        # grafico prc train
+        pass
+
+    def buttonTestMatrix(self):
+        # grafico conf matrix train
+        pass
+
+    def buttonTestRoc(self):
+        # grafico roc train
+        pass
+
+    def buttonTestPrc(self):
+        # grafico prc train
+        pass
+
+    def buttonResultsInfo(self):
+        # apertura scheda info metriche
+        pass
+
+    def buttonUseExport(self):
+        # openSaveDialog passando il modello corretto
+        pass
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
@@ -587,6 +699,7 @@ class MainWindow(QMainWindow):
         self.horizontalLayout_10 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_10.setObjectName("horizontalLayout_10")
         self.results_ignored = QtWidgets.QLabel(self.Risultati)
+        self.results_ignored.setWordWrap(True)
         self.results_ignored.setObjectName("results_ignored")
         self.horizontalLayout_10.addWidget(self.results_ignored)
         self.verticalLayout_15.addLayout(self.horizontalLayout_10)

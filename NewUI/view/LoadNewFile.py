@@ -7,8 +7,59 @@
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtWidgets import QFileDialog
 
-class Ui_Dialog(object):
+from view.GUI import MainWindow
+
+
+class LoadNewFile(QtWidgets.QDialog):
+    # inizializzazione
+
+    def __init__(self, parent: MainWindow = None):
+        # Inizializzazione con parent mainwindow
+        super().__init__(parent)
+        self.mainwindow = parent
+        self.setupUi(self)
+        self.error_dialog = QtWidgets.QErrorMessage(self)
+
+        # Inizializzazione variabili proprie
+        self.type = "NEW"
+        self.filename = ""
+
+    # funzioni setter
+
+    def setType(self, type: str):
+        self.type = type
+
+    def setFileName(self, filename: str):
+        self.filename = filename
+
+    # funzioni di business
+
+    def openFileNameDialog(self):
+        # Apre finesta per recupero file e lo passa al modello se corretto
+        options = QFileDialog.Options()
+        fileName, _ = QFileDialog.getOpenFileName(self, "QFileDialog.getOpenFileName()", "",
+                                                  "All Files (*);;CSV Files (*.csv)", options=options)
+        # DEBUG
+        if fileName:
+            print(fileName)
+
+        """# Utilizzo tablemodel
+            try:
+                self.mainwindow.tablemodel.setType(self.type)
+                self.mainwindow.tablemodel.loadDataFromFile(
+                    fileName)  # SARA' LA FUNZIONE SU DATAOBJECT A LANCIARE ECCEZIONI
+                # nessuna eccezione ritorno alla main
+                self.returnToMain()
+            except Exception as e:
+                # Stampa eccezione
+                self.error_dialog.showMessage(str(e))"""
+
+    def returnToMain(self):
+        self.close()
+        self.mainwindow.show()
+
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
         Dialog.resize(500, 400)
@@ -47,7 +98,7 @@ class Ui_Dialog(object):
         self.verticalLayout_4 = QtWidgets.QVBoxLayout()
         self.verticalLayout_4.setObjectName("verticalLayout_4")
         self.label = QtWidgets.QLabel(Dialog)
-        self.label.setAlignment(QtCore.Qt.AlignJustify|QtCore.Qt.AlignVCenter)
+        self.label.setAlignment(QtCore.Qt.AlignJustify | QtCore.Qt.AlignVCenter)
         self.label.setWordWrap(True)
         self.label.setObjectName("label")
         self.verticalLayout_4.addWidget(self.label)
@@ -88,6 +139,11 @@ class Ui_Dialog(object):
         self.verticalLayout_5.addLayout(self.horizontalLayout_2)
         self.verticalLayout.addLayout(self.verticalLayout_5)
 
+        # SLOTS
+        self.radio_storici.clicked.connect(lambda: self.setType("OLD"))
+        self.radio_recenti.clicked.connect(lambda: self.setType("NEW"))
+        self.loadfile.clicked.connect(lambda: self.openFileNameDialog())
+
         self.retranslateUi(Dialog)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
@@ -95,22 +151,15 @@ class Ui_Dialog(object):
         _translate = QtCore.QCoreApplication.translate
         Dialog.setWindowTitle(_translate("Dialog", "Caricamento File Utilizzo"))
         self.label_2.setText(_translate("Dialog", "CARICAMENTO FILE DI UTILIZZO"))
-        self.label_4.setText(_translate("Dialog", "E\' possibile caricare un file .csv contenente i titoli di credito su cui si vuole ottenere predizioni da parte del modello addestrato."))
-        self.label_5.setText(_translate("Dialog", "Il file deve seguire il tracciato utilizzato da questo applicativo per essere valido."))
-        self.label.setText(_translate("Dialog", "E\' possibile caricare un file contenente dati storici col medesimo tracciato di quello utilizzato per l\'addestramento del modello oppure un file contenente solamente titoli recenti facenti parte dello stesso ruolo."))
+        self.label_4.setText(_translate("Dialog",
+                                        "E\' possibile caricare un file .csv contenente i titoli di credito su cui si vuole ottenere predizioni da parte del modello addestrato."))
+        self.label_5.setText(_translate("Dialog",
+                                        "Il file deve seguire il tracciato utilizzato da questo applicativo per essere valido."))
+        self.label.setText(_translate("Dialog",
+                                      "E\' possibile caricare un file contenente dati storici col medesimo tracciato di quello utilizzato per l\'addestramento del modello oppure un file contenente solamente titoli recenti facenti parte dello stesso ruolo."))
         self.label_6.setText(_translate("Dialog", "Scegli il tipo di dati contenuti nel file da elaborare:"))
         self.radio_recenti.setText(_translate("Dialog", "Dati Recenti"))
         self.radio_storici.setText(_translate("Dialog", "Dati Storici"))
-        self.label_3.setText(_translate("Dialog", "Permi per selezionare il file .csv contenente i dati sui titoli di credito:"))
+        self.label_3.setText(
+            _translate("Dialog", "Permi per selezionare il file .csv contenente i dati sui titoli di credito:"))
         self.pushButton.setText(_translate("Dialog", "Carica File"))
-
-
-if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    Dialog = QtWidgets.QDialog()
-    ui = Ui_Dialog()
-    ui.setupUi(Dialog)
-    Dialog.show()
-    sys.exit(app.exec_())
-
