@@ -51,13 +51,6 @@ class TableModel(QAbstractTableModel):
         self.beginResetModel()
         self.endResetModel()
 
-    def goback(self):
-        # ripristino struttura e data dal passaggio precedente, con pop elimino il backup più recente
-        self.beginResetModel()
-        #TODO self._struttura=self._cronologia.pop(0)
-        #TODO self._data=self._struttura.df
-        self.endResetModel()
-
     def provastampa(self):
         print(self._data.head())
 

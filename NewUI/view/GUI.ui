@@ -713,7 +713,7 @@
            </widget>
           </item>
           <item row="0" column="1">
-           <widget class="QLabel" name="label_19">
+           <widget class="QLabel" name="label_data_negative">
             <property name="text">
              <string>nessuno</string>
             </property>
@@ -786,7 +786,7 @@
            </widget>
           </item>
           <item row="0" column="1">
-           <widget class="QLabel" name="label_train_tota">
+           <widget class="QLabel" name="label_train_total">
             <property name="text">
              <string>nessuno</string>
             </property>

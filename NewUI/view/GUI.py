@@ -7,8 +7,117 @@
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtWidgets import QMainWindow
 
-class Ui_MainWindow(object):
+from model.TableModel import *
+from functions.utility import *
+from view.FirstWindow import *
+
+
+class MainWindow(QMainWindow):
+
+    # Funzioni proprie della mainui
+
+    # Contiene le variabili model
+
+    def __init__(self):
+        # Inizializzazione con modelli
+        super().__init__()
+        self.setupUi(self)
+
+        """self.tablemodel = tablemodel
+        self.table.setModel(tablemodel)"""
+
+    def openFirstWindow(self):
+        # apertura schermata inziale
+        self.hide()
+        FirstWindow(self).show()
+
+    # Abilita disabilita tabs
+    def enableData(self):
+        self.TabWidget.setTabEnabled(1, True)
+
+    def diableData(self):
+        self.TabWidget.setTabEnabled(1, False)
+
+    def enableTrain(self):
+        self.TabWidget.setTabEnabled(2, True)
+
+    def disableTrain(self):
+        self.TabWidget.setTabEnabled(2, False)
+
+    def enableTest(self):
+        self.TabWidget.setTabEnabled(3, True)
+
+    def disableTest(self):
+        self.TabWidget.setTabEnabled(3, False)
+
+    def enableRisultati(self):
+        self.TabWidget.setTabEnabled(4, True)
+
+    def disableRisultati(self):
+        self.TabWidget.setTabEnabled(4, False)
+
+    def enableUtilizza(self):
+        self.TabWidget.setTabEnabled(5, True)
+
+    def disableUtilizza(self):
+        self.TabWidget.setTabEnabled(5, False)
+
+    #Abilita disabilita bottoni
+    def enableMainButtonTrain(self):
+        self.main_button_train.setEnabled(True)
+
+    def disableMainButtonTrain(self):
+        self.main_button_train.setEnabled(False)
+
+    def enableUseApply(self):
+        self.use_apply.setEnabled(True)
+
+    def disableUseApply(self):
+        self.use_apply.setEnabled(False)
+
+    # Set label text
+
+    #tab main
+    def setlabelMainType(self, type: str):
+        self.main_type.setText("Tipologia di titoli di credito: "+ type)
+
+    def setlabelMainFilename(self, filename: str):
+        self.main_filename.setText("File aperto per l'addestramento: " + filename)
+
+    def setlabelFileLabelRatio(self, positivelabel: float, negativelabel: float):
+        self.filelabelratio.setText("1) I titoli contenuti nel training set hanno label per "+str(positivelabel) +
+                                    "% positiva e "+str(negativelabel) +
+                                    "% negativa, selezionare un algoritmo di sampling per equilibrare gli esempi.")
+    #tab data
+    def setlabelsData(self, tot: int, pos: int, neg: int):
+        self.label_data_total.setText(str(tot))
+        self.label_data_positive.setText(str(pos))
+        self.label_data_negative.setText(str(neg))
+    #tab train
+    def setlabelsTrain(self, tot: int, pos: int, neg: int):
+        self.label_train_total.setText(str(tot))
+        self.label_train_positive.setText(str(pos))
+        self.label_train_negative.setText(str(neg))
+    #tab test
+    def setlabelsTest(self, tot: int, pos: int, neg: int):
+        self.label_test_total.setText(str(tot))
+        self.label_test_positive.setText(str(pos))
+        self.label_test_negative.setText(str(neg))
+    #tab risultati
+    def setlabelsRisultati(self, type: str, totallable: int, positivelabel: float, negativelabel: float, sampling: str, scaling: str, algorithm: str, ignoredcolumns: list):
+        self.results_typep.setText("Tipologia di titoli di credito: "+ type)
+        self.results_number_examples.setText("Numero di esempi utilizzati nell'addestramento:" + str(totallable) +
+                                             ", di cui " +str(positivelabel)+ "% con label positiva e "
+                                             + str(negativelabel) +"% con label negativa")
+        self.results_sampling.setText("Sampling: "+ sampling)
+        self.results_scaling.setText("Scaling: " + scaling)
+        self.results_algorithm.setText("Algoritmo di apprendimento: " + algorithm)
+
+
+
+
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(900, 800)
@@ -224,7 +333,8 @@ class Ui_MainWindow(object):
         self.label_10.setWordWrap(False)
         self.label_10.setObjectName("label_10")
         self.horizontalLayout_7.addWidget(self.label_10)
-        spacerItem12 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Minimum)
+        spacerItem12 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.MinimumExpanding,
+                                             QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_7.addItem(spacerItem12)
         self.main_button_train = QtWidgets.QPushButton(self.Main)
         self.main_button_train.setObjectName("main_button_train")
@@ -233,12 +343,12 @@ class Ui_MainWindow(object):
         self.verticalLayout_13 = QtWidgets.QVBoxLayout()
         self.verticalLayout_13.setObjectName("verticalLayout_13")
         self.label_9 = QtWidgets.QLabel(self.Main)
-        self.label_9.setAlignment(QtCore.Qt.AlignJustify|QtCore.Qt.AlignVCenter)
+        self.label_9.setAlignment(QtCore.Qt.AlignJustify | QtCore.Qt.AlignVCenter)
         self.label_9.setWordWrap(True)
         self.label_9.setObjectName("label_9")
         self.verticalLayout_13.addWidget(self.label_9)
         self.label_11 = QtWidgets.QLabel(self.Main)
-        self.label_11.setAlignment(QtCore.Qt.AlignJustify|QtCore.Qt.AlignVCenter)
+        self.label_11.setAlignment(QtCore.Qt.AlignJustify | QtCore.Qt.AlignVCenter)
         self.label_11.setWordWrap(True)
         self.label_11.setObjectName("label_11")
         self.verticalLayout_13.addWidget(self.label_11)
@@ -290,9 +400,9 @@ class Ui_MainWindow(object):
         self.label_18 = QtWidgets.QLabel(self.Data)
         self.label_18.setObjectName("label_18")
         self.formLayout_4.setWidget(0, QtWidgets.QFormLayout.LabelRole, self.label_18)
-        self.label_19 = QtWidgets.QLabel(self.Data)
-        self.label_19.setObjectName("label_19")
-        self.formLayout_4.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.label_19)
+        self.label_data_negative = QtWidgets.QLabel(self.Data)
+        self.label_data_negative.setObjectName("label_data_negative")
+        self.formLayout_4.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.label_data_negative)
         self.verticalLayout_2.addLayout(self.formLayout_4)
         self.table_data = QtWidgets.QTableView(self.Data)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
@@ -328,9 +438,9 @@ class Ui_MainWindow(object):
         self.label_20 = QtWidgets.QLabel(self.Train)
         self.label_20.setObjectName("label_20")
         self.formLayout_6.setWidget(0, QtWidgets.QFormLayout.LabelRole, self.label_20)
-        self.label_train_tota = QtWidgets.QLabel(self.Train)
-        self.label_train_tota.setObjectName("label_train_tota")
-        self.formLayout_6.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.label_train_tota)
+        self.label_train_total = QtWidgets.QLabel(self.Train)
+        self.label_train_total.setObjectName("label_train_total")
+        self.formLayout_6.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.label_train_total)
         self.verticalLayout_3.addLayout(self.formLayout_6)
         self.formLayout_5 = QtWidgets.QFormLayout()
         self.formLayout_5.setObjectName("formLayout_5")
@@ -723,8 +833,17 @@ class Ui_MainWindow(object):
         self.verticalLayout.addWidget(self.TabWidget)
         MainWindow.setCentralWidget(self.centralwidget)
 
+        # RetranslateUi
         self.retranslateUi(MainWindow)
-        self.TabWidget.setCurrentIndex(4)
+
+        # Set iniziale delle tabs
+        self.TabWidget.setCurrentIndex(0)
+        self.disableTrain()
+        self.disableTest()
+        self.disableRisultati()
+        self.disableUtilizza()
+
+        # Slots
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -733,15 +852,21 @@ class Ui_MainWindow(object):
         self.label_7.setText(_translate("MainWindow", "Gestione dati caricati da file"))
         self.main_type.setText(_translate("MainWindow", "Tipologia di titoli di credito:"))
         self.main_filename.setText(_translate("MainWindow", "File aperto per l\'addestramento:"))
-        self.label_4.setText(_translate("MainWindow", "Eliminare il check dal nome della colonna che si desidera ignorare per l\'addestramento:"))
-        self.label_8.setText(_translate("MainWindow", "Per il modello predittivo verranno utilizzate solamente le colonne rimaste selezionate."))
-        self.label_5.setText(_translate("MainWindow", "Selezionare come suddividere i dati in training e test set tra le opzioni disponibili:"))
+        self.label_4.setText(_translate("MainWindow",
+                                        "Eliminare il check dal nome della colonna che si desidera ignorare per l\'addestramento:"))
+        self.label_8.setText(_translate("MainWindow",
+                                        "Per il modello predittivo verranno utilizzate solamente le colonne rimaste selezionate."))
+        self.label_5.setText(_translate("MainWindow",
+                                        "Selezionare come suddividere i dati in training e test set tra le opzioni disponibili:"))
         self.label_12.setText(_translate("MainWindow", "Visualizzabile nelle schede Train e Test."))
         self.label_3.setText(_translate("MainWindow", "Addestramento Modello"))
         self.label.setText(_translate("MainWindow", "PREFERENZE RIGUARDANTI L\'ADDESTRAMENTO DEL MODELLO PREDITTIVO"))
-        self.filelabelratio.setText(_translate("MainWindow", "1) I titoli contenuti nel training set hanno label per % positiva e % negativa, selezionare un algoritmo di sampling per equilibrare gli esempi."))
-        self.label_2.setText(_translate("MainWindow", "2) Selezionare la tipologia di normalizzazione da applicare ai dati."))
-        self.label_6.setText(_translate("MainWindow", "3) Selezionare l\'algoritmo di apprendimento con cui addestrare il modello predittivo per la classificazione."))
+        self.filelabelratio.setText(_translate("MainWindow",
+                                               "1) I titoli contenuti nel training set hanno label per % positiva e % negativa, selezionare un algoritmo di sampling per equilibrare gli esempi."))
+        self.label_2.setText(
+            _translate("MainWindow", "2) Selezionare la tipologia di normalizzazione da applicare ai dati."))
+        self.label_6.setText(_translate("MainWindow",
+                                        "3) Selezionare l\'algoritmo di apprendimento con cui addestrare il modello predittivo per la classificazione."))
         self.groupBox_3.setTitle(_translate("MainWindow", "1)Sampling"))
         self.sampling1.setText(_translate("MainWindow", "Nessuno"))
         self.sampling2.setText(_translate("MainWindow", "Downsampling"))
@@ -756,10 +881,13 @@ class Ui_MainWindow(object):
         self.algorithm3.setText(_translate("MainWindow", "Decision Tree Classifier"))
         self.algorithm4.setText(_translate("MainWindow", "Random Forest Classifier"))
         self.algorithm5.setText(_translate("MainWindow", "XGB Classifier"))
-        self.label_10.setText(_translate("MainWindow", "Clicca per addestrare il modello preddittivo sui titoli contenuti nel training set:"))
+        self.label_10.setText(_translate("MainWindow",
+                                         "Clicca per addestrare il modello preddittivo sui titoli contenuti nel training set:"))
         self.main_button_train.setText(_translate("MainWindow", "Addestra Modello"))
-        self.label_9.setText(_translate("MainWindow", "Una volta addestrato saranno visualizzabili le predizioni su training e test set in una nuova colonna aggiunta alle rispettive tabelle, inoltre le metriche relative all\' efficacia del modello saranno visualizzabili nella sezione Risultati. Sarà inoltre possibile utilizzare il modello addestrato nella sezione Utilizza."))
-        self.label_11.setText(_translate("MainWindow", "E\' possibile addestrare nuovamente il modello predittivo dopo aver modificato alcuni  parametri, inclusi le colonne da considerare e la suddivisione tra training set e test set, premendo nuovamente sul pulsante Addestra."))
+        self.label_9.setText(_translate("MainWindow",
+                                        "Una volta addestrato saranno visualizzabili le predizioni su training e test set in una nuova colonna aggiunta alle rispettive tabelle, inoltre le metriche relative all\' efficacia del modello saranno visualizzabili nella sezione Risultati. Sarà inoltre possibile utilizzare il modello addestrato nella sezione Utilizza."))
+        self.label_11.setText(_translate("MainWindow",
+                                         "E\' possibile addestrare nuovamente il modello predittivo dopo aver modificato alcuni  parametri, inclusi le colonne da considerare e la suddivisione tra training set e test set, premendo nuovamente sul pulsante Addestra."))
         self.main_button_file.setText(_translate("MainWindow", "Caricamento nuovo file"))
         self.main_button_reset.setText(_translate("MainWindow", "Reset"))
         self.TabWidget.setTabText(self.TabWidget.indexOf(self.Main), _translate("MainWindow", "Main"))
@@ -769,12 +897,12 @@ class Ui_MainWindow(object):
         self.label_16.setText(_translate("MainWindow", "Numero di titoli con label positiva:"))
         self.label_data_positive.setText(_translate("MainWindow", "nessuno"))
         self.label_18.setText(_translate("MainWindow", "Numero di titoli con label Negativa:"))
-        self.label_19.setText(_translate("MainWindow", "nessuno"))
+        self.label_data_negative.setText(_translate("MainWindow", "nessuno"))
         self.data_export.setText(_translate("MainWindow", "Esporta"))
         self.TabWidget.setTabText(self.TabWidget.indexOf(self.Data), _translate("MainWindow", "Data"))
         self.label_15.setText(_translate("MainWindow", "Informazioni sui dati di addestramento in-sample:"))
         self.label_20.setText(_translate("MainWindow", "Numero di titoli presenti:"))
-        self.label_train_tota.setText(_translate("MainWindow", "nessuno"))
+        self.label_train_total.setText(_translate("MainWindow", "nessuno"))
         self.label_17.setText(_translate("MainWindow", "Numero di titoli con label positiva:"))
         self.label_train_positive.setText(_translate("MainWindow", "nessuno"))
         self.label_21.setText(_translate("MainWindow", "Numero di titoli con label Negativa:"))
@@ -790,10 +918,12 @@ class Ui_MainWindow(object):
         self.label_test_negative.setText(_translate("MainWindow", "nessuno"))
         self.test_export.setText(_translate("MainWindow", "Esporta"))
         self.TabWidget.setTabText(self.TabWidget.indexOf(self.Test), _translate("MainWindow", "Test"))
-        self.label_29.setText(_translate("MainWindow", "Risultati e metriche per valutare le performance del modello addestrato:"))
+        self.label_29.setText(
+            _translate("MainWindow", "Risultati e metriche per valutare le performance del modello addestrato:"))
         self.label_36.setText(_translate("MainWindow", "INFORMAZIONI SUL MODELLO"))
         self.results_typep.setText(_translate("MainWindow", "Tipologia di titoli di credito: nessuna"))
-        self.results_number_examples.setText(_translate("MainWindow", "Numero di esempi utilizzati nell\'addestramento: nessuno, di cui % con label positiva e % con label negativa"))
+        self.results_number_examples.setText(_translate("MainWindow",
+                                                        "Numero di esempi utilizzati nell\'addestramento: nessuno, di cui % con label positiva e % con label negativa"))
         self.results_sampling.setText(_translate("MainWindow", "Sampling: nessuno"))
         self.results_algorithm.setText(_translate("MainWindow", "Algoritmo di apprendimento: nessuno"))
         self.results_scaling.setText(_translate("MainWindow", "Scaling: nessuno"))
@@ -829,7 +959,8 @@ class Ui_MainWindow(object):
         self.results_info.setText(_translate("MainWindow", "Info Metriche"))
         self.TabWidget.setTabText(self.TabWidget.indexOf(self.Risultati), _translate("MainWindow", "Risultati"))
         self.label_22.setText(_translate("MainWindow", "Utilizzo del modello addestrato:"))
-        self.use_type.setText(_translate("MainWindow", "Tipologia di titoli di credito su cui è stato addestrato il modello: non è ancora stato addestrato nessun modello."))
+        self.use_type.setText(_translate("MainWindow",
+                                         "Tipologia di titoli di credito su cui è stato addestrato il modello: non è ancora stato addestrato nessun modello."))
         self.use_filename.setText(_translate("MainWindow", "File caricato: nessuno"))
         self.use_loadfile.setText(_translate("MainWindow", "Carica File"))
         self.use_apply.setText(_translate("MainWindow", "Elabora"))
@@ -839,10 +970,14 @@ class Ui_MainWindow(object):
 
 if __name__ == "__main__":
     import sys
-    app = QtWidgets.QApplication(sys.argv)
-    MainWindow = QtWidgets.QMainWindow()
-    ui = Ui_MainWindow()
-    ui.setupUi(MainWindow)
-    MainWindow.show()
-    sys.exit(app.exec_())
+    import pandas as pd
 
+    # Instanziazione app e mainwindow
+    app = QtWidgets.QApplication(sys.argv)
+    # qui vengono instanziati i table model
+    mainwindow = MainWindow()  # da aggiungere i table model come argomenti
+
+    mainwindow.show()
+
+    # chiusura programma
+    sys.exit(app.exec_())
