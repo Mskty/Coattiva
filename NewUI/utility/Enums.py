@@ -12,8 +12,8 @@ class SamplingEnum(Enum):
 
 class ScalingEnum(Enum):
     NONE = 0
-    UNDER = 1
-    SMOTE = 2
+    STANDARD = 1
+    MINMAX = 2
 
 class ClassifierEnum(Enum):
     LOGISTIC = 0

@@ -14,12 +14,13 @@ class AlgorithmPipeline:
     def predict(self, dataset: pd.DataFrame):
         dataset = dataset.copy()
 
-        #Applicazione scaler su colonne non categoriche (columnstoscale)
-        dataset_to_scale=dataset[self.columnstoscale]
-        dataset.drop(columns=dataset.columns.difference(self.columnstoscale), inplace=True)
-        scaled_features_dataset = self.scaler.transform(dataset_to_scale.values)
-        scaled_dataset = pd.DataFrame(scaled_features_dataset, index=dataset_to_scale.index, columns=dataset_to_scale.columns)
-        dataset = pd.concat([scaled_dataset, dataset], axis=1, sort=False)
+        #Applicazione scaler su colonne non categoriche (columnstoscale) se presente
+        if self.scaler != None:
+            dataset_to_scale=dataset[self.columnstoscale]
+            dataset.drop(columns=dataset.columns.difference(self.columnstoscale), inplace=True)
+            scaled_features_dataset = self.scaler.transform(dataset_to_scale.values)
+            scaled_dataset = pd.DataFrame(scaled_features_dataset, index=dataset_to_scale.index, columns=dataset_to_scale.columns)
+            dataset = pd.concat([scaled_dataset, dataset], axis=1, sort=False)
 
         # Separazione colonna label se presente
         if "label" in dataset.columns:

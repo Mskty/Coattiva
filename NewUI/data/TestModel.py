@@ -18,7 +18,7 @@ class TestModel:
         return len(self.enabledcolumns.loc[(self.enabledcolumns.label == 1)])
 
     def get_negative_label(self) -> int:
-        return len(self.enabledcolumns.query("label==0"))
+        return len(self.enabledcolumns.loc[(self.enabledcolumns.label == 0)])
 
     def disablecolumns(self, columns: list):
         if set(columns).issubset(set(list(self.enabledcolumns.columns.values))):
