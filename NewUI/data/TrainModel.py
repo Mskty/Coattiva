@@ -3,31 +3,30 @@ from utility.Enums import *
 
 
 class TrainModel:
+    """
+    Contiene il dataframe di addestramento,
+    espone metodo per ritornare AlgorithmPipeline: un modello addestrato solamente sulle colonne enabledcolumns
+    """
 
-    def __init__(self, type: PFPGEnum, data:pd.DataFrame, enabledcolumns: pd.DataFrame, disabledcolumns: pd.DataFrame):
-        self.df = data
+    def __init__(self, type: PFPGEnum, enabledcolumns: pd.DataFrame, disabledcolumns: pd.DataFrame):
         self.type = type
         self.enabledcolumns = enabledcolumns
         self.disabledcolumns = disabledcolumns
 
-"""        self.scaler: ScalingEnum = ScalingEnum.NONE
-        self.sampler: SamplingEnum = SamplingEnum.NONE
-        self.classifier: ClassifierEnum.LOGISTIC"""
-
     # Getter functions
 
     def get_rows(self) -> int:
-        return len(self.df)
+        return len(self.enabledcolumns)
 
     def get_positive_label(self) -> int:
-        return len(self.df.loc[(self.df.label == 1)])
+        return len(self.enabledcolumns.loc[(self.enabledcolumns.label == 1)])
 
     def get_negative_label(self) -> int:
-        return len(self.df.query("label==0"))
+        return len(self.enabledcolumns.query("label==0"))
 
     def disablecolumns(self, columns: list):
-        if set(columns).issubset(set(list(self.df.columns.values))):
-            self.disabledcolumns = self.df[columns]
+        if set(columns).issubset(set(list(self.enabledcolumns.columns.values))):
+            self.disabledcolumns = self.enabledcolumns[columns]
             self.enabledcolumns.drop(columns=columns)
         else:
             print("error: colonne non presenti")
@@ -40,3 +39,8 @@ class TrainModel:
             print("error: colonne non presenti")
 
 
+
+
+"""        self.scaler: ScalingEnum = ScalingEnum.NONE
+        self.sampler: SamplingEnum = SamplingEnum.NONE
+        self.classifier: ClassifierEnum.LOGISTIC"""
