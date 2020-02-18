@@ -6,16 +6,13 @@
 #
 # WARNING! All changes made in this file will be lost!
 
-from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QFileDialog
-
-from view.GUI import MainWindow
+from view.GUI import *
 
 
 class FirstWindow(QtWidgets.QDialog):
     # inizializzazione
 
-    def __init__(self, parent: MainWindow = None):
+    def __init__(self, parent = None):
         # Inizializzazione con parent mainwindow
         super().__init__(parent)
         self.mainwindow = parent
@@ -28,7 +25,7 @@ class FirstWindow(QtWidgets.QDialog):
 
     # funzioni setter
 
-    def setType(self, type: str):
+    def setType(self, type: PFPGEnum):
         self.type = type
 
     def setFileName(self, filename: str):
@@ -45,20 +42,19 @@ class FirstWindow(QtWidgets.QDialog):
         if fileName:
             print(fileName)
 
-        """# Utilizzo tablemodel
+        # Utilizzo tablemodel
         try:
-            self.mainwindow.tablemodel.setType(self.type)
-            self.mainwindow.tablemodel.loadDataFromFile(
-                fileName)  # SARA' LA FUNZIONE SU DATAOBJECT A LANCIARE ECCEZIONI
+            self.mainwindow.model.set_data(self.type, fileName)
             # nessuna eccezione ritorno alla main
             self.returnToMain()
         except Exception as e:
             # Stampa eccezione
-            self.error_dialog.showMessage(str(e))"""
+            self.error_dialog.showMessage(str(e))
 
     def returnToMain(self):
         self.close()
         self.mainwindow.show()
+        self.mainwindow.closeFirstWindow()
 
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
@@ -161,8 +157,8 @@ class FirstWindow(QtWidgets.QDialog):
         self.verticalLayout.addLayout(self.verticalLayout_2)
 
         # SLOTS
-        self.radio_pf.clicked.connect(lambda: self.setType("PF"))
-        self.radio_pg.clicked.connect(lambda: self.setType("PG"))
+        self.radio_pf.clicked.connect(lambda: self.setType(PFPGEnum.PF))
+        self.radio_pg.clicked.connect(lambda: self.setType(PFPGEnum.PG))
         self.loadfile.clicked.connect(lambda: self.openFileNameDialog())
 
         # RetranslateUi

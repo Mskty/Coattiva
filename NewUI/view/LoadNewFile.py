@@ -6,16 +6,13 @@
 #
 # WARNING! All changes made in this file will be lost!
 
-from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QFileDialog
-
-from view.GUI import MainWindow
+from view.GUI import *
 
 
 class LoadNewFile(QtWidgets.QDialog):
     # inizializzazione
 
-    def __init__(self, parent: MainWindow = None):
+    def __init__(self, parent = None):
         # Inizializzazione con parent mainwindow
         super().__init__(parent)
         self.mainwindow = parent

@@ -6,14 +6,14 @@ from data.TestModel import *
 
 class DataModel:
 
-    #La colonna DataCaricoTitolo è sempre abilitata
+    #La colonna DataCaricoTitolo e label è sempre abilitata
 
     def __init__(self, type: PFPGEnum, data: pd.DataFrame = None, filename: str = None):
         try:
             self.df: pd.DataFrame = pd.read_csv(filename)
         except Exception:
             print("no file passed")
-        else:
+        if data is not None:
             self.df: pd.DataFrame = data
         self.type = type
         self.enabledcolumns = self.df.copy()
@@ -54,20 +54,24 @@ class DataModel:
     def disablecolumns(self, columns: list):
         if set(columns).issubset(set(list(self.df.columns.values))):
             self.disabledcolumns = self.df[columns]
-            self.enabledcolumns.drop(columns=columns)
+            self.enabledcolumns.drop(columns=columns, inplace=True)
         else:
             print("error: colonne non presenti")
 
     def enablecolumns(self, columns: list):
         if set(columns).issubset(set(list(self.disabledcolumns.columns.values))):
             self.enabledcolumns[columns] = self.disabledcolumns[columns]
-            self.disabledcolumns.drop(columns)
+            self.disabledcolumns.drop(columns=columns, inplace=True)
         else:
             print("error: colonne non presenti")
 
+    def enableallcolumns(self):
+        self.enabledcolumns=self.df
+        self.disabledcolumns=pd.DataFrame()
+
     # Creazione oggetti TrainModel e TestModel
 
-    def train_test_splitter_possibilities(self):
+    def train_test_splitter_possibilities(self) -> pd.DataFrame:
         """
             Dato il dataframe dei dati storici preparati ritorna un nuovo dataframe dove ogni riga
             rappresenta la data di un ruolo presente nei dati storici. Ogni riga riporta, per quella data
@@ -125,7 +129,10 @@ class DataModel:
 
         # Ritorno train e test set
 
-        trainset = TrainModel(self.type, trainenabled , traindisabled)
+        trainset = TrainModel(self.type, trainenabled, traindisabled)
         testset = TestModel(self.type, testenabled, testdisabled)
 
         return trainset, testset
+
+    def export_to_csv(self, export_file_path):
+        self.enabledcolumns.to_csv(export_file_path, index=None, header=True)

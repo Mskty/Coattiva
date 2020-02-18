@@ -7,11 +7,13 @@
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtGui import QStandardItemModel
 from PyQt5.QtWidgets import QMainWindow, QFileDialog
 
+from data.Model import *
 from model.TableModel import *
-from utility.utility import *
 from view.FirstWindow import *
+from view.LoadNewFile import *
 
 
 class MainWindow(QMainWindow):
@@ -25,8 +27,16 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.setupUi(self)
 
-        """self.tablemodel = tablemodel
-        self.table.setModel(tablemodel)"""
+        # Modello
+        self.model = Model()
+
+        # Table e list models
+        self.datatable: TableModel = None
+        self.traintable: TableModel = None
+        self.testtable: TableModel = None
+        self.columnslist: QStandardItemModel = None
+        self.splitlist: QStandardItemModel = None
+
 
         # variabili di business
         self.sampling = 0
@@ -37,6 +47,9 @@ class MainWindow(QMainWindow):
         self.usefilename = ""
         self.usefiletype = "OLD"
 
+        # Dialog di errore
+        self.error_dialog = QtWidgets.QErrorMessage(self)
+
     """ Funzioni """
 
     def openFirstWindow(self):
@@ -44,9 +57,35 @@ class MainWindow(QMainWindow):
         self.hide()
         FirstWindow(self).show()
 
+    def closeFirstWindow(self):
+        # la finestra di caricamento file di addestramento è stata chiusa, setto la gui
+
+        # Disabilito bottoni main tab
+        self.disableMainButtonTrain()
+        self.disableradios()
+
+        # labels
+        type = self.model.get_traintype()
+        self.setlabelMainType(type)
+        filename = self.model.get_datafilename()
+        self.setlabelMainFilename(filename)
+        datatext=self.model.get_data_info()
+        self.setlabelsData(datatext[0],datatext[1],datatext[2])
+
+        # modello per tabella dati
+        self.datatable = TableModel(self.model.data.enabledcolumns)
+
+        # modello lista colonne
+
+
+
+
+
+
     def openLoadNewFileWindow(self):
         # apertura schermata nuovo file per utilizzo
         self.hide()
+        LoadNewFile(self).show()
 
 
     def openSaveDialog(self, model):
@@ -92,6 +131,17 @@ class MainWindow(QMainWindow):
 
     def disableUtilizza(self):
         self.TabWidget.setTabEnabled(5, False)
+
+    """ Abilita disabilita radio nelle groupbox"""
+    def enableradios(self):
+        self.groupBox.setEnabled(True)
+        self.groupBox_2.setEnabled(True)
+        self.groupBox_3.setEnabled(True)
+
+    def disableradios(self):
+        self.groupBox.setEnabled(False)
+        self.groupBox_2.setEnabled(False)
+        self.groupBox_3.setEnabled(False)
 
     """Abilita disabilita bottoni"""
 
@@ -1090,7 +1140,7 @@ if __name__ == "__main__":
     # qui vengono instanziati i table model
     mainwindow = MainWindow()  # da aggiungere i table model come argomenti
 
-    mainwindow.show()
+    mainwindow.openFirstWindow()
 
     # chiusura programma
     sys.exit(app.exec_())

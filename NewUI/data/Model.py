@@ -1,1 +1,186 @@
-#LOGICA DI BUSINESS FUNZIONI INVOCATE DALLA VIEW
+# LOGICA DI BUSINESS FUNZIONI INVOCATE DALLA VIEW
+from sympy.strategies.core import switch
+
+from utility.funzioni import *
+from data.DataModel import *
+from data.TrainModel import *
+from data.TestModel import *
+from data.AlgorithmPipeline import *
+
+
+class Model:
+    def __init__(self):
+
+        # TODO GESTIONE STATI
+
+        self.datafilename: str = ""
+        self.use_datafilename: str = ""
+
+        self.data: DataModel = None
+        self.train: TrainModel = None
+        self.test: TestModel = None
+
+        self.columns: list = []
+        self.traintestsplit: pd.DataFrame = None
+        self.workingalgorithm: AlgorithmPipeline = None
+
+    # business
+
+    def export_data(self, filepath: str):
+        self.data.export_to_csv(filepath)
+
+    def export_trainset(self, filepath: str):
+        self.train.export_to_csv(filepath)
+
+    def export_testset(self, filepath: str):
+        self.test.export_to_csv(filepath)
+
+    def enablecolumn(self, column: str):
+        try:
+            self.data.enablecolumns(list(column))
+        except Exception:
+            print("no data loaded")
+        try:
+            self.train.enablecolumns(list(column))
+        except Exception:
+            print("no trainset")
+        try:
+            self.test.enablecolumns(list(column))
+        except Exception:
+            print("no testset")
+
+    def disablecolumn(self, column: str):
+        try:
+            self.data.disablecolumns(list(column))
+        except Exception:
+            print("no data loaded")
+        try:
+            self.train.disablecolumns(list(column))
+        except Exception:
+            print("no trainset")
+        try:
+            self.test.disablecolumns(list(column))
+        except Exception:
+            print("no testset")
+
+    def train_algorithm(self):
+        self.workingalgorithm = self.train.trainmodel()
+
+    # Setter
+
+    def set_data(self, type: PFPGEnum, filename: str):
+        self.data = DataModel(type, filename=filename)  # fa già pulizia
+        # get columns
+        self.columns = self.data.get_enabledcolumnsnames()
+        # get traintestsplit
+        self.traintestsplit = self.data.train_test_splitter_possibilities()
+        # Reset train test and use_data
+        self.train = None
+        self.test = None
+        self.workingalgorithm = None
+
+        # TODO use_data
+
+    def reset_settings(self):
+        # Attributi
+        self.use_datafilename = ""
+        self.train = None
+        self.test = None
+        self.workingalgorithm = None
+
+        # Data
+        self.data.enableallcolumns()
+
+    # TODO use_data
+
+    def generate_train_test(self, dates):
+        self.train, self.test = self.data.train_test_splitter(dates)
+
+    def set_sampling(self, sampling: SamplingEnum):
+        self.train.sampler = sampling
+
+    def set_scaling(self, scaling: ScalingEnum):
+        self.train.scaler = scaling
+
+    def set_algorithm(self, algorithm: ClassifierEnum):
+        self.train.classifier = algorithm
+
+    # Getter (ritorna in formato da visualizzare su view)
+
+    def get_datafilename(self):
+        return self.datafilename
+
+    def get_use_datafilename(self):
+        return self.use_datafilename
+
+    def get_traintype(self):
+        if self.data.type == PFPGEnum.PF:
+            return "Persone Fisiche"
+        elif self.data.type == PFPGEnum.PG:
+            return "Persone Giuridiche"
+
+    def get_algorithm(self):
+        if self.train.classifier == ClassifierEnum.LOGISTIC:
+            return "Logistic Regression"
+        elif self.train.classifier == ClassifierEnum.SVC:
+            return "Support Vector Machine"
+        elif self.train.classifier == ClassifierEnum.TREE:
+            return "Decision Tree Classifier"
+        elif self.train.classifier == ClassifierEnum.FOREST:
+            return "Random Forest Classifier"
+        elif self.train.classifier == ClassifierEnum.XGB:
+            return "XGB Classifier"
+
+    def get_data_info(self) -> list:
+        return [self.data.get_rows(), self.data.get_positive_label(), self.data.get_negative_label()]
+
+    def get_train_info(self) -> list:
+        return [self.train.get_rows(), self.train.get_positive_label(), self.train.get_negative_label()]
+
+    def get_test_info(self) -> list:
+        return [self.test.get_rows(), self.test.get_positive_label(), self.test.get_negative_label()]
+
+    def get_sampling_info(self) -> list:
+        return [self.train.get_sampling_rows(), self.train.get_sampling_positive_label(),
+                self.train.get_sampling_negative_label()]
+
+    def get_disabledcolumns(self) -> list:
+        return self.data.disabledcolumns
+
+    def get_sampling(self):
+        if self.train.sampler == SamplingEnum.NONE:
+            return "Nessuno"
+        elif self.train.sampler == SamplingEnum.UNDER:
+            return "Downsampling"
+        elif self.train.sampler == SamplingEnum.UNDER:
+            return "SMOTE Oversampling"
+
+    def get_scaling(self):
+        if self.train.scaler == ScalingEnum.NONE:
+            return "Nessuno"
+        elif self.train.scaler == ScalingEnum.STANDARD:
+            return "Standard"
+        elif self.train.scaler == ScalingEnum.MINMAX:
+            return "MinMax"
+
+    def get_train_scores(self) -> list:
+        scores = self.workingalgorithm.metrics(self.train.enabledcolumns)
+        return [scores.accuracy, scores.precision, scores.recall, scores.f1]
+
+    def get_test_scores(self) -> list:
+        scores = self.workingalgorithm.metrics(self.test.enabledcolumns)
+        return [scores.accuracy, scores.precision, scores.recall, scores.f1]
+
+    # TODO GRAFICI
+
+    # TODO UTILIZZO FILE
+
+    """ DEBUG FUNCTIONS """
+
+    def train_from_file(self, type: PFPGEnum, filename: str):
+        df = pd.read_csv(filename)
+        self.train = TrainModel(type, df, pd.DataFrame())
+
+    def test_from_file(self, type: PFPGEnum, filename: str):
+        df = pd.read_csv(filename)
+        self.test = TestModel(type, df, pd.DataFrame())

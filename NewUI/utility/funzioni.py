@@ -31,7 +31,6 @@ from sklearn.metrics import classification_report, confusion_matrix, accuracy_sc
 from sklearn import preprocessing
 from sklearn import tree
 from sklearn.preprocessing import LabelBinarizer, LabelEncoder, OneHotEncoder, StandardScaler, MinMaxScaler
-from Modellazione.Model_Trainer import separazione_label
 
 """
 in questo script sono contenute le funzioni utilizzate genericamente durante lo svolgimento del progetto e gli import più generali.
