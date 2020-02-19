@@ -54,7 +54,7 @@ class FirstWindow(QtWidgets.QDialog):
     def returnToMain(self):
         self.close()
         self.mainwindow.show()
-        self.mainwindow.closeFirstWindow()
+        self.mainwindow.firstSetup()
 
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")

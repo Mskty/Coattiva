@@ -63,8 +63,20 @@ class Model:
         except Exception:
             print("no testset")
 
+    # Addestramento e utilizzo modello predittivo
+
     def train_algorithm(self):
         self.workingalgorithm = self.train.trainmodel()
+
+    def predict_train(self):
+        # Aggiunge predizioni alla tabella del trainmodel
+        pred = self.workingalgorithm.predict(self.train.enabledcolumns)
+        self.train.attach_predictions(pred)
+
+    def predict_test(self):
+        # Aggiunge predizioni alla tabella del testmodel
+        pred = self.workingalgorithm.predict(self.test.enabledcolumns)
+        self.test.attach_predictions(pred)
 
     # Setter
 
@@ -82,6 +94,8 @@ class Model:
         # TODO use_data
 
     def reset_settings(self):
+        # Resetta train test, algoritmo, nuovo file di utilizzo e colonne selezionate
+
         # Attributi
         self.use_datafilename = ""
         self.train = None
@@ -93,7 +107,17 @@ class Model:
 
     # TODO use_data
 
-    def generate_train_test(self, dates):
+    def generate_train_test(self, date: str):
+        # Ho la data del ruolo da cui quelli precendeti e se stesso faranno parte del training set
+        # Scorro finche non trovo la data desiderata aggiungendo le date a una lista,
+        # una volta trovata la aggiungo e mi fermo
+        dates = []
+        for index, row in self.traintestsplit.iterrows():
+            if row["ruolo"] == date:
+                dates.append(row["ruolo"])
+                break
+            else:
+                dates.append(row["ruolo"])
         self.train, self.test = self.data.train_test_splitter(dates)
 
     def set_sampling(self, sampling: SamplingEnum):
@@ -106,6 +130,13 @@ class Model:
         self.train.classifier = algorithm
 
     # Getter (ritorna in formato da visualizzare su view)
+
+    def get_column_names(self):
+        return self.columns
+
+    def get_train_test_splits(self):
+        # saranno visualizzati in formato fino a data: esempi:
+        return list(self.traintestsplit["ruolo"].values), list(self.traintestsplit["nesempi"].values)
 
     def get_datafilename(self):
         return self.datafilename

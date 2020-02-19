@@ -46,16 +46,13 @@ class MainWindow(QMainWindow):
         self.usefilename = ""
         self.usefiletype = "OLD"
 
-
-        self.checkboxes: list=[]
-
         # Dialog di errore
         self.error_dialog = QtWidgets.QErrorMessage(self)
 
     """ Funzioni """
 
     def onClickedColumnCheckbox(self):
-        #TODO REFRESH MODEL
+        # TODO REFRESH MODEL
         checkbox = self.sender()
         if checkbox.isChecked():
             self.model.enablecolumn(checkbox.text())
@@ -65,7 +62,7 @@ class MainWindow(QMainWindow):
             # DEBUG print(checkbox.text(), checkbox.text())
 
     def add_checkbox_columns(self, column: str):
-        checkbox=QtWidgets.QCheckBox(column)
+        checkbox = QtWidgets.QCheckBox(column)
         checkbox.setCheckState(QtCore.Qt.Checked)
         checkbox.toggled.connect(lambda: self.onClickedColumnCheckbox())
         self.main_list_columns_layout.addWidget(checkbox)
@@ -75,17 +72,46 @@ class MainWindow(QMainWindow):
         for i in a:
             self.add_checkbox_columns(i)"""
 
-    """def onClickedSplitRadio(self):
-        radio: QtWidgets.QRadioButton= self.sender()
+    def onClickedSplitRadio(self):
+        # Crea e abilita tabelle train e test
+        radio: QtWidgets.QRadioButton = self.sender()
         if radio.isChecked():
-            self.model.s"""
+            date = radio.objectName()
+            self.model.generate_train_test(date)
+
+            # Ho generato train e test nel modello ora genero le tabelle
+            self.traintable = TableModel(self.model.train.enabledcolumns)
+            self.table_train.setModel(self.traintable)
+            self.testtable = TableModel(self.model.test.enabledcolumns)
+            self.table_test.setModel(self.testtable)
+
+            # Inserisco il testo nelle tab di train e test
+            traininfo = self.model.get_train_info()
+            self.setlabelsTrain(traininfo[0], traininfo[1], traininfo[2])
+            testinfo = self.model.get_test_info()
+            self.setlabelsTest(testinfo[0], testinfo[1], testinfo[2])
+
+            # Abilito le tabs
+            self.enableTrain()
+            self.enableTest()
+
+            # Abilito radio e addestra modello
+            self.enableradios()
+            self.enableMainButtonTrain()
+
+    def add_radio_split(self, ruolo: str, esempi: int):
+        radio = QtWidgets.QRadioButton("fino a data: " + ruolo + " titoli: " + str(esempi))
+        # utilizzo l'objectname per salvare il dato del ruolo
+        radio.setObjectName(ruolo)
+        radio.toggled.connect(lambda: self.onClickedSplitRadio())
+        self.main_list_split_layout.addWidget(radio)
 
     def openFirstWindow(self):
         # apertura schermata inziale
         self.hide()
         FirstWindow(self).show()
 
-    def closeFirstWindow(self):
+    def firstSetup(self):
         # la finestra di caricamento file di addestramento è stata chiusa, setto la gui
 
         # Disabilito bottoni main tab
@@ -100,14 +126,28 @@ class MainWindow(QMainWindow):
         datatext = self.model.get_data_info()
         self.setlabelsData(datatext[0], datatext[1], datatext[2])
 
-        # modello per tabella dati
+        #label ratio text:
+        total: int = datatext[0]
+        positive_perc: float= (datatext[1]/total)*100
+        negative_perc: float = (datatext[2]/total)*100
+        self.setlabelFileLabelRatio(positive_perc,negative_perc)
+
+
+        # modello e testo per tabella dati
         self.datatable = TableModel(self.model.data.enabledcolumns)
+        datainfo=self.model.get_data_info()
+        self.setlabelsTrain(datainfo[0], datainfo[1], datainfo[2])
+
 
         # impostazione lista colonne nella scroll area
-        for i in self.model.columns:
+        columnlist = self.model.get_column_names()
+        for i in columnlist:
             self.add_checkbox_columns(i)
 
         # impostazione lista split nella scroll area
+        ruoli, nesempi = self.model.get_train_test_splits()  # Lunghi uguale per costruzione
+        for i in range(len(ruoli)):
+            self.add_radio_split(ruoli[i], nesempi[i])
 
     def openLoadNewFileWindow(self):
         # apertura schermata nuovo file per utilizzo
@@ -184,6 +224,16 @@ class MainWindow(QMainWindow):
     def disableUseApply(self):
         self.use_apply.setEnabled(False)
 
+    def enableTestGraphButtons(self):
+        self.button_test_matrix.setEnabled(True)
+        self.button_test_auc.setEnabled(True)
+        self.button_test_prc.setEnabled(True)
+
+    def disableTestGraphButtons(self):
+        self.button_test_matrix.setEnabled(False)
+        self.button_test_auc.setEnabled(False)
+        self.button_test_prc.setEnabled(False)
+
     """ Set label text """
 
     # Tab main
@@ -194,8 +244,8 @@ class MainWindow(QMainWindow):
         self.main_filename.setText("File aperto per l'addestramento: " + filename)
 
     def setlabelFileLabelRatio(self, positivelabel: float, negativelabel: float):
-        self.filelabelratio.setText("1) I titoli contenuti nel training set hanno label per " + str(positivelabel) +
-                                    "% positiva e " + str(negativelabel) +
+        self.filelabelratio.setText("1) I titoli contenuti nel training set hanno label per {0:.2f}".format(positivelabel) +
+                                    "% positiva e {0:.2f}".format(negativelabel) +
                                     "% negativa, selezionare un algoritmo di sampling per equilibrare gli esempi.")
 
     # Tab data
@@ -221,8 +271,7 @@ class MainWindow(QMainWindow):
                            scaling: str, algorithm: str, ignoredcolumns: list):
         self.results_typep.setText("Tipologia di titoli di credito: " + type)
         self.results_number_examples.setText("Numero di esempi utilizzati nell'addestramento:" + str(totallable) +
-                                             ", di cui " + str(positivelabel) + "% con label positiva e "
-                                             + str(negativelabel) + "% con label negativa")
+                                             ", di cui {0:.2f}".format(positivelabel) + "% con label positiva e {0:.2f}".format(negativelabel) + "% con label negativa")
         self.results_sampling.setText("Sampling: " + sampling)
         self.results_scaling.setText("Scaling: " + scaling)
         self.results_algorithm.setText("Algoritmo di apprendimento: " + algorithm)
@@ -253,8 +302,53 @@ class MainWindow(QMainWindow):
     """ Funzioni SLOTS """
 
     def buttonTrainModel(self):
-        # addestramento modello
-        pass
+        # addestramento modello e setup ui risultati
+        self.model.train_algorithm()
+
+        # aggiunta predizioni e risultati trainset
+        self.model.predict_train()
+        self.traintable.updatemodel()
+        # Label risultati
+        tipo=self.model.get_traintype()
+        list_train=self.model.get_sampling_info()
+        totallabel: int=list_train[0]
+        positivelabel: float=(list_train[1]/totallabel)*100
+        negativelabel: float = (list_train[2] / totallabel) * 100
+        sampling=self.model.get_sampling()
+        scaling=self.model.get_scaling()
+        algorithm=self.model.get_algorithm()
+        disabledcolumns=self.model.get_disabledcolumns()
+        self.setlabelsRisultati(tipo,totallabel,positivelabel,negativelabel,sampling,scaling,algorithm,disabledcolumns)
+        # Risultati trainset
+        train_scores=self.model.get_train_scores()
+        acc=train_scores[0]
+        prec=train_scores[1]
+        rec=train_scores[2]
+        f1=train_scores[3]
+        self.setlabelsTrainMetrics(acc,prec,rec,f1)
+
+        # Aggiunta predizioni e risultati testset se presente
+        if self.testtable is not None:
+            # Abilito grafici
+            self.enableTestGraphButtons()
+            # Aggiunta predizioni e risultati trainset
+            self.model.predict_test()
+            self.testtable.updatemodel()
+            # Risultati trainset
+            train_scores = self.model.get_train_scores()
+            acc = train_scores[0]
+            prec = train_scores[1]
+            rec = train_scores[2]
+            f1 = train_scores[3]
+            self.setlabelsTrainMetrics(acc, prec, rec, f1)
+        else:
+            # Disabilito grafici
+            self.disableTestGraphButtons()
+            # Reset risultati testset
+            self.test_accuracy.setText("na")
+            self.test_precision.setText("na")
+            self.test_recall.setText("na")
+            self.test_f1.setText("na")
 
     def buttonLoadNewTrainFile(self):
         # apertura nuovo file per addestramento
@@ -301,6 +395,14 @@ class MainWindow(QMainWindow):
 
     def buttonResultsInfo(self):
         # apertura scheda info metriche
+        pass
+
+    def buttonUseLoadFile(self):
+        # apri finestra LoadNewFile
+        pass
+
+    def buttonUseApply(self):
+        #Riporta i risultati del modello sulla tabella del file di utilizzo
         pass
 
     def buttonUseExport(self):
@@ -955,15 +1057,15 @@ class MainWindow(QMainWindow):
         self.horizontalLayout_13.setObjectName("horizontalLayout_13")
         spacerItem31 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_13.addItem(spacerItem31)
-        self.pushButton_4 = QtWidgets.QPushButton(self.Risultati)
-        self.pushButton_4.setObjectName("pushButton_4")
-        self.horizontalLayout_13.addWidget(self.pushButton_4)
-        self.pushButton_8 = QtWidgets.QPushButton(self.Risultati)
-        self.pushButton_8.setObjectName("pushButton_8")
-        self.horizontalLayout_13.addWidget(self.pushButton_8)
-        self.pushButton_3 = QtWidgets.QPushButton(self.Risultati)
-        self.pushButton_3.setObjectName("pushButton_3")
-        self.horizontalLayout_13.addWidget(self.pushButton_3)
+        self.button_test_matrix = QtWidgets.QPushButton(self.Risultati)
+        self.button_test_matrix.setObjectName("button_test_matrix")
+        self.horizontalLayout_13.addWidget(self.button_test_matrix)
+        self.button_test_auc = QtWidgets.QPushButton(self.Risultati)
+        self.button_test_auc.setObjectName("button_test_auc")
+        self.horizontalLayout_13.addWidget(self.button_test_auc)
+        self.button_test_prc = QtWidgets.QPushButton(self.Risultati)
+        self.button_test_prc.setObjectName("button_test_prc")
+        self.horizontalLayout_13.addWidget(self.button_test_prc)
         spacerItem32 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_13.addItem(spacerItem32)
         self.verticalLayout_17.addLayout(self.horizontalLayout_13)
@@ -1048,6 +1150,37 @@ class MainWindow(QMainWindow):
         self.disableUtilizza()
 
         # Slots
+        self.sampling1.toggled.connect(lambda: self.model.set_sampling(SamplingEnum.NONE))
+        self.sampling2.toggled.connect(lambda: self.model.set_sampling(SamplingEnum.UNDER))
+        self.sampling3.toggled.connect(lambda: self.model.set_sampling(SamplingEnum.SMOTE))
+        self.scaling1.toggled.connect(lambda: self.model.set_scaling(ScalingEnum.NONE))
+        self.scaling2.toggled.connect(lambda: self.model.set_scaling(ScalingEnum.STANDARD))
+        self.scaling3.toggled.connect(lambda: self.model.set_scaling(ScalingEnum.MINMAX))
+        self.algorithm1.toggled.connect(lambda: self.model.set_algorithm(ClassifierEnum.LOGISTIC))
+        self.algorithm2.toggled.connect(lambda: self.model.set_algorithm(ClassifierEnum.SVC))
+        self.algorithm3.toggled.connect(lambda: self.model.set_algorithm(ClassifierEnum.TREE))
+        self.algorithm4.toggled.connect(lambda: self.model.set_algorithm(ClassifierEnum.FOREST))
+        self.algorithm5.toggled.connect(lambda: self.model.set_algorithm(ClassifierEnum.XGB))
+        self.main_button_train.clicked.connect(lambda: self.buttonTrainModel())
+        self.main_button_file.clicked.connect(lambda: self.buttonLoadNewTrainFile())
+        self.main_button_reset.clicked.connect(lambda: self.buttonReset())
+        self.data_export.clicked.connect(lambda: self.buttonDataExport())
+        self.train_export.clicked.connect(lambda: self.buttonTrainExport())
+        self.test_export.clicked.connect(lambda: self.buttonTestExport())
+        self.button_train_matrix.clicked.connect(lambda: self.buttonTrainMatrix())
+        self.button_train_auc.clicked.connect(lambda: self.buttonTrainRoc())
+        self.button_train_prc.clicked.connect(lambda: self.buttonTrainPrc())
+        self.button_test_matrix.clicked.connect(lambda: self.buttonTestMatrix())
+        self.button_test_auc.clicked.connect(lambda: self.buttonTestRoc())
+        self.button_test_prc.clicked.connect(lambda: self.buttonTestPrc())
+        self.results_info.clicked.connect(lambda : self.buttonResultsInfo())
+        self.use_loadfile.clicked.connect(lambda: self.buttonUseLoadFile())
+        self.use_apply.clicked.connect(lambda: self.buttonUseApply())
+        self.use_export.clicked.connect(lambda: self.buttonUseExport())
+
+
+
+
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -1157,9 +1290,9 @@ class MainWindow(QMainWindow):
         self.test_recall.setText(_translate("MainWindow", "na"))
         self.label_49.setText(_translate("MainWindow", "Recall"))
         self.label_46.setText(_translate("MainWindow", "GRAFICI"))
-        self.pushButton_4.setText(_translate("MainWindow", "Confusion Matrix"))
-        self.pushButton_8.setText(_translate("MainWindow", "Roc_Auc Curve"))
-        self.pushButton_3.setText(_translate("MainWindow", "Precision_Recall Curve"))
+        self.button_test_matrix.setText(_translate("MainWindow", "Confusion Matrix"))
+        self.button_test_auc.setText(_translate("MainWindow", "Roc_Auc Curve"))
+        self.button_test_prc.setText(_translate("MainWindow", "Precision_Recall Curve"))
         self.results_info.setText(_translate("MainWindow", "Info Metriche"))
         self.TabWidget.setTabText(self.TabWidget.indexOf(self.Risultati), _translate("MainWindow", "Risultati"))
         self.label_22.setText(_translate("MainWindow", "Utilizzo del modello addestrato:"))
