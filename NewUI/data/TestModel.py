@@ -22,7 +22,7 @@ class TestModel:
 
     def disablecolumns(self, columns: list):
         if set(columns).issubset(set(list(self.enabledcolumns.columns.values))):
-            self.disabledcolumns = self.enabledcolumns[columns]
+            self.disabledcolumns[columns] = self.enabledcolumns[columns]
             self.enabledcolumns.drop(columns=columns, inplace=True)
         else:
             print("error: colonne non presenti")

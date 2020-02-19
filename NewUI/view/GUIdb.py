@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+ # -*- coding: utf-8 -*-
 
 # Form implementation generated from reading ui file 'GUI.ui'
 #
@@ -55,14 +55,21 @@ class MainWindow(QMainWindow):
             widgetToRemove.setParent(None)
 
     def onClickedColumnCheckbox(self):
-        # TODO REFRESH MODEL
         checkbox = self.sender()
         if checkbox.isChecked():
-            self.model.enablecolumn(checkbox.text())
+            self.model.db_enablecolumn(checkbox.text())
             # DEBUG print(checkbox.text())
         else:
-            self.model.disablecolumn(checkbox.text())
+            self.model.db_disablecolumn(checkbox.text())
             # DEBUG print(checkbox.text(), checkbox.text())
+        try:
+            self.traintable.updatemodel()
+        except:
+            pass
+        try:
+            self.testtable.updatemodel()
+        except:
+            pass
 
     def add_checkbox_columns(self, column: str):
         checkbox = QtWidgets.QCheckBox(column)
@@ -70,44 +77,12 @@ class MainWindow(QMainWindow):
         checkbox.toggled.connect(lambda: self.onClickedColumnCheckbox())
         self.main_list_columns_layout.addWidget(checkbox)
 
-    """def debugcheck(self):
-        a=["a","b","c","a","b","c","a","b","c","a","b","c","a","b","c"]
-        for i in a:
-            self.add_checkbox_columns(i)"""
 
     def onClickedSplitRadio(self):
-        # Crea e abilita tabelle train e test
-        radio: QtWidgets.QRadioButton = self.sender()
-        if radio.isChecked():
-            date = radio.objectName()
-            self.model.generate_train_test(date)
-
-            # Ho generato train e test nel modello ora genero le tabelle
-            self.traintable = TableModel(self.model.train.enabledcolumns)
-            self.table_train.setModel(self.traintable)
-            self.testtable = TableModel(self.model.test.enabledcolumns)
-            self.table_test.setModel(self.testtable)
-
-            # Inserisco il testo nelle tab di train e test
-            traininfo = self.model.get_train_info()
-            self.setlabelsTrain(traininfo[0], traininfo[1], traininfo[2])
-            testinfo = self.model.get_test_info()
-            self.setlabelsTest(testinfo[0], testinfo[1], testinfo[2])
-
-            # Abilito le tabs
-            self.enableTrain()
-            self.enableTest()
-
-            # Abilito radio e addestra modello
-            self.enableradios()
-            self.enableMainButtonTrain()
+       pass
 
     def add_radio_split(self, ruolo: str, esempi: int):
-        radio = QtWidgets.QRadioButton("fino a data: " + ruolo + " titoli: " + str(esempi))
-        # utilizzo l'objectname per salvare il dato del ruolo
-        radio.setObjectName(ruolo)
-        radio.toggled.connect(lambda: self.onClickedSplitRadio())
-        self.main_list_split_layout.addWidget(radio)
+        pass
 
     def openFirstWindow(self):
         # apertura schermata inziale
@@ -116,32 +91,18 @@ class MainWindow(QMainWindow):
 
     def firstSetup(self):
         # la finestra di caricamento file di addestramento è stata chiusa, setto la gui
+        self.enableTrain()
+        self.enableTest()
+        self.enableRisultati()
+        self.enableradios()
+        self.enableMainButtonTrain()
 
-        # Disabilito bottoni main tab
-        self.disableMainButtonTrain()
-        self.disableradios()
+        self.model.db_set_data()
 
-        # labels
-        type = self.model.get_traintype()
-        self.setlabelMainType(type)
-        filename = self.model.get_datafilename()
-        self.setlabelMainFilename(filename)
-        datatext = self.model.get_data_info()
-        self.setlabelsData(datatext[0], datatext[1], datatext[2])
-
-        #label ratio text:
-        total: int = datatext[0]
-        positive_perc: float= (datatext[1]/total)*100
-        negative_perc: float = (datatext[2]/total)*100
-        self.setlabelFileLabelRatio(positive_perc,negative_perc)
-
-
-        # modello e testo per tabella dati
-        self.datatable = TableModel(self.model.data.enabledcolumns)
-        self.table_data.setModel(self.datatable)
-        datainfo=self.model.get_data_info()
-        self.setlabelsTrain(datainfo[0], datainfo[1], datainfo[2])
-
+        self.traintable=TableModel(self.model.train.enabledcolumns)
+        self.testtable=TableModel(self.model.test.enabledcolumns)
+        self.table_train.setModel(self.traintable)
+        self.table_test.setModel(self.testtable)
 
         # impostazione lista colonne nella scroll area
         # Pulisco prima il layout
@@ -149,13 +110,6 @@ class MainWindow(QMainWindow):
         columnlist = self.model.get_column_names()
         for i in columnlist:
             self.add_checkbox_columns(i)
-
-        # impostazione lista split nella scroll area
-        # Pulisco prima il layout
-        self.clearScrollArea(self.main_list_split_layout)
-        ruoli, nesempi = self.model.get_train_test_splits()  # Lunghi uguale per costruzione
-        for i in range(len(ruoli)):
-            self.add_radio_split(ruoli[i], nesempi[i])
 
     def openLoadNewFileWindow(self):
         # apertura schermata nuovo file per utilizzo
@@ -314,7 +268,7 @@ class MainWindow(QMainWindow):
         self.model.predict_train()
         self.traintable.updatemodel()
         # Label risultati
-        tipo=self.model.get_traintype()
+        tipo=self.model.db_get_traintype()
         list_train=self.model.get_sampling_info()
         totallabel: int=list_train[0]
         positivelabel: float=(list_train[1]/totallabel)*100
@@ -322,7 +276,7 @@ class MainWindow(QMainWindow):
         sampling=self.model.get_sampling()
         scaling=self.model.get_scaling()
         algorithm=self.model.get_algorithm()
-        disabledcolumns=self.model.get_disabledcolumns()
+        disabledcolumns=self.model.db_get_disabledcolumns()
         self.setlabelsRisultati(tipo,totallabel,positivelabel,negativelabel,sampling,scaling,algorithm,disabledcolumns)
         # Risultati trainset
         train_scores=self.model.get_train_scores()
@@ -362,26 +316,7 @@ class MainWindow(QMainWindow):
 
     def buttonReset(self):
         # Reset: abilita tutte le colonne, disabilita train e test set, blocca le box
-        # Reset modello:
-        self.model.reset_settings()
         self.datatable.updatemodel()
-
-        # Reset variabili:
-        self.traintable: TableModel = None
-        self.testtable: TableModel = None
-        self.usetable: TableModel = None
-
-        # Reset tabs
-        self.disableTrain()
-        self.disableTest()
-        self.disableRisultati()
-        self.disableUtilizza()
-
-        # Reset radio boxes
-        self.disableradios()
-
-        # Reset bottoni main page
-        self.disableTrain()
 
         # Reset scroll areas
         # impostazione lista colonne nella scroll area
@@ -1376,6 +1311,7 @@ if __name__ == "__main__":
     mainwindow = MainWindow()  # da aggiungere i table model come argomenti
 
     # mainwindow.openFirstWindow()
+    mainwindow.firstSetup()
     mainwindow.show()
 
     # chiusura programma

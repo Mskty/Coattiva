@@ -55,7 +55,7 @@ class DataModel:
 
     def disablecolumns(self, columns: list):
         if set(columns).issubset(set(list(self.df.columns.values))):
-            self.disabledcolumns = self.df[columns]
+            self.disabledcolumns[columns] = self.df[columns]
             self.enabledcolumns.drop(columns=columns, inplace=True)
         else:
             print("error: colonne non presenti")

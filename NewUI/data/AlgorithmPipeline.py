@@ -39,6 +39,10 @@ class AlgorithmPipeline:
         roc_auc = roc_auc_score(dataset["label"].values, dataset["predizione"].values)
         return Score(accuracy,precision,recall,f1,roc_auc)
 
+    def confusion_matrix(self, dataset:pd.DataFrame):
+        # Ritorna np array 2x2
+        return confusion_matrix(dataset["label"].values, dataset["predizione"].values)
+
 
 
 

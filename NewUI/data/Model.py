@@ -5,6 +5,7 @@ from utility.funzioni import *
 from data.DataModel import *
 from data.TrainModel import *
 from data.TestModel import *
+from data.GraphBuilder import *
 from data.AlgorithmPipeline import *
 
 
@@ -37,29 +38,29 @@ class Model:
 
     def enablecolumn(self, column: str):
         try:
-            self.data.enablecolumns(list(column))
+            self.data.enablecolumns([column])
         except Exception:
             print("no data loaded")
         try:
-            self.train.enablecolumns(list(column))
+            self.train.enablecolumns([column])
         except Exception:
             print("no trainset")
         try:
-            self.test.enablecolumns(list(column))
+            self.test.enablecolumns([column])
         except Exception:
             print("no testset")
 
     def disablecolumn(self, column: str):
         try:
-            self.data.disablecolumns(list(column))
+            self.data.disablecolumns([column])
         except Exception:
             print("no data loaded")
         try:
-            self.train.disablecolumns(list(column))
+            self.train.disablecolumns([column])
         except Exception:
             print("no trainset")
         try:
-            self.test.disablecolumns(list(column))
+            self.test.disablecolumns([column])
         except Exception:
             print("no testset")
 
@@ -202,18 +203,159 @@ class Model:
         scores = self.workingalgorithm.metrics(self.test.enabledcolumns)
         return [scores.accuracy, scores.precision, scores.recall, scores.f1]
 
-    # TODO GRAFICI
+    """ -------------------------------------------------GRAFICI---------------------------------------------------- """
+
+    def get_confusion_matrix_train(self):
+        matrix = self.workingalgorithm.confusion_matrix(self.train.enabledcolumns)
+        builder = GraphBuilder()
+        builder.plot_confusion_matrix(matrix)
+
+    def get_confusion_matrix_test(self):
+        matrix = self.workingalgorithm.confusion_matrix(self.test.enabledcolumns)
+        builder = GraphBuilder()
+        builder.plot_confusion_matrix(matrix)
+
+    def get_auc_curve_train(self):
+        matrix = self.workingalgorithm.confusion_matrix(self.train.enabledcolumns)
+        # trovo i true positive e false positive dall'array 2x2 di matrice
+        fp = matrix[0, 1]
+        tp = matrix[1, 1]
+        builder = GraphBuilder()
+        builder.plot_roc_curve(tp, fp)
+
+    def get_auc_curve_test(self):
+        matrix = self.workingalgorithm.confusion_matrix(self.test.enabledcolumns)
+        # trovo i true positive e false positive dall'array 2x2 di matrice
+        fp = matrix[0, 1]
+        tp = matrix[1, 1]
+        builder = GraphBuilder()
+        builder.plot_roc_curve(tp, fp)
+
+    def get_prc_curve_train(self):
+        scores = self.workingalgorithm.metrics(self.train.enabledcolumns)
+        builder = GraphBuilder
+        builder.plot_precision_recall(scores.precision, scores.recall)
+
+    def get_prc_curve_test(self):
+        scores = self.workingalgorithm.metrics(self.test.enabledcolumns)
+        builder = GraphBuilder
+        builder.plot_precision_recall(scores.precision, scores.recall)
 
     # TODO UTILIZZO FILE
 
 
 
+
+
+
+
+
+
+
+
+
     """ DEBUG FUNCTIONS """
 
-    def train_from_file(self, type: PFPGEnum, filename: str):
+    def db_train_from_file(self, type: PFPGEnum=PFPGEnum.PF):
+        filename="C:/Users/squer/Desktop/Coattiva/Datasets/export_trainset_PF.csv"
         df = pd.read_csv(filename)
         self.train = TrainModel(type, df, pd.DataFrame())
 
-    def test_from_file(self, type: PFPGEnum, filename: str):
+    def db_test_from_file(self, type: PFPGEnum=PFPGEnum.PF):
+        filename="C:/Users/squer/Desktop/Coattiva/Datasets/export_testset_PF.csv"
         df = pd.read_csv(filename)
         self.test = TestModel(type, df, pd.DataFrame())
+
+    def db_enablecolumn(self, column: str):
+        try:
+            print(column)
+            self.train.enablecolumns([column])
+        except Exception:
+            print("no trainset")
+        try:
+            self.test.enablecolumns([column])
+        except Exception:
+            print("no testset")
+
+    def db_disablecolumn(self, column: str):
+        try:
+            self.train.disablecolumns([column])
+        except Exception:
+            print("no trainset")
+        try:
+            self.test.disablecolumns([column])
+        except Exception:
+            print("no testset")
+
+    def db_get_traintype(self):
+        if self.train.type == PFPGEnum.PF:
+            return "Persone Fisiche"
+        elif self.train.type == PFPGEnum.PG:
+            return "Persone Giuridiche"
+
+    # Addestramento e utilizzo modello predittivo
+
+    # Setter
+
+    def db_set_data(self):
+        self.db_train_from_file()
+        self.db_test_from_file()
+        # get columns
+        self.columns = self.train.db_columnnames()
+        # get traintestsplit
+        #self.traintestsplit = self.data.train_test_splitter_possibilities()
+        # Reset train test and use_data
+        self.workingalgorithm = None
+
+    def db_get_disabledcolumns(self) -> list:
+        return self.train.disabledcolumns.columns.values
+
+    """ -------------------------------------------------GRAFICI---------------------------------------------------- """
+
+    def get_confusion_matrix_train(self):
+        plt.close()
+        matrix = self.workingalgorithm.confusion_matrix(self.train.enabledcolumns)
+        builder = GraphBuilder()
+        builder.plot_confusion_matrix(matrix)
+        plt.show()
+
+    def get_confusion_matrix_test(self):
+        plt.close()
+        matrix = self.workingalgorithm.confusion_matrix(self.test.enabledcolumns)
+        builder = GraphBuilder()
+        builder.plot_confusion_matrix(matrix)
+        plt.show()
+
+    def get_auc_curve_train(self):
+        plt.close()
+        matrix = self.workingalgorithm.confusion_matrix(self.train.enabledcolumns)
+        # trovo i true positive e false positive dall'array 2x2 di matrice
+        fp = matrix[0, 1]
+        tp = matrix[1, 1]
+        builder = GraphBuilder()
+        builder.plot_roc_curve(tp, fp)
+        plt.show()
+
+    def get_auc_curve_test(self):
+        plt.close()
+        matrix = self.workingalgorithm.confusion_matrix(self.test.enabledcolumns)
+        # trovo i true positive e false positive dall'array 2x2 di matrice
+        fp = matrix[0, 1]
+        tp = matrix[1, 1]
+        builder = GraphBuilder()
+        builder.plot_roc_curve(tp, fp)
+        plt.show()
+
+    def get_prc_curve_train(self):
+        plt.close()
+        scores = self.workingalgorithm.metrics(self.train.enabledcolumns)
+        builder = GraphBuilder()
+        builder.plot_precision_recall(scores.precision, scores.recall)
+        plt.show()
+
+    def get_prc_curve_test(self):
+        plt.close()
+        scores = self.workingalgorithm.metrics(self.test.enabledcolumns)
+        builder = GraphBuilder()
+        builder.plot_precision_recall(scores.precision, scores.recall)
+        plt.show()

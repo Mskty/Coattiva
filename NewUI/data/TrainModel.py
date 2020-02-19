@@ -72,8 +72,10 @@ class TrainModel:
             return self.get_negative_label()
 
     def disablecolumns(self, columns: list):
+        print(list(self.enabledcolumns.columns.values))
+        print(columns)
         if set(columns).issubset(set(list(self.enabledcolumns.columns.values))):
-            self.disabledcolumns = self.enabledcolumns[columns]
+            self.disabledcolumns[columns] = self.enabledcolumns[columns]
             self.enabledcolumns.drop(columns=columns, inplace=True)
         else:
             print("error: colonne non presenti")
@@ -170,3 +172,7 @@ class TrainModel:
 
     def export_to_csv(self, export_file_path):
         self.enabledcolumns.to_csv(export_file_path, index=None, header=True)
+
+
+    def db_columnnames(self):
+        return self.enabledcolumns.columns.values
