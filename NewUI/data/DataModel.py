@@ -29,7 +29,9 @@ class DataModel:
 
     def get_columnsnames(self) -> list:
         names = list(self.df.columns.values)
+        # Rimuovo label e DataCaricoTitolo perchè non disattivabili (e sono due colonne sempre presenti)
         names.remove("label")
+        names.remove("DataCaricoTitolo")
         return names
 
     def get_rows(self) -> int:

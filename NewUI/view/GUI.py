@@ -37,7 +37,6 @@ class MainWindow(QMainWindow):
         self.columnslist: QStandardItemModel = None
         self.splitlist: QStandardItemModel = None
 
-
         # variabili di business
         self.sampling = 0
         self.scaling = 0
@@ -47,10 +46,39 @@ class MainWindow(QMainWindow):
         self.usefilename = ""
         self.usefiletype = "OLD"
 
+
+        self.checkboxes: list=[]
+
         # Dialog di errore
         self.error_dialog = QtWidgets.QErrorMessage(self)
 
     """ Funzioni """
+
+    def onClickedColumnCheckbox(self):
+        #TODO REFRESH MODEL
+        checkbox = self.sender()
+        if checkbox.isChecked():
+            self.model.enablecolumn(checkbox.text())
+            # DEBUG print(checkbox.text())
+        else:
+            self.model.disablecolumn(checkbox.text())
+            # DEBUG print(checkbox.text(), checkbox.text())
+
+    def add_checkbox_columns(self, column: str):
+        checkbox=QtWidgets.QCheckBox(column)
+        checkbox.setCheckState(QtCore.Qt.Checked)
+        checkbox.toggled.connect(lambda: self.onClickedColumnCheckbox())
+        self.main_list_columns_layout.addWidget(checkbox)
+
+    """def debugcheck(self):
+        a=["a","b","c","a","b","c","a","b","c","a","b","c","a","b","c"]
+        for i in a:
+            self.add_checkbox_columns(i)"""
+
+    """def onClickedSplitRadio(self):
+        radio: QtWidgets.QRadioButton= self.sender()
+        if radio.isChecked():
+            self.model.s"""
 
     def openFirstWindow(self):
         # apertura schermata inziale
@@ -69,24 +97,22 @@ class MainWindow(QMainWindow):
         self.setlabelMainType(type)
         filename = self.model.get_datafilename()
         self.setlabelMainFilename(filename)
-        datatext=self.model.get_data_info()
-        self.setlabelsData(datatext[0],datatext[1],datatext[2])
+        datatext = self.model.get_data_info()
+        self.setlabelsData(datatext[0], datatext[1], datatext[2])
 
         # modello per tabella dati
         self.datatable = TableModel(self.model.data.enabledcolumns)
 
-        # modello lista colonne
+        # impostazione lista colonne nella scroll area
+        for i in self.model.columns:
+            self.add_checkbox_columns(i)
 
-
-
-
-
+        # impostazione lista split nella scroll area
 
     def openLoadNewFileWindow(self):
         # apertura schermata nuovo file per utilizzo
         self.hide()
         LoadNewFile(self).show()
-
 
     def openSaveDialog(self, model):
         options = QFileDialog.Options()
@@ -133,6 +159,7 @@ class MainWindow(QMainWindow):
         self.TabWidget.setTabEnabled(5, False)
 
     """ Abilita disabilita radio nelle groupbox"""
+
     def enableradios(self):
         self.groupBox.setEnabled(True)
         self.groupBox_2.setEnabled(True)
@@ -340,14 +367,18 @@ class MainWindow(QMainWindow):
         self.horizontalLayout_18.setObjectName("horizontalLayout_18")
         spacerItem3 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_18.addItem(spacerItem3)
-        self.main_list_columns = QtWidgets.QListView(self.Main)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.main_list_columns.sizePolicy().hasHeightForWidth())
-        self.main_list_columns.setSizePolicy(sizePolicy)
-        self.main_list_columns.setResizeMode(QtWidgets.QListView.Adjust)
+
+        self.main_list_columns = QtWidgets.QScrollArea(self.Main)
+        self.main_list_columns.setSizeAdjustPolicy(QtWidgets.QAbstractScrollArea.AdjustToContents)
+        self.main_list_columns.setWidgetResizable(True)
         self.main_list_columns.setObjectName("main_list_columns")
+        self.main_list_columns_content = QtWidgets.QWidget()
+        self.main_list_columns_content.setGeometry(QtCore.QRect(0, 0, 369, 189))
+        self.main_list_columns_content.setObjectName("main_list_columns_content")
+        self.main_list_columns_layout = QtWidgets.QVBoxLayout(self.main_list_columns_content)
+        self.main_list_columns_layout.setObjectName("main_list_columns_layout")
+        self.main_list_columns.setWidget(self.main_list_columns_content)
+
         self.horizontalLayout_18.addWidget(self.main_list_columns)
         spacerItem4 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_18.addItem(spacerItem4)
@@ -374,9 +405,19 @@ class MainWindow(QMainWindow):
         self.horizontalLayout_20.setObjectName("horizontalLayout_20")
         spacerItem7 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_20.addItem(spacerItem7)
-        self.main_list_split = QtWidgets.QListView(self.Main)
-        self.main_list_split.setResizeMode(QtWidgets.QListView.Adjust)
+
+        self.main_list_split = QtWidgets.QScrollArea(self.Main)
+        self.main_list_split.setSizeAdjustPolicy(QtWidgets.QAbstractScrollArea.AdjustToContents)
+        self.main_list_split.setWidgetResizable(True)
         self.main_list_split.setObjectName("main_list_split")
+        self.main_list_split_content = QtWidgets.QWidget()
+        self.main_list_split_content.setGeometry(QtCore.QRect(0, 0, 369, 189))
+        self.main_list_split_content.setObjectName("main_list_split_content")
+        self.main_list_split_layout = QtWidgets.QVBoxLayout(self.main_list_split_content)
+        self.main_list_split_layout.setObjectName("main_list_split_layout")
+        self.main_list_split.setWidget(self.main_list_split_content)
+        # self.main_list_split_content.layout().addWidget(QtWidgets.QLabel("ciao"))
+
         self.horizontalLayout_20.addWidget(self.main_list_split)
         spacerItem8 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_20.addItem(spacerItem8)
@@ -1140,7 +1181,9 @@ if __name__ == "__main__":
     # qui vengono instanziati i table model
     mainwindow = MainWindow()  # da aggiungere i table model come argomenti
 
-    mainwindow.openFirstWindow()
+    # mainwindow.openFirstWindow()
+    mainwindow.show()
+    mainwindow.debugcheck()
 
     # chiusura programma
     sys.exit(app.exec_())
