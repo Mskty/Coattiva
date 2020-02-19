@@ -34,15 +34,9 @@ class MainWindow(QMainWindow):
         self.datatable: TableModel = None
         self.traintable: TableModel = None
         self.testtable: TableModel = None
-        self.columnslist: QStandardItemModel = None
-        self.splitlist: QStandardItemModel = None
+        self.usetable: TableModel = None
 
         # variabili di business
-        self.sampling = 0
-        self.scaling = 0
-        self.algorithm = 0
-        self.type = "PF"
-        self.trainfilename = ""
         self.usefilename = ""
         self.usefiletype = "OLD"
 
@@ -50,6 +44,15 @@ class MainWindow(QMainWindow):
         self.error_dialog = QtWidgets.QErrorMessage(self)
 
     """ Funzioni """
+
+    def clearScrollArea(self, layout: QtWidgets.QVBoxLayout):
+        #PER ELIMINARE I WIDGET DA UN LAYOUT NELLA SCROLLAREA
+        for i in reversed(range(layout.count())):
+            widgetToRemove = layout.itemAt(i).widget()
+            # remove it from the layout list
+            layout.removeWidget(widgetToRemove)
+            # remove it from the gui
+            widgetToRemove.setParent(None)
 
     def onClickedColumnCheckbox(self):
         # TODO REFRESH MODEL
@@ -140,11 +143,15 @@ class MainWindow(QMainWindow):
 
 
         # impostazione lista colonne nella scroll area
+        # Pulisco prima il layout
+        self.clearScrollArea(self.main_list_columns_layout)
         columnlist = self.model.get_column_names()
         for i in columnlist:
             self.add_checkbox_columns(i)
 
         # impostazione lista split nella scroll area
+        # Pulisco prima il layout
+        self.clearScrollArea(self.main_list_split_layout)
         ruoli, nesempi = self.model.get_train_test_splits()  # Lunghi uguale per costruzione
         for i in range(len(ruoli)):
             self.add_radio_split(ruoli[i], nesempi[i])
@@ -154,17 +161,14 @@ class MainWindow(QMainWindow):
         self.hide()
         LoadNewFile(self).show()
 
-    def openSaveDialog(self, model):
+    def openSaveDialog(self):
         options = QFileDialog.Options()
         fileName, _ = QFileDialog.getSaveFileName(self, "QFileDialog.getSaveFileName()", "",
                                                   "Csv Files (*.csv)", options=options)
         # DEBUG
         if fileName:
             print(fileName)
-
-        # TODO GESTIONE ERRORI
-
-        # TODO CHIAMATA TABLEMODEL SAVECSV CON FILENAME
+        return fileName
 
     """Abilita disabilita tabs"""
 
@@ -349,25 +353,76 @@ class MainWindow(QMainWindow):
             self.test_precision.setText("na")
             self.test_recall.setText("na")
             self.test_f1.setText("na")
+    #TODO PARTE UTILIZZA
 
     def buttonLoadNewTrainFile(self):
         # apertura nuovo file per addestramento
         pass
 
     def buttonReset(self):
-        pass
+        # Reset: abilita tutte le colonne, disabilita train e test set, blocca le box
+        # Reset modello:
+        self.model.reset_settings()
+        self.datatable.updatemodel()
+
+        # Reset variabili:
+        self.traintable: TableModel = None
+        self.testtable: TableModel = None
+        self.usetable: TableModel = None
+
+        # Reset tabs
+        self.disableTrain()
+        self.disableTest()
+        self.disableRisultati()
+        self.disableUtilizza()
+
+        # Reset radio boxes
+        self.disableradios()
+
+        # Reset bottoni main page
+        self.disableTrain()
+
+        # Reset scroll areas
+        # impostazione lista colonne nella scroll area
+        # Pulisco prima il layout
+        self.clearScrollArea(self.main_list_columns_layout)
+        columnlist = self.model.get_column_names()
+        for i in columnlist:
+            self.add_checkbox_columns(i)
+
+        # impostazione lista split nella scroll area
+        # Pulisco prima il layout
+        self.clearScrollArea(self.main_list_split_layout)
+        ruoli, nesempi = self.model.get_train_test_splits()  # Lunghi uguale per costruzione
+        for i in range(len(ruoli)):
+            self.add_radio_split(ruoli[i], nesempi[i])
 
     def buttonDataExport(self):
         # openSaveDialog passando il modello corretto
-        pass
+        filepath=self.openSaveDialog()
+        try:
+            self.model.export_data(filepath)
+        except:
+            pass
+    # TODO ERROR MESSAGE
 
     def buttonTrainExport(self):
         # openSaveDialog passando il modello corretto
-        pass
+        filepath = self.openSaveDialog()
+        try:
+            self.model.export_data(filepath)
+        except:
+            pass
+    # TODO ERROR MESSAGE
 
     def buttonTestExport(self):
         # openSaveDialog passando il modello corretto
-        pass
+        filepath = self.openSaveDialog()
+        try:
+            self.model.export_data(filepath)
+        except:
+            pass
+    # TODO ERROR MESSAGE
 
     def buttonTrainMatrix(self):
         # grafico conf matrix train
@@ -407,7 +462,12 @@ class MainWindow(QMainWindow):
 
     def buttonUseExport(self):
         # openSaveDialog passando il modello corretto
-        pass
+        filepath = self.openSaveDialog()
+        try:
+            self.model.export_data(filepath)
+        except:
+            pass
+    # TODO ERROR MESSAGE
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
@@ -1316,7 +1376,6 @@ if __name__ == "__main__":
 
     # mainwindow.openFirstWindow()
     mainwindow.show()
-    mainwindow.debugcheck()
 
     # chiusura programma
     sys.exit(app.exec_())
