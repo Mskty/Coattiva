@@ -8,7 +8,7 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtGui import QStandardItemModel
-from PyQt5.QtWidgets import QMainWindow, QFileDialog
+from PyQt5.QtWidgets import QMainWindow, QFileDialog, QHeaderView
 
 from data.Model import *
 from model.TableModel import *
@@ -104,12 +104,16 @@ class MainWindow(QMainWindow):
         self.table_train.setModel(self.traintable)
         self.table_test.setModel(self.testtable)
 
+
         # impostazione lista colonne nella scroll area
         # Pulisco prima il layout
         self.clearScrollArea(self.main_list_columns_layout)
         columnlist = self.model.get_column_names()
         for i in columnlist:
             self.add_checkbox_columns(i)
+        self.main_list_columns.widget().adjustSize()
+        self.main_list_columns.setMinimumWidth(self.main_list_columns.widget().width()+30)
+
 
     def openLoadNewFileWindow(self):
         # apertura schermata nuovo file per utilizzo
@@ -264,6 +268,8 @@ class MainWindow(QMainWindow):
         # addestramento modello e setup ui risultati
         self.model.train_algorithm()
 
+
+
         # aggiunta predizioni e risultati trainset
         self.model.predict_train()
         self.traintable.updatemodel()
@@ -308,6 +314,7 @@ class MainWindow(QMainWindow):
             self.test_precision.setText("na")
             self.test_recall.setText("na")
             self.test_f1.setText("na")
+
     #TODO PARTE UTILIZZA
 
     def buttonLoadNewTrainFile(self):
@@ -325,6 +332,7 @@ class MainWindow(QMainWindow):
         columnlist = self.model.get_column_names()
         for i in columnlist:
             self.add_checkbox_columns(i)
+        self.main_list_columns.setSizeAdjustPolicy(QtWidgets.QScrollArea.AdjustToContents)
 
         # impostazione lista split nella scroll area
         # Pulisco prima il layout
@@ -467,8 +475,9 @@ class MainWindow(QMainWindow):
         self.horizontalLayout_18.addItem(spacerItem3)
 
         self.main_list_columns = QtWidgets.QScrollArea(self.Main)
-        self.main_list_columns.setSizeAdjustPolicy(QtWidgets.QAbstractScrollArea.AdjustToContents)
-        self.main_list_columns.setWidgetResizable(True)
+        self.main_list_columns.setSizeAdjustPolicy(QtWidgets.QScrollArea.AdjustToContents)
+
+
         self.main_list_columns.setObjectName("main_list_columns")
         self.main_list_columns_content = QtWidgets.QWidget()
         self.main_list_columns_content.setGeometry(QtCore.QRect(0, 0, 369, 189))
@@ -476,6 +485,8 @@ class MainWindow(QMainWindow):
         self.main_list_columns_layout = QtWidgets.QVBoxLayout(self.main_list_columns_content)
         self.main_list_columns_layout.setObjectName("main_list_columns_layout")
         self.main_list_columns.setWidget(self.main_list_columns_content)
+        self.main_list_columns.setWidgetResizable(True)
+        self.main_list_columns.setMinimumWidth(self.main_list_columns.widget().sizeHint().width())
 
         self.horizontalLayout_18.addWidget(self.main_list_columns)
         spacerItem4 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
@@ -763,6 +774,8 @@ class MainWindow(QMainWindow):
         self.verticalLayout_3.addLayout(self.formLayout_7)
         self.table_train = QtWidgets.QTableView(self.Train)
         self.table_train.setObjectName("table_train")
+        self.table_train.horizontalHeader().setResizeContentsPrecision(1)
+        self.table_train.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.ResizeToContents)
         self.verticalLayout_3.addWidget(self.table_train)
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")

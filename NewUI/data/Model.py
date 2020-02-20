@@ -206,40 +206,34 @@ class Model:
     """ -------------------------------------------------GRAFICI---------------------------------------------------- """
 
     def get_confusion_matrix_train(self):
-        matrix = self.workingalgorithm.confusion_matrix(self.train.enabledcolumns)
-        builder = GraphBuilder()
-        builder.plot_confusion_matrix(matrix)
+        plt.close()
+        self.workingalgorithm.plot_confusion_matrix(self.train.enabledcolumns)
+        plt.show()
 
     def get_confusion_matrix_test(self):
-        matrix = self.workingalgorithm.confusion_matrix(self.test.enabledcolumns)
-        builder = GraphBuilder()
-        builder.plot_confusion_matrix(matrix)
+        plt.close()
+        self.workingalgorithm.plot_confusion_matrix(self.test.enabledcolumns)
+        plt.show()
 
     def get_auc_curve_train(self):
-        matrix = self.workingalgorithm.confusion_matrix(self.train.enabledcolumns)
-        # trovo i true positive e false positive dall'array 2x2 di matrice
-        fp = matrix[0, 1]
-        tp = matrix[1, 1]
-        builder = GraphBuilder()
-        builder.plot_roc_curve(tp, fp)
+        plt.close()
+        self.workingalgorithm.plot_roc_curve(self.train.enabledcolumns)
+        plt.show()
 
     def get_auc_curve_test(self):
-        matrix = self.workingalgorithm.confusion_matrix(self.test.enabledcolumns)
-        # trovo i true positive e false positive dall'array 2x2 di matrice
-        fp = matrix[0, 1]
-        tp = matrix[1, 1]
-        builder = GraphBuilder()
-        builder.plot_roc_curve(tp, fp)
+        plt.close()
+        self.workingalgorithm.plot_roc_curve(self.test.enabledcolumns)
+        plt.show()
 
     def get_prc_curve_train(self):
-        scores = self.workingalgorithm.metrics(self.train.enabledcolumns)
-        builder = GraphBuilder
-        builder.plot_precision_recall(scores.precision, scores.recall)
+        plt.close()
+        self.workingalgorithm.plot_precision_recall(self.train.enabledcolumns)
+        plt.show()
 
     def get_prc_curve_test(self):
-        scores = self.workingalgorithm.metrics(self.test.enabledcolumns)
-        builder = GraphBuilder
-        builder.plot_precision_recall(scores.precision, scores.recall)
+        plt.close()
+        self.workingalgorithm.plot_precision_recall(self.test.enabledcolumns)
+        plt.show()
 
     # TODO UTILIZZO FILE
 
@@ -310,52 +304,4 @@ class Model:
     def db_get_disabledcolumns(self) -> list:
         return self.train.disabledcolumns.columns.values
 
-    """ -------------------------------------------------GRAFICI---------------------------------------------------- """
 
-    def get_confusion_matrix_train(self):
-        plt.close()
-        matrix = self.workingalgorithm.confusion_matrix(self.train.enabledcolumns)
-        builder = GraphBuilder()
-        builder.plot_confusion_matrix(matrix)
-        plt.show()
-
-    def get_confusion_matrix_test(self):
-        plt.close()
-        matrix = self.workingalgorithm.confusion_matrix(self.test.enabledcolumns)
-        builder = GraphBuilder()
-        builder.plot_confusion_matrix(matrix)
-        plt.show()
-
-    def get_auc_curve_train(self):
-        plt.close()
-        matrix = self.workingalgorithm.confusion_matrix(self.train.enabledcolumns)
-        # trovo i true positive e false positive dall'array 2x2 di matrice
-        fp = matrix[0, 1]
-        tp = matrix[1, 1]
-        builder = GraphBuilder()
-        builder.plot_roc_curve(tp, fp)
-        plt.show()
-
-    def get_auc_curve_test(self):
-        plt.close()
-        matrix = self.workingalgorithm.confusion_matrix(self.test.enabledcolumns)
-        # trovo i true positive e false positive dall'array 2x2 di matrice
-        fp = matrix[0, 1]
-        tp = matrix[1, 1]
-        builder = GraphBuilder()
-        builder.plot_roc_curve(tp, fp)
-        plt.show()
-
-    def get_prc_curve_train(self):
-        plt.close()
-        scores = self.workingalgorithm.metrics(self.train.enabledcolumns)
-        builder = GraphBuilder()
-        builder.plot_precision_recall(scores.precision, scores.recall)
-        plt.show()
-
-    def get_prc_curve_test(self):
-        plt.close()
-        scores = self.workingalgorithm.metrics(self.test.enabledcolumns)
-        builder = GraphBuilder()
-        builder.plot_precision_recall(scores.precision, scores.recall)
-        plt.show()

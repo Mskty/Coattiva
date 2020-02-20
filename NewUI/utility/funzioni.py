@@ -561,6 +561,8 @@ def plot_precision_recall(precision, recall):
     plt.xlabel("Recall")
     plt.ylabel("Precision")
     plt.legend(loc="upper left")
+    skl.metrics.plot_precision_recall_curve()
+
 
 
 """-------------------------------------SALVARE E CARICARE MODELLI------------------------------------------"""
