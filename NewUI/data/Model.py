@@ -5,7 +5,7 @@ from utility.funzioni import *
 from data.DataModel import *
 from data.TrainModel import *
 from data.TestModel import *
-from data.GraphBuilder import *
+from data.NewDataModel import *
 from data.AlgorithmPipeline import *
 
 
@@ -20,6 +20,7 @@ class Model:
         self.data: DataModel = None
         self.train: TrainModel = None
         self.test: TestModel = None
+        self.usedata: NewDataModel = None
 
         self.columns: list = []
         self.traintestsplit: pd.DataFrame = None
@@ -79,6 +80,10 @@ class Model:
         pred = self.workingalgorithm.predict(self.test.enabledcolumns)
         self.test.attach_predictions(pred)
 
+    def predict_use_data(self):
+        pred = self.workingalgorithm.predict(self.data.enabledcolumns)
+        self.usedata.attach_predictions(pred)
+
     # Setter
 
     def set_data(self, type: PFPGEnum, filename: str):
@@ -90,23 +95,24 @@ class Model:
         # Reset train test and use_data
         self.train = None
         self.test = None
+        self.usedata = None
         self.workingalgorithm = None
 
-        # TODO use_data
+    def set_use_data(self, typefile: NewFileEnum, filename: str):
+        self.usedata = NewDataModel(self.train.type, typefile, self.columns, filename)
 
     def reset_settings(self):
         # Resetta train test, algoritmo, nuovo file di utilizzo e colonne selezionate
 
         # Attributi
         self.use_datafilename = ""
+        self.usedata = None
         self.train = None
         self.test = None
         self.workingalgorithm = None
 
         # Data
         self.data.enableallcolumns()
-
-    # TODO use_data
 
     def generate_train_test(self, date: str):
         # Ho la data del ruolo da cui quelli precendeti e se stesso faranno parte del training set
@@ -235,28 +241,15 @@ class Model:
         self.workingalgorithm.plot_precision_recall(self.test.enabledcolumns)
         plt.show()
 
-    # TODO UTILIZZO FILE
-
-
-
-
-
-
-
-
-
-
-
-
     """ DEBUG FUNCTIONS """
 
-    def db_train_from_file(self, type: PFPGEnum=PFPGEnum.PF):
-        filename="C:/Users/squer/Desktop/Coattiva/Datasets/export_trainset_PF.csv"
+    def db_train_from_file(self, type: PFPGEnum = PFPGEnum.PF):
+        filename = "C:/Users/squer/Desktop/Coattiva/Datasets/export_trainset_PF.csv"
         df = pd.read_csv(filename)
         self.train = TrainModel(type, df, pd.DataFrame())
 
-    def db_test_from_file(self, type: PFPGEnum=PFPGEnum.PF):
-        filename="C:/Users/squer/Desktop/Coattiva/Datasets/export_testset_PF.csv"
+    def db_test_from_file(self, type: PFPGEnum = PFPGEnum.PF):
+        filename = "C:/Users/squer/Desktop/Coattiva/Datasets/export_testset_PF.csv"
         df = pd.read_csv(filename)
         self.test = TestModel(type, df, pd.DataFrame())
 
@@ -297,11 +290,9 @@ class Model:
         # get columns
         self.columns = self.train.db_columnnames()
         # get traintestsplit
-        #self.traintestsplit = self.data.train_test_splitter_possibilities()
+        # self.traintestsplit = self.data.train_test_splitter_possibilities()
         # Reset train test and use_data
         self.workingalgorithm = None
 
     def db_get_disabledcolumns(self) -> list:
         return self.train.disabledcolumns.columns.values
-
-

@@ -12,7 +12,7 @@ class TrainModel:
     def __init__(self, type: PFPGEnum, enabledcolumns: pd.DataFrame, disabledcolumns: pd.DataFrame):
 
         # label sempre enabled
-        self.type = type
+        self.type :PFPGEnum = type
         self.enabledcolumns = enabledcolumns
         self.disabledcolumns = disabledcolumns
 

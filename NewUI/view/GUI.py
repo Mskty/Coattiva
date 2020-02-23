@@ -36,10 +36,6 @@ class MainWindow(QMainWindow):
         self.testtable: TableModel = None
         self.usetable: TableModel = None
 
-        # variabili di business
-        self.usefilename = ""
-        self.usefiletype = "OLD"
-
         # Dialog di errore
         self.error_dialog = QtWidgets.QErrorMessage(self)
 
@@ -56,14 +52,20 @@ class MainWindow(QMainWindow):
 
     def onClickedColumnCheckbox(self):
         # Abilita o disabilita la colonna nelle tabelle del model dopo aver premuto su una checkbox
-        # TODO REFRESH MODEL
         checkbox = self.sender()
         if checkbox.isChecked():
             self.model.enablecolumn(checkbox.text())
-            # DEBUG print(checkbox.text())
         else:
             self.model.disablecolumn(checkbox.text())
-            # DEBUG print(checkbox.text(), checkbox.text())
+        # Refresh modelli
+        try:
+            self.traintable.updatemodel()
+        except:
+            pass
+        try:
+            self.testtable.updatemodel()
+        except:
+            pass
 
     def add_checkbox_columns(self, column: str):
         # Aggiunge checkbox al layout della scrollview main_list_columns
@@ -71,11 +73,6 @@ class MainWindow(QMainWindow):
         checkbox.setCheckState(QtCore.Qt.Checked)
         checkbox.toggled.connect(lambda: self.onClickedColumnCheckbox())
         self.main_list_columns_layout.addWidget(checkbox)
-
-    """def debugcheck(self):
-        a=["a","b","c","a","b","c","a","b","c","a","b","c","a","b","c"]
-        for i in a:
-            self.add_checkbox_columns(i)"""
 
     def onClickedSplitRadio(self):
         """
@@ -109,6 +106,21 @@ class MainWindow(QMainWindow):
             self.enableradios()
             self.enableMainButtonTrain()
 
+    def resetUI(self):
+        """ Resetta solamente gli elementi ui allo stato in cui dovrebbero essere all'apertura dell'applicazione
+            lasciando inalterate le variabili di modello"""
+        # scroll areas
+        self.enablescrolls()
+        # Tabs
+        self.disableTrain()
+        self.disableTest()
+        self.disableRisultati()
+        self.disableUtilizza()
+        # Buttons
+        self.disableradios()
+        self.disableMainButtonTrain()
+        self.disableUseApply()
+
     def add_radio_split(self, ruolo: str, esempi: int):
         # Aggiunge radio button al layout della scrollview main_list_columns
         radio = QtWidgets.QRadioButton("fino a data: " + ruolo + " titoli: " + str(esempi))
@@ -129,30 +141,30 @@ class MainWindow(QMainWindow):
         Popola infine le scrollview con le checkbox per le colonne e i possibili split dei dati in train e test
         Serve anche come reset nel caso venga caricato un nuovo file premento il pulsante 'Caricamento nuovo file'"""
 
-        # Disabilito bottoni main tab
-        self.disableMainButtonTrain()
-        self.disableradios()
+        # Resetto le tab e i modelli nel caso siano popolati
+        self.resetUI()
+        self.datatable: TableModel = None
+        self.traintable: TableModel = None
+        self.testtable: TableModel = None
+        self.usetable: TableModel = None
 
         # Setta le label prendendo dati dal modello
         type = self.model.get_traintype()
         self.setlabelMainType(type)
         filename = self.model.get_datafilename()
         self.setlabelMainFilename(filename)
-        datatext = self.model.get_data_info()
-        self.setlabelsData(datatext[0], datatext[1], datatext[2])
         # settaggio della label ratio
+        datatext = self.model.get_data_info()
         total: int = datatext[0]
-        positive_perc: float= (datatext[1]/total)*100
-        negative_perc: float = (datatext[2]/total)*100
-        self.setlabelFileLabelRatio(positive_perc,negative_perc)
-
+        positive_perc: float = (datatext[1] / total) * 100
+        negative_perc: float = (datatext[2] / total) * 100
+        self.setlabelFileLabelRatio(positive_perc, negative_perc)
 
         # TableModel e testo delle label per la tab Dati
         self.datatable = TableModel(self.model.data.enabledcolumns)
         self.table_data.setModel(self.datatable)
-        datainfo=self.model.get_data_info()
-        self.setlabelsTrain(datainfo[0], datainfo[1], datainfo[2])
-
+        datainfo = self.model.get_data_info()
+        self.setlabelsData(datainfo[0], datainfo[1], datainfo[2])
 
         # Impostazione lista colonne nella scroll area
         # Pulisco prima il layout
@@ -179,6 +191,17 @@ class MainWindow(QMainWindow):
         self.hide()
         LoadNewFile(self).show()
 
+    def useFileSetup(self):
+        """Esegue il setup della GUI di utilizzo una volta caricato il file di utilizzo tramite l'apposita finestra"""
+        # Imposto la tabella per la visualizzazione del file caricato, vengono considerate le solo colonne elaborate
+        self.usetable= TableModel(self.model.usedata.enabledcolumns)
+        self.table_use.setModel(self.usetable)
+        # Imposto la label per nome file
+        filename = self.model.get_use_datafilename()
+        self.setlabelUtilizzaFilename(filename)
+        # Abilito il bottone per l'utilizzo del modello sui nuovi dati
+        self.enableUseApply()
+
     def openSaveDialog(self):
         # Apre un dialog per ottenere un percorso su cui salvare un file
         options = QFileDialog.Options()
@@ -188,7 +211,6 @@ class MainWindow(QMainWindow):
         if fileName:
             print(fileName)
         return fileName
-        # TODO CONTROLLI
 
     """----------------------------------------Abilita disabilita tabs-----------------------------------------------"""
 
@@ -234,6 +256,15 @@ class MainWindow(QMainWindow):
         self.groupBox_2.setEnabled(False)
         self.groupBox_3.setEnabled(False)
 
+    """-------------------------Abilita disabilita contenuto delle scroll Area---------------------------------------"""
+    def enablescrolls(self):
+        self.main_list_columns.widget().setEnabled(True)
+        self.main_list_split.widget().setEnabled(True)
+
+    def disablescrolls(self):
+        self.main_list_columns.widget().setEnabled(False)
+        self.main_list_split.widget().setEnabled(False)
+
     """---------------------------------------Abilita disabilita bottoni--------------------------------------------"""
 
     def enableMainButtonTrain(self):
@@ -268,9 +299,10 @@ class MainWindow(QMainWindow):
         self.main_filename.setText("File aperto per l'addestramento: " + filename)
 
     def setlabelFileLabelRatio(self, positivelabel: float, negativelabel: float):
-        self.filelabelratio.setText("1) I titoli contenuti nel training set hanno label per {0:.2f}".format(positivelabel) +
-                                    "% positiva e {0:.2f}".format(negativelabel) +
-                                    "% negativa, selezionare un algoritmo di sampling per equilibrare gli esempi.")
+        self.filelabelratio.setText(
+            "1) I titoli contenuti nel training set hanno label per {0:.2f}".format(positivelabel) +
+            "% positiva e {0:.2f}".format(negativelabel) +
+            "% negativa, selezionare un algoritmo di sampling per equilibrare gli esempi.")
 
     # Tab data
     def setlabelsData(self, tot: int, pos: int, neg: int):
@@ -295,7 +327,9 @@ class MainWindow(QMainWindow):
                            scaling: str, algorithm: str, ignoredcolumns: list):
         self.results_typep.setText("Tipologia di titoli di credito: " + type)
         self.results_number_examples.setText("Numero di esempi utilizzati nell'addestramento:" + str(totallable) +
-                                             ", di cui {0:.2f}".format(positivelabel) + "% con label positiva e {0:.2f}".format(negativelabel) + "% con label negativa")
+                                             ", di cui {0:.2f}".format(
+                                                 positivelabel) + "% con label positiva e {0:.2f}".format(
+            negativelabel) + "% con label negativa")
         self.results_sampling.setText("Sampling: " + sampling)
         self.results_scaling.setText("Scaling: " + scaling)
         self.results_algorithm.setText("Algoritmo di apprendimento: " + algorithm)
@@ -341,24 +375,25 @@ class MainWindow(QMainWindow):
         self.traintable.updatemodel()
 
         # Labels fisse Tab risultati
-        tipo=self.model.get_traintype()
-        list_train=self.model.get_sampling_info()
-        totallabel: int=list_train[0]
-        positivelabel: float=(list_train[1]/totallabel)*100
+        tipo = self.model.get_traintype()
+        list_train = self.model.get_sampling_info()
+        totallabel: int = list_train[0]
+        positivelabel: float = (list_train[1] / totallabel) * 100
         negativelabel: float = (list_train[2] / totallabel) * 100
-        sampling=self.model.get_sampling()
-        scaling=self.model.get_scaling()
-        algorithm=self.model.get_algorithm()
-        disabledcolumns=self.model.get_disabledcolumns()
-        self.setlabelsRisultati(tipo,totallabel,positivelabel,negativelabel,sampling,scaling,algorithm,disabledcolumns)
+        sampling = self.model.get_sampling()
+        scaling = self.model.get_scaling()
+        algorithm = self.model.get_algorithm()
+        disabledcolumns = self.model.get_disabledcolumns()
+        self.setlabelsRisultati(tipo, totallabel, positivelabel, negativelabel, sampling, scaling, algorithm,
+                                disabledcolumns)
 
         # Risultati trainset
-        train_scores=self.model.get_train_scores()
-        acc=train_scores[0]
-        prec=train_scores[1]
-        rec=train_scores[2]
-        f1=train_scores[3]
-        self.setlabelsTrainMetrics(acc,prec,rec,f1)
+        train_scores = self.model.get_train_scores()
+        acc = train_scores[0]
+        prec = train_scores[1]
+        rec = train_scores[2]
+        f1 = train_scores[3]
+        self.setlabelsTrainMetrics(acc, prec, rec, f1)
 
         # Aggiunta predizioni e risultati testset se presente
         if self.testtable is not None:
@@ -383,7 +418,14 @@ class MainWindow(QMainWindow):
             self.test_recall.setText("na")
             self.test_f1.setText("na")
 
-    #TODO PARTE UTILIZZA
+        # Abilito e setto label tipo per la parte utilizza
+        self.enableUtilizza()
+        self.setlabelUtilizzaType(self.model.get_traintype())
+
+        # Disabilito bottone e comandi della main in quanto è richiesto il bottone reset per sbloccare
+        self.disablescrolls()  # scroll areas
+        self.disableradios()  # radio commands
+        self.disableMainButtonTrain()  # self
 
     def buttonLoadNewTrainFile(self):
         # Chiama la firstwindow
@@ -435,11 +477,12 @@ class MainWindow(QMainWindow):
 
     def buttonDataExport(self):
         # chiama opensave dialog per ottere il path di salvataggio poi invoca la funzione del modello per salvare
-        filepath=self.openSaveDialog()
+        filepath = self.openSaveDialog()
         try:
             self.model.export_data(filepath)
         except:
             pass
+
     # TODO ERROR MESSAGE
 
     def buttonTrainExport(self):
@@ -449,6 +492,7 @@ class MainWindow(QMainWindow):
             self.model.export_trainset(filepath)
         except:
             pass
+
     # TODO ERROR MESSAGE
 
     def buttonTestExport(self):
@@ -458,6 +502,7 @@ class MainWindow(QMainWindow):
             self.model.export_testset(filepath)
         except:
             pass
+
     # TODO ERROR MESSAGE
 
     def buttonTrainMatrix(self):
@@ -485,16 +530,20 @@ class MainWindow(QMainWindow):
         self.model.get_prc_curve_train()
 
     def buttonResultsInfo(self):
-        #TODO apertura scheda info metriche
+        # TODO apertura scheda info metriche
         pass
 
     def buttonUseLoadFile(self):
-        #TODO apri finestra LoadNewFile
-        pass
+        # apri finestra LoadNewFile
+        self.openLoadNewFileWindow()
 
     def buttonUseApply(self):
-        #TODO Riporta i risultati del modello sulla tabella del file di utilizzo
-        pass
+        # Riporta i risultati del modello sulla tabella del file di utilizzo
+        # Ottieni predizioni
+        self.model.predict_use_data()
+        # Refresh del modello per visualizzarle
+        self.usetable.updatemodel()
+
 
     def buttonUseExport(self):
         # chiama opensave dialog per ottere il path di salvataggio poi invoca la funzione del modello per salvare
@@ -503,6 +552,7 @@ class MainWindow(QMainWindow):
             self.model.export_data(filepath)
         except:
             pass
+
     # TODO ERROR MESSAGE
 
     def setupUi(self, MainWindow):
@@ -1277,13 +1327,10 @@ class MainWindow(QMainWindow):
         self.button_test_matrix.clicked.connect(lambda: self.buttonTestMatrix())
         self.button_test_auc.clicked.connect(lambda: self.buttonTestRoc())
         self.button_test_prc.clicked.connect(lambda: self.buttonTestPrc())
-        self.results_info.clicked.connect(lambda : self.buttonResultsInfo())
+        self.results_info.clicked.connect(lambda: self.buttonResultsInfo())
         self.use_loadfile.clicked.connect(lambda: self.buttonUseLoadFile())
         self.use_apply.clicked.connect(lambda: self.buttonUseApply())
         self.use_export.clicked.connect(lambda: self.buttonUseExport())
-
-
-
 
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
@@ -1415,11 +1462,10 @@ if __name__ == "__main__":
 
     # Instanziazione app e mainwindow
     app = QtWidgets.QApplication(sys.argv)
-    # qui vengono instanziati i table model
-    mainwindow = MainWindow()  # da aggiungere i table model come argomenti
+    mainwindow = MainWindow()
 
-    # mainwindow.openFirstWindow()
-    mainwindow.show()
+    # Avvio esecuzione UI
+    mainwindow.openFirstWindow()
 
     # chiusura programma
     sys.exit(app.exec_())

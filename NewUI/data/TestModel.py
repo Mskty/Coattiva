@@ -5,7 +5,7 @@ from utility.Enums import *
 class TestModel:
 
     def __init__(self, type: PFPGEnum, enabledcolumns: pd.DataFrame, disabledcolumns: pd.DataFrame):
-        self.type = type
+        self.type: PFPGEnum = type
         self.enabledcolumns = enabledcolumns
         self.disabledcolumns = disabledcolumns
 

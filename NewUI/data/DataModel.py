@@ -15,7 +15,9 @@ class DataModel:
             print("no file passed")
         if data is not None:
             self.df: pd.DataFrame = data
-        self.type = type
+        self.type: PFPGEnum = type
+
+        #TODO CLEAN AND PREPROCESS
         self.enabledcolumns = self.df.copy()
         self.disabledcolumns = pd.DataFrame()
 

@@ -20,12 +20,12 @@ class LoadNewFile(QtWidgets.QDialog):
         self.error_dialog = QtWidgets.QErrorMessage(self)
 
         # Inizializzazione variabili proprie
-        self.type = "NEW"
+        self.type: NewFileEnum = NewFileEnum.NEW
         self.filename = ""
 
     # funzioni setter
 
-    def setType(self, type: str):
+    def setType(self, type: NewFileEnum):
         self.type = type
 
     def setFileName(self, filename: str):
@@ -42,16 +42,14 @@ class LoadNewFile(QtWidgets.QDialog):
         if fileName:
             print(fileName)
 
-        """# Utilizzo tablemodel
-            try:
-                self.mainwindow.tablemodel.setType(self.type)
-                self.mainwindow.tablemodel.loadDataFromFile(
-                    fileName)  # SARA' LA FUNZIONE SU DATAOBJECT A LANCIARE ECCEZIONI
-                # nessuna eccezione ritorno alla main
-                self.returnToMain()
-            except Exception as e:
-                # Stampa eccezione
-                self.error_dialog.showMessage(str(e))"""
+        # Utilizzo tablemodel
+        try:
+            self.mainwindow.model.set_data(self.type, fileName)
+            # nessuna eccezione ritorno alla main
+            self.returnToMain()
+        except Exception as e:
+            # Stampa eccezione
+            self.error_dialog.showMessage(str(e))
 
     def returnToMain(self):
         self.close()
@@ -107,12 +105,13 @@ class LoadNewFile(QtWidgets.QDialog):
         self.horizontalLayout.setObjectName("horizontalLayout")
         spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem)
-        self.radio_recenti = QtWidgets.QRadioButton(Dialog)
-        self.radio_recenti.setObjectName("radio_recenti")
-        self.horizontalLayout.addWidget(self.radio_recenti)
         self.radio_storici = QtWidgets.QRadioButton(Dialog)
         self.radio_storici.setObjectName("radio_storici")
         self.horizontalLayout.addWidget(self.radio_storici)
+        self.radio_storici.setChecked(True)
+        self.radio_recenti = QtWidgets.QRadioButton(Dialog)
+        self.radio_recenti.setObjectName("radio_recenti")
+        self.horizontalLayout.addWidget(self.radio_recenti)
         spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem1)
         self.verticalLayout_4.addLayout(self.horizontalLayout)
@@ -137,9 +136,8 @@ class LoadNewFile(QtWidgets.QDialog):
         self.verticalLayout.addLayout(self.verticalLayout_5)
 
         # SLOTS
-        self.radio_storici.clicked.connect(lambda: self.setType("OLD"))
-        self.radio_recenti.clicked.connect(lambda: self.setType("NEW"))
-        self.loadfile.clicked.connect(lambda: self.openFileNameDialog())
+        self.radio_storici.clicked.connect(lambda: self.setType(NewFileEnum.OLD))
+        self.radio_recenti.clicked.connect(lambda: self.setType(NewFileEnum.NEW))
 
         self.retranslateUi(Dialog)
         QtCore.QMetaObject.connectSlotsByName(Dialog)

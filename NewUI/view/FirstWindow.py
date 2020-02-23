@@ -20,7 +20,7 @@ class FirstWindow(QtWidgets.QDialog):
         self.error_dialog = QtWidgets.QErrorMessage(self)
 
         # Inizializzazione variabili proprie
-        self.type = "PF"
+        self.type: PFPGEnum = PFPGEnum.PF
         self.filename = ""
 
     # funzioni setter
