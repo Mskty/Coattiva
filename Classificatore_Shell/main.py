@@ -25,12 +25,12 @@ print("INIZIO ESECUZIONE SHELL \n")
 
 # Caricamento dati storici
 print("Carica il file contenente i dati storici in formato csv...")
-dfPF, dfPG = load_storic_data()
+df, dfPG = load_storic_data()
 print("File csv caricato correttamente! \n")
 
 # Pulizia dati storici
 print("Ora i dati storici contenenti i titoli di persone fisiche e giuridiche verranno preparati...")
-dfPFclean = clean_storic_pf(dfPF)
+dfPFclean = clean_storic_pf(df)
 dfPGclean = clean_storic_pg(dfPG)
 print("Pulizia dati storici completata! \n")
 
