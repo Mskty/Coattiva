@@ -14,6 +14,7 @@ from data.Model import *
 from model.TableModel import *
 from view.FirstWindow import *
 from view.LoadNewFile import *
+from view.WaitingDialog import *
 
 
 class MainWindow(QMainWindow):
@@ -664,7 +665,6 @@ class MainWindow(QMainWindow):
         self.main_list_split_layout = QtWidgets.QVBoxLayout(self.main_list_split_content)
         self.main_list_split_layout.setObjectName("main_list_split_layout")
         self.main_list_split.setWidget(self.main_list_split_content)
-        # self.main_list_split_content.layout().addWidget(QtWidgets.QLabel("ciao"))
 
         self.horizontalLayout_20.addWidget(self.main_list_split)
         spacerItem8 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
@@ -787,6 +787,9 @@ class MainWindow(QMainWindow):
         spacerItem12 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.MinimumExpanding,
                                              QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_7.addItem(spacerItem12)
+        self.main_button_reset = QtWidgets.QPushButton(self.Main)
+        self.main_button_reset.setObjectName("main_button_reset")
+        self.horizontalLayout_7.addWidget(self.main_button_reset)
         self.main_button_train = QtWidgets.QPushButton(self.Main)
         self.main_button_train.setObjectName("main_button_train")
         self.horizontalLayout_7.addWidget(self.main_button_train)
@@ -811,9 +814,6 @@ class MainWindow(QMainWindow):
         self.main_button_file = QtWidgets.QPushButton(self.Main)
         self.main_button_file.setObjectName("main_button_file")
         self.horizontalLayout_6.addWidget(self.main_button_file)
-        self.main_button_reset = QtWidgets.QPushButton(self.Main)
-        self.main_button_reset.setObjectName("main_button_reset")
-        self.horizontalLayout_6.addWidget(self.main_button_reset)
         self.verticalLayout_6.addLayout(self.horizontalLayout_6)
         self.TabWidget.addTab(self.Main, "")
         self.Data = QtWidgets.QWidget()
@@ -1375,7 +1375,7 @@ class MainWindow(QMainWindow):
         self.label_9.setText(_translate("MainWindow",
                                         "Una volta addestrato saranno visualizzabili le predizioni su training e test set in una nuova colonna aggiunta alle rispettive tabelle, inoltre le metriche relative all\' efficacia del modello saranno visualizzabili nella sezione Risultati. Sarà inoltre possibile utilizzare il modello addestrato nella sezione Utilizza."))
         self.label_11.setText(_translate("MainWindow",
-                                         "E\' possibile addestrare nuovamente il modello predittivo dopo aver modificato alcuni  parametri, inclusi le colonne da considerare e la suddivisione tra training set e test set, premendo nuovamente sul pulsante Addestra."))
+                                         "E\' possibile addestrare nuovamente il modello predittivo dopo aver modificato alcuni  parametri, inclusi le colonne da considerare e la suddivisione tra training set e test set, premendo il pulsante Reset e nuovamente il pulsante Addestra."))
         self.main_button_file.setText(_translate("MainWindow", "Caricamento nuovo file"))
         self.main_button_reset.setText(_translate("MainWindow", "Reset"))
         self.TabWidget.setTabText(self.TabWidget.indexOf(self.Main), _translate("MainWindow", "Main"))
@@ -1458,7 +1458,6 @@ class MainWindow(QMainWindow):
 
 if __name__ == "__main__":
     import sys
-    import pandas as pd
 
     # Instanziazione app e mainwindow
     app = QtWidgets.QApplication(sys.argv)

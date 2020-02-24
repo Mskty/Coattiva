@@ -2,11 +2,13 @@ from utility.funzioni import *
 from utility.Enums import *
 from data.TrainModel import *
 from data.TestModel import *
+from data.StoricCleaner import *
+from data.StoricPreprocesser import *
 
 
 class DataModel:
 
-    #La colonna DataCaricoTitolo e label è sempre abilitata
+    # La colonna DataCaricoTitolo e label è sempre abilitata
 
     def __init__(self, type: PFPGEnum, data: pd.DataFrame = None, filename: str = None):
         try:
@@ -17,7 +19,15 @@ class DataModel:
             self.df: pd.DataFrame = data
         self.type: PFPGEnum = type
 
-        #TODO CLEAN AND PREPROCESS
+        # Pulizia dei dati
+        cleaner = StoricCleaner(self.type, self.df)
+        cleaner.clean()
+
+        # Preparazione dei dati
+        preprocesser = StoricPreprocesser(self.type, self.df)
+        preprocesser.prepare()
+
+        # Inizializzazione colonne abilitate e disabilitate
         self.enabledcolumns = self.df.copy()
         self.disabledcolumns = pd.DataFrame()
 
@@ -45,14 +55,6 @@ class DataModel:
     def get_negative_label(self) -> int:
         return len(self.df.query("label==0"))
 
-    def clean(self):
-        # TODO INVOCARE PULIZIA
-        pass
-
-    def preprocess(self):
-        # TODO INVOCARE PREPROCESSAMENTO
-        pass
-
     # Disabilita e abilita colonne
 
     def disablecolumns(self, columns: list):
@@ -70,8 +72,8 @@ class DataModel:
             print("error: colonne non presenti")
 
     def enableallcolumns(self):
-        self.enabledcolumns=self.df
-        self.disabledcolumns=pd.DataFrame()
+        self.enabledcolumns = self.df
+        self.disabledcolumns = pd.DataFrame()
 
     # Creazione oggetti TrainModel e TestModel
 
@@ -138,5 +140,6 @@ class DataModel:
 
         return trainset, testset
 
+    # Esportazione dati su csv
     def export_to_csv(self, export_file_path):
         self.enabledcolumns.to_csv(export_file_path, index=None, header=True)

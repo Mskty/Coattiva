@@ -2,7 +2,7 @@ from utility.funzioni import *
 from utility.Enums import *
 
 
-class Storic_Cleaner:
+class StoricCleaner:
 
     def __init__(self, type: PFPGEnum, df: pd.DataFrame):
         self.__type = type

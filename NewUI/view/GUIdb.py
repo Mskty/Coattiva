@@ -87,7 +87,7 @@ class MainWindow(QMainWindow):
     def openFirstWindow(self):
         # apertura schermata inziale
         self.hide()
-        FirstWindow(self).show()
+        dialog= FirstWindow(self)
 
     def firstSetup(self):
         # la finestra di caricamento file di addestramento è stata chiusa, setto la gui
@@ -394,7 +394,7 @@ class MainWindow(QMainWindow):
 
     def buttonResultsInfo(self):
         # apertura scheda info metriche
-        pass
+        self.openFirstWindow()
 
     def buttonUseLoadFile(self):
         # apri finestra LoadNewFile

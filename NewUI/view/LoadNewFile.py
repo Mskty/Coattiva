@@ -42,18 +42,28 @@ class LoadNewFile(QtWidgets.QDialog):
         if fileName:
             print(fileName)
 
-        # Utilizzo tablemodel
-        try:
-            self.mainwindow.model.set_data(self.type, fileName)
-            # nessuna eccezione ritorno alla main
-            self.returnToMain()
-        except Exception as e:
-            # Stampa eccezione
-            self.error_dialog.showMessage(str(e))
+        return fileName
 
     def returnToMain(self):
         self.close()
+        self.mainwindow.useFileSetup()
         self.mainwindow.show()
+
+    def onClickedLoadFileButton(self):
+        filename = self.openFileNameDialog()
+        if filename:
+            dialog=WaitingDialog(self)
+            dialog.show()
+            try:
+                self.mainwindow.model.set_use_data(self.type, filename)
+                # chiudo dialog di attesa
+                dialog.close()
+                # nessuna eccezione ritorno alla main
+                self.returnToMain()
+            except Exception as e:
+                # Stampa eccezione
+                dialog.close()
+                self.error_dialog.showMessage(str(e))
 
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
@@ -139,6 +149,9 @@ class LoadNewFile(QtWidgets.QDialog):
         self.radio_storici.clicked.connect(lambda: self.setType(NewFileEnum.OLD))
         self.radio_recenti.clicked.connect(lambda: self.setType(NewFileEnum.NEW))
 
+        # Disable help button
+        self.setWindowFlags(self.windowFlags() & ~QtCore.Qt.WindowContextHelpButtonHint)
+
         self.retranslateUi(Dialog)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
@@ -147,11 +160,15 @@ class LoadNewFile(QtWidgets.QDialog):
         Dialog.setWindowTitle(_translate("Dialog", "Caricamento File Utilizzo"))
         self.label_2.setText(_translate("Dialog", "CARICAMENTO FILE DI UTILIZZO"))
         self.label_4.setText(_translate("Dialog",
-                                        "E\' possibile caricare un file .csv contenente i titoli di credito su cui si vuole ottenere predizioni da parte del modello addestrato."))
+                                        "E\' possibile caricare un file .csv contenente i titoli di credito su cui si "
+                                        "vuole ottenere predizioni da parte del modello addestrato."))
         self.label_5.setText(_translate("Dialog",
-                                        "Il file deve seguire il tracciato utilizzato da questo applicativo per essere valido."))
+                                        "Il file deve seguire il tracciato utilizzato da questo applicativo per "
+                                        "essere valido."))
         self.label.setText(_translate("Dialog",
-                                      "E\' possibile caricare un file contenente dati storici col medesimo tracciato di quello utilizzato per l\'addestramento del modello oppure un file contenente solamente titoli recenti facenti parte dello stesso ruolo."))
+                                      "E\' possibile caricare un file contenente dati storici col medesimo tracciato "
+                                      "di quello utilizzato per l\'addestramento del modello oppure un file "
+                                      "contenente solamente titoli recenti facenti parte dello stesso ruolo."))
         self.label_6.setText(_translate("Dialog", "Scegli il tipo di dati contenuti nel file da elaborare:"))
         self.radio_recenti.setText(_translate("Dialog", "Dati Recenti"))
         self.radio_storici.setText(_translate("Dialog", "Dati Storici"))

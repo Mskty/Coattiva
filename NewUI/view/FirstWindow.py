@@ -42,19 +42,30 @@ class FirstWindow(QtWidgets.QDialog):
         if fileName:
             print(fileName)
 
-        # Utilizzo tablemodel
-        try:
-            self.mainwindow.model.set_data(self.type, fileName)
-            # nessuna eccezione ritorno alla main
-            self.returnToMain()
-        except Exception as e:
-            # Stampa eccezione
-            self.error_dialog.showMessage(str(e))
+        return fileName
 
     def returnToMain(self):
         self.close()
-        self.mainwindow.show()
         self.mainwindow.firstSetup()
+        self.mainwindow.show()
+
+    # SLOTS
+
+    def onClickedLoadFileButton(self):
+        filename = self.openFileNameDialog()
+        if filename:
+            dialog=WaitingDialog(self)
+            dialog.show()
+            try:
+                self.mainwindow.model.set_data(self.type, filename)
+                # chiudo dialog di attesa
+                dialog.close()
+                # nessuna eccezione ritorno alla main
+                self.returnToMain()
+            except Exception as e:
+                # Stampa eccezione
+                dialog.close()
+                self.error_dialog.showMessage(str(e))
 
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
@@ -66,6 +77,10 @@ class FirstWindow(QtWidgets.QDialog):
         Dialog.setSizePolicy(sizePolicy)
         Dialog.setMinimumSize(QtCore.QSize(500, 400))
         Dialog.setMaximumSize(QtCore.QSize(500, 400))
+        qr = self.frameGeometry()
+        cp = QtWidgets.QDesktopWidget().availableGeometry().center()
+        qr.moveCenter(cp)
+        self.move(qr.topLeft())
         self.verticalLayout = QtWidgets.QVBoxLayout(Dialog)
         self.verticalLayout.setSizeConstraint(QtWidgets.QLayout.SetDefaultConstraint)
         self.verticalLayout.setContentsMargins(-1, -1, -1, 9)
@@ -124,6 +139,7 @@ class FirstWindow(QtWidgets.QDialog):
         self.radio_pf = QtWidgets.QRadioButton(Dialog)
         self.radio_pf.setObjectName("radio_pf")
         self.horizontalLayout.addWidget(self.radio_pf)
+        self.radio_pf.setChecked(True)
         self.radio_pg = QtWidgets.QRadioButton(Dialog)
         self.radio_pg.setObjectName("radio_pg")
         self.horizontalLayout.addWidget(self.radio_pg)
@@ -159,7 +175,10 @@ class FirstWindow(QtWidgets.QDialog):
         # SLOTS
         self.radio_pf.clicked.connect(lambda: self.setType(PFPGEnum.PF))
         self.radio_pg.clicked.connect(lambda: self.setType(PFPGEnum.PG))
-        self.loadfile.clicked.connect(lambda: self.openFileNameDialog())
+        self.loadfile.clicked.connect(lambda: self.onClickedLoadFileButton())
+
+        # Disable help button
+        self.setWindowFlags(self.windowFlags() & ~QtCore.Qt.WindowContextHelpButtonHint)
 
         # RetranslateUi
         self.retranslateUi(Dialog)
@@ -170,11 +189,16 @@ class FirstWindow(QtWidgets.QDialog):
         Dialog.setWindowTitle(_translate("Dialog", "Classificatore Coattiva Benvenuto"))
         self.label.setText(_translate("Dialog", "BENVENUTO"))
         self.label_4.setText(_translate("Dialog",
-                                        "E\' possibile caricare un file .csv contenente i titoli di credito storici da cui partire ad addestrare un modello predittivo per la classificazione delle label."))
+                                        "E\' possibile caricare un file .csv contenente i titoli di credito storici "
+                                        "da cui partire ad addestrare un modello predittivo per la classificazione "
+                                        "delle label."))
         self.label_6.setText(_translate("Dialog",
-                                        "Il file deve seguire il tracciato utilizzato da questo applicativo per essere valido."))
+                                        "Il file deve seguire il tracciato utilizzato da questo applicativo per "
+                                        "essere valido."))
         self.label_5.setText(_translate("Dialog",
-                                        "Se il file risulta valido allora verranno automaticamente applicate operazioni di pulizia e preprocessamento dei dati per renderli utilizzabili come base per l\'algoritmo di apprendimento."))
+                                        "Se il file risulta valido allora verranno automaticamente applicate "
+                                        "operazioni di pulizia e preprocessamento dei dati per renderli utilizzabili "
+                                        "come base per l\'algoritmo di apprendimento."))
         self.label_2.setText(
             _translate("Dialog", "Scegli il tipo di debitori a cui sono riferiti i titoli di credito:"))
         self.radio_pf.setText(_translate("Dialog", "Persone Fisiche"))
