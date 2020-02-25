@@ -21,11 +21,11 @@ class DataModel:
 
         # Pulizia dei dati
         cleaner = StoricCleaner(self.type, self.df)
-        cleaner.clean()
+        self.df = cleaner.clean()
 
         # Preparazione dei dati
         preprocesser = StoricPreprocesser(self.type, self.df)
-        preprocesser.prepare()
+        self.df = preprocesser.prepare()
 
         # Inizializzazione colonne abilitate e disabilitate
         self.enabledcolumns = self.df.copy()

@@ -35,7 +35,8 @@ class TestModel:
             print("error: colonne non presenti")
 
     def attach_predictions(self, pred: list):
-        self.enabledcolumns["predizione"] = pred
+        # Aggiungo predizioni alla prima riga
+        self.enabledcolumns.insert(0, "predizione", pred)
 
     def remove_predictions(self):
         self.enabledcolumns.drop(columns="predizione", inplace=True)

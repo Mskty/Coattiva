@@ -189,8 +189,8 @@ class MainWindow(QMainWindow):
 
     def openLoadNewFileWindow(self):
         # apertura schermata nuovo file per utilizzo
-        self.hide()
-        LoadNewFile(self).show()
+        dialog = LoadNewFile(self)
+        dialog.exec_()
 
     def useFileSetup(self):
         """Esegue il setup della GUI di utilizzo una volta caricato il file di utilizzo tramite l'apposita finestra"""
@@ -368,6 +368,11 @@ class MainWindow(QMainWindow):
         Le operazioni riguardanti il testset vengono fatte solo se questo è presente
         :return:
         """
+
+        # Apertura finestra di attesa
+        waitdialog= WaitingDialog(self)
+        waitdialog.show()
+
         # Addestramento modello e setup ui risultati
         self.model.train_algorithm()
 
@@ -428,9 +433,13 @@ class MainWindow(QMainWindow):
         self.disableradios()  # radio commands
         self.disableMainButtonTrain()  # self
 
+        # Elaborazione terminata informo la schermata di attesa
+        waitdialog.success(True)
+
     def buttonLoadNewTrainFile(self):
         # Chiama la firstwindow
         # ( al momento questa operazione risulta in un completo reset dell'app e non è annullabile )
+        self.hide()
         self.openFirstWindow()
 
     def buttonReset(self):
@@ -540,10 +549,15 @@ class MainWindow(QMainWindow):
 
     def buttonUseApply(self):
         # Riporta i risultati del modello sulla tabella del file di utilizzo
+        # Dialog di attesa
+        dialog = WaitingDialog(self)
+        dialog.show()
         # Ottieni predizioni
         self.model.predict_use_data()
         # Refresh del modello per visualizzarle
         self.usetable.updatemodel()
+        # Informo il dialog del successo
+        dialog.success(True)
 
 
     def buttonUseExport(self):

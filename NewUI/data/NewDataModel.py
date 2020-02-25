@@ -1,3 +1,5 @@
+from data.StoricCleaner import StoricCleaner
+from data.StoricPreprocesser import StoricPreprocesser
 from utility.funzioni import *
 from utility.Enums import *
 
@@ -13,7 +15,18 @@ class NewDataModel:
         self.filetype = filetype
         self.columns = columns
 
-        # TODO CLEAN AND PREPROCESS ADEQUATE TO FILETYPE
+        # Se dati storici allora eseguo anche la pulizia altrimenti solo preparazione
+        if self.filetype == NewFileEnum.OLD:
+            # Pulizia dei dati
+            cleaner = StoricCleaner(self.type, self.df)
+            self.df = cleaner.clean()
+            # Preprocessamento
+            preprocesser = StoricPreprocesser(self.type, self.df)
+            self.df = preprocesser.prepare()
+        elif self.filetype == NewFileEnum.NEW:
+            # Preprocessamento
+            preprocesser = StoricPreprocesser(self.type, self.df)
+            self.df = preprocesser.prepare()
 
         # Mantengo solo le colonne da utilizzare
         self.enabledcolumns = self.df[columns]
@@ -24,8 +37,8 @@ class NewDataModel:
         return len(self.enabledcolumns)
 
     def attach_predictions(self, pred: list):
-        self.df["predizione"] = pred
-        self.enabledcolumns["predizione"] = pred
+        self.df.insert(0, "predizione", pred)
+        self.enabledcolumns.insert(0, "predizione", pred)
 
     def remove_predictions(self):
         self.df.drop(columns="predizione", inplace=True)
@@ -36,3 +49,6 @@ class NewDataModel:
 
     def export_full_to_csv(self, export_file_path):
         self.df.to_csv(export_file_path, index=None, header=True)
+
+    def export_just_predictions_to_csv(self, export_file_path):
+        self.df["predizione"].to_csv(export_file_path, index=None, header=True)

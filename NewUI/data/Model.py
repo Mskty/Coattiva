@@ -37,7 +37,13 @@ class Model:
     def export_testset(self, filepath: str):
         self.test.export_to_csv(filepath)
 
+    def export_usedata(self, filepath: str):
+        self.usedata.export_to_csv(filepath)
+
     def enablecolumn(self, column: str):
+        # Abilita colonne in data, trainset e testset (se presenti)
+        # Viene ignorata la usedata poichè il modello è gia addestrato nel momento in cui sarà presente
+        # E non è possibile abiltiare o disabilitare colonne
         try:
             self.data.enablecolumns([column])
         except Exception:
@@ -52,6 +58,9 @@ class Model:
             print("no testset")
 
     def disablecolumn(self, column: str):
+        # Disabilita colonne in data, trainset e testset (se presenti)
+        # Viene ignorata la usedata poichè il modello è gia addestrato nel momento in cui sarà presente
+        # E non è possibile abiltiare o disabilitare colonne
         try:
             self.data.disablecolumns([column])
         except Exception:
@@ -68,6 +77,7 @@ class Model:
     # Addestramento e utilizzo modello predittivo
 
     def train_algorithm(self):
+        # Produce il modello addestrato a partire dal trainset selezionato
         self.workingalgorithm = self.train.trainmodel()
 
     def predict_train(self):
@@ -87,7 +97,8 @@ class Model:
     # Setter
 
     def set_data(self, type: PFPGEnum, filename: str):
-        self.data = DataModel(type, filename=filename)  # fa già pulizia
+        # Inzizializza o resetta i parametri del modello a partire da un nuovo file di dati storici
+        self.data = DataModel(type, filename=filename)  # fa già pulizia e preparazione
         # get columns
         self.columns = self.data.get_enabledcolumnsnames()
         # get traintestsplit
@@ -99,10 +110,12 @@ class Model:
         self.workingalgorithm = None
 
     def set_use_data(self, typefile: NewFileEnum, filename: str):
-        self.usedata = NewDataModel(self.train.type, typefile, self.columns, filename)
+        # Inizializza i dati su cui si dovrà utilizzare il modello a partire da un file
+        self.usedata = NewDataModel(self.train.type, typefile, self.columns, filename) # fa  già pulizia e preparazione
 
     def reset_settings(self):
         # Resetta train test, algoritmo, nuovo file di utilizzo e colonne selezionate
+        # Mantenendo però il file di dati storici caricato da cui produrre trainset e testset
 
         # Attributi
         self.use_datafilename = ""
@@ -241,7 +254,21 @@ class Model:
         self.workingalgorithm.plot_precision_recall(self.test.enabledcolumns)
         plt.show()
 
-    """ DEBUG FUNCTIONS """
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    """ ----------------------------------------------DEBUG FUNCTIONS----------------------------------------------- """
 
     def db_train_from_file(self, type: PFPGEnum = PFPGEnum.PF):
         filename = "C:/Users/squer/Desktop/Coattiva/Datasets/export_trainset_PF.csv"

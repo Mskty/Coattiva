@@ -45,27 +45,37 @@ class FirstWindow(QtWidgets.QDialog):
         return fileName
 
     def returnToMain(self):
-        self.close()
+        # Mainwindow non visibile alla prima apertura dell'applicazione ma visibile una volta che era già stato aperto
+        # un file
         self.mainwindow.firstSetup()
-        self.mainwindow.show()
+        if self.mainwindow.isVisible():
+            self.close()
+        else:
+            self.close()
+            self.mainwindow.show()
 
     # SLOTS
 
     def onClickedLoadFileButton(self):
         filename = self.openFileNameDialog()
+        dialog = WaitingDialog(self)
+        dialog.show()
         if filename:
-            dialog=WaitingDialog(self)
-            dialog.show()
+
             try:
                 self.mainwindow.model.set_data(self.type, filename)
-                # chiudo dialog di attesa
-                dialog.close()
+                # informo il dialog del successo
+                dialog.success(True)
                 # nessuna eccezione ritorno alla main
                 self.returnToMain()
             except Exception as e:
+                # Informo il dialog del fallimento
+                dialog.success(False)
                 # Stampa eccezione
-                dialog.close()
                 self.error_dialog.showMessage(str(e))
+
+    def onClickedTracciatoButton(self):
+        pass
 
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
@@ -83,7 +93,7 @@ class FirstWindow(QtWidgets.QDialog):
         self.move(qr.topLeft())
         self.verticalLayout = QtWidgets.QVBoxLayout(Dialog)
         self.verticalLayout.setSizeConstraint(QtWidgets.QLayout.SetDefaultConstraint)
-        self.verticalLayout.setContentsMargins(-1, -1, -1, 9)
+        self.verticalLayout.setContentsMargins(9, 9, 9, 9)
         self.verticalLayout.setSpacing(0)
         self.verticalLayout.setObjectName("verticalLayout")
         self.verticalLayout_4 = QtWidgets.QVBoxLayout()
@@ -131,19 +141,22 @@ class FirstWindow(QtWidgets.QDialog):
         self.label_2 = QtWidgets.QLabel(Dialog)
         self.label_2.setAlignment(QtCore.Qt.AlignCenter)
         self.label_2.setObjectName("label_2")
+        self.label_2.setMinimumHeight(40)
         self.verticalLayout_6.addWidget(self.label_2)
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
-        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        spacerItem = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem)
         self.radio_pf = QtWidgets.QRadioButton(Dialog)
         self.radio_pf.setObjectName("radio_pf")
+        self.radio_pf.setMinimumHeight(40)
         self.horizontalLayout.addWidget(self.radio_pf)
         self.radio_pf.setChecked(True)
         self.radio_pg = QtWidgets.QRadioButton(Dialog)
         self.radio_pg.setObjectName("radio_pg")
+        self.radio_pf.setMinimumHeight(40)
         self.horizontalLayout.addWidget(self.radio_pg)
-        spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        spacerItem1 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem1)
         self.verticalLayout_6.addLayout(self.horizontalLayout)
         self.verticalLayout_3.addLayout(self.verticalLayout_6)
@@ -159,23 +172,40 @@ class FirstWindow(QtWidgets.QDialog):
         self.label_3.setSizePolicy(sizePolicy)
         self.label_3.setAlignment(QtCore.Qt.AlignCenter)
         self.label_3.setObjectName("label_3")
+        self.label_3.setMinimumHeight(40)
         self.verticalLayout_2.addWidget(self.label_3)
+
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
-        spacerItem2 = QtWidgets.QSpacerItem(20, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        spacerItem2 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_3.addItem(spacerItem2)
         self.loadfile = QtWidgets.QPushButton(Dialog)
         self.loadfile.setObjectName("loadfile")
         self.horizontalLayout_3.addWidget(self.loadfile)
-        spacerItem3 = QtWidgets.QSpacerItem(20, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        spacerItem3 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_3.addItem(spacerItem3)
         self.verticalLayout_2.addLayout(self.horizontalLayout_3)
+
+        self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
+        self.label_7 = QtWidgets.QLabel(Dialog)
+        self.label_7.setObjectName("label_7")
+        self.label_7.setMinimumHeight(40)
+        self.horizontalLayout_2.addWidget(self.label_7)
+        spacerItem4 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_2.addItem(spacerItem4)
+        self.tracciato = QtWidgets.QPushButton(Dialog)
+        self.tracciato.setObjectName("tracciato")
+        self.horizontalLayout_2.addWidget(self.tracciato)
+        self.verticalLayout_2.addLayout(self.horizontalLayout_2)
+
         self.verticalLayout.addLayout(self.verticalLayout_2)
 
         # SLOTS
         self.radio_pf.clicked.connect(lambda: self.setType(PFPGEnum.PF))
         self.radio_pg.clicked.connect(lambda: self.setType(PFPGEnum.PG))
         self.loadfile.clicked.connect(lambda: self.onClickedLoadFileButton())
+        self.tracciato.clicked.connect(lambda: self.onClickedTracciatoButton())
 
         # Disable help button
         self.setWindowFlags(self.windowFlags() & ~QtCore.Qt.WindowContextHelpButtonHint)
@@ -206,3 +236,5 @@ class FirstWindow(QtWidgets.QDialog):
         self.label_3.setText(
             _translate("Dialog", "Premi per selezionare il file .csv contenente i dati storici sui titoli di credito:"))
         self.loadfile.setText(_translate("Dialog", "Carica File"))
+        self.label_7.setText(_translate("Dialog", "Premi per visualizzare il tracciato richiesto per il file .csv:"))
+        self.tracciato.setText(_translate("Dialog", "Tracciato"))

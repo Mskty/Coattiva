@@ -6,7 +6,13 @@ class StoricCleaner:
 
     def __init__(self, type: PFPGEnum, df: pd.DataFrame):
         self.__type = type
-        self.__df = df.copy()
+        # Mantengo solo i titoli corretti
+        if self.__type == PFPGEnum.PF:
+            self.__df = df[df.TipoPersonalità == "PF"].copy()
+        elif self.__type == PFPGEnum.PG:
+            self.__df = df[df.TipoPersonalità == "PF"].copy()
+
+
 
     """----------------------------------------------Persone Fisiche-----------------------------------------------"""
 
@@ -290,8 +296,10 @@ class StoricCleaner:
 
     def label(self, df: pd.DataFrame):
         # Calcolo la label di classe per ogni credito secondo le specifiche
-        df['label'] = df['Pagato120Giorni'] / df["ValoreTitolo"] >= 0.20
-        df['label'] = df['label'].astype("int64")
+        label = df['Pagato120Giorni'] / df["ValoreTitolo"] >= 0.20
+        df.insert(0, "label", label)
+        """df['label'] = df['Pagato120Giorni'] / df["ValoreTitolo"] >= 0.20
+        df['label'] = df['label'].astype("int64")"""
 
         # Droppo le colonne che non verranno più utilizzate
         df.drop(columns=["idAnagrafica", "DataPrimaNotifica", "Pagato120Giorni"], inplace=True)

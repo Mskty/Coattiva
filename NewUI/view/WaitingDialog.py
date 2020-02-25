@@ -15,6 +15,25 @@ class WaitingDialog(QtWidgets.QDialog):
         super().__init__(parent)
         self.setupUi(self)
 
+    def success(self, success: bool):
+        # Operazione terminata lo scrivo e permetto di chiudere la finestra
+        self.verticalLayout.removeWidget(self.label)
+        self.label.setParent(None)
+        self.verticalLayout.removeWidget(self.progressBar)
+        self.progressBar.setParent(None)
+        if success:
+            text = "Operazione terminata con successo"
+        else:
+            text = "Operazione fallita"
+        label=QtWidgets.QLabel(text)
+        label.setAlignment(QtCore.Qt.AlignCenter)
+        self.verticalLayout.addWidget(label)
+        button=QtWidgets.QPushButton("Chiudi")
+        button.clicked.connect(lambda: self.close())
+        self.verticalLayout.addWidget(button)
+        print("wut")
+        #self.setWindowFlags(self.windowFlags() & QtCore.Qt.WindowCloseButtonHint)
+
     def setupUi(self, WaitingDialog):
         WaitingDialog.setObjectName("WaitingDialog")
         WaitingDialog.setWindowModality(QtCore.Qt.ApplicationModal)
