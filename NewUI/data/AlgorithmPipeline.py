@@ -5,12 +5,13 @@ from sklearn.metrics import plot_precision_recall_curve
 from sklearn.metrics import plot_roc_curve
 from sklearn.metrics import plot_confusion_matrix
 
+
 class AlgorithmPipeline:
 
     # Classificatore già addestrato su training set
     # Scaler già addestrato su training set
 
-    def __init__(self, classifier, scaler=None, columnstoscale: list= None):
+    def __init__(self, classifier, scaler=None, columnstoscale: list = None):
         self.classifier = classifier
         self.scaler = scaler
         self.columnstoscale = columnstoscale
@@ -18,12 +19,13 @@ class AlgorithmPipeline:
     def predict(self, dataset: pd.DataFrame):
         dataset = dataset.copy()
 
-        #Applicazione scaler su colonne non categoriche (columnstoscale) se presente
-        if self.scaler != None:
-            dataset_to_scale=dataset[self.columnstoscale]
-            dataset.drop(columns=dataset.columns.difference(self.columnstoscale), inplace=True)
+        # Applicazione scaler su colonne non categoriche (columnstoscale) se presente
+        if self.scaler is not None:
+            dataset_to_scale = dataset[self.columnstoscale]
+            dataset.drop(columns=self.columnstoscale, inplace=True)
             scaled_features_dataset = self.scaler.transform(dataset_to_scale.values)
-            scaled_dataset = pd.DataFrame(scaled_features_dataset, index=dataset_to_scale.index, columns=dataset_to_scale.columns)
+            scaled_dataset = pd.DataFrame(scaled_features_dataset, index=dataset_to_scale.index,
+                                          columns=dataset_to_scale.columns)
             dataset = pd.concat([scaled_dataset, dataset], axis=1, sort=False)
 
         # Separazione colonna label se presente
@@ -41,7 +43,7 @@ class AlgorithmPipeline:
         recall = recall_score(dataset["label"].values, dataset["predizione"].values)
         f1 = f1_score(dataset["label"].values, dataset["predizione"].values)
         roc_auc = roc_auc_score(dataset["label"].values, dataset["predizione"].values)
-        return Score(accuracy,precision,recall,f1,roc_auc)
+        return Score(accuracy, precision, recall, f1, roc_auc)
 
     def plot_roc_curve(self, dataset: pd.DataFrame):
         # fa comparire il grafico della roc_curve
@@ -50,7 +52,7 @@ class AlgorithmPipeline:
         # Applicazione scaler su colonne non categoriche (columnstoscale) se presente
         if self.scaler != None:
             dataset_to_scale = dataset[self.columnstoscale]
-            dataset.drop(columns=dataset.columns.difference(self.columnstoscale), inplace=True)
+            dataset.drop(columns=self.columnstoscale, inplace=True)
             scaled_features_dataset = self.scaler.transform(dataset_to_scale.values)
             scaled_dataset = pd.DataFrame(scaled_features_dataset, index=dataset_to_scale.index,
                                           columns=dataset_to_scale.columns)
@@ -62,9 +64,7 @@ class AlgorithmPipeline:
         Y = dataset["label"].to_numpy()
         X = dataset.drop(columns="label").to_numpy()
 
-        skl.metrics.plot_roc_curve(self.classifier,X,Y)
-
-
+        skl.metrics.plot_roc_curve(self.classifier, X, Y)
 
     def plot_precision_recall(self, dataset: pd.DataFrame):
         # fa comparire il grafico della precision vs recall con threshold della decision function (default 0)
@@ -73,7 +73,7 @@ class AlgorithmPipeline:
         # Applicazione scaler su colonne non categoriche (columnstoscale) se presente
         if self.scaler != None:
             dataset_to_scale = dataset[self.columnstoscale]
-            dataset.drop(columns=dataset.columns.difference(self.columnstoscale), inplace=True)
+            dataset.drop(columns=self.columnstoscale, inplace=True)
             scaled_features_dataset = self.scaler.transform(dataset_to_scale.values)
             scaled_dataset = pd.DataFrame(scaled_features_dataset, index=dataset_to_scale.index,
                                           columns=dataset_to_scale.columns)
@@ -94,7 +94,7 @@ class AlgorithmPipeline:
         # Applicazione scaler su colonne non categoriche (columnstoscale) se presente
         if self.scaler != None:
             dataset_to_scale = dataset[self.columnstoscale]
-            dataset.drop(columns=dataset.columns.difference(self.columnstoscale), inplace=True)
+            dataset.drop(columns=self.columnstoscale, inplace=True)
             scaled_features_dataset = self.scaler.transform(dataset_to_scale.values)
             scaled_dataset = pd.DataFrame(scaled_features_dataset, index=dataset_to_scale.index,
                                           columns=dataset_to_scale.columns)
@@ -105,10 +105,4 @@ class AlgorithmPipeline:
         # Separazione colonna label
         Y = dataset["label"].to_numpy()
         X = dataset.drop(columns="label").to_numpy()
-        skl.metrics.plot_confusion_matrix(self.classifier,X, Y,cmap=plt.cm.Blues, values_format="")
-
-
-
-
-
-
+        skl.metrics.plot_confusion_matrix(self.classifier, X, Y, cmap=plt.cm.Blues, values_format="")

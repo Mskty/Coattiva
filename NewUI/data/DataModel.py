@@ -37,13 +37,16 @@ class DataModel:
         return list(self.disabledcolumns.columns.values)
 
     def get_enabledcolumnsnames(self) -> list:
-        return list(self.disabledcolumns.columns.values)
+        return list(self.enabledcolumns.columns.values)
 
     def get_columnsnames(self) -> list:
+        # Ritorna la lista dei nomi delle colonne che sarà possibile disabilitare
         names = list(self.df.columns.values)
         # Rimuovo label e DataCaricoTitolo perchè non disattivabili (e sono due colonne sempre presenti)
         names.remove("label")
         names.remove("DataCaricoTitolo")
+        # Rimuovo ValoreTitolo in quanto è considerato il campo più importante e non può essere rimosso
+        names.remove("ValoreTitolo")
         return names
 
     def get_rows(self) -> int:
@@ -59,7 +62,7 @@ class DataModel:
 
     def disablecolumns(self, columns: list):
         if set(columns).issubset(set(list(self.df.columns.values))):
-            self.disabledcolumns[columns] = self.df[columns]
+            self.disabledcolumns[columns] = self.enabledcolumns[columns]
             self.enabledcolumns.drop(columns=columns, inplace=True)
         else:
             print("error: colonne non presenti")
@@ -72,7 +75,7 @@ class DataModel:
             print("error: colonne non presenti")
 
     def enableallcolumns(self):
-        self.enabledcolumns = self.df
+        self.enabledcolumns = self.df.copy()
         self.disabledcolumns = pd.DataFrame()
 
     # Creazione oggetti TrainModel e TestModel

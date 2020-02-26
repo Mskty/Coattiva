@@ -105,8 +105,9 @@ class Model:
     def set_data(self, type: PFPGEnum, filename: str):
         # Inzizializza o resetta i parametri del modello a partire da un nuovo file di dati storici
         self.data = DataModel(type, filename=filename)  # fa già pulizia e preparazione
+        self.datafilename=filename
         # get columns
-        self.columns = self.data.get_enabledcolumnsnames()
+        self.columns = self.data.get_columnsnames()
         # get traintestsplit
         self.traintestsplit = self.data.train_test_splitter_possibilities()
         # Reset train test and use_data

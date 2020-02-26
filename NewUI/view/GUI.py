@@ -59,12 +59,16 @@ class MainWindow(QMainWindow):
         else:
             self.model.disablecolumn(checkbox.text())
         # Refresh modelli
+        self.datatable.updatemodel()
+        print("update data")
         try:
             self.traintable.updatemodel()
+            print("update train")
         except:
             pass
         try:
             self.testtable.updatemodel()
+            print("update test")
         except:
             pass
 
@@ -100,6 +104,7 @@ class MainWindow(QMainWindow):
 
             # Controllo se è stato generato il testset altrimenti non genero la tabella testtable
             if self.model.is_test_present():
+                # Abilito tab test
                 self.testtable = TableModel(self.model.test.enabledcolumns)
                 self.table_test.setModel(self.testtable)
                 # Inserisco il testo nelle tab di test
@@ -107,12 +112,14 @@ class MainWindow(QMainWindow):
                 self.setlabelsTest(testinfo[0], testinfo[1], testinfo[2])
                 # Abilito la tab test
                 self.enableTest()
+            else:
+                # disabilito tab test
+                self.testtable = None
+                self.disableTest()
 
             # Abilito radio e addestra modello
             self.enableradios()
             self.enableMainButtonTrain()
-
-
 
     def resetUI(self):
         """ Resetta solamente gli elementi ui allo stato in cui dovrebbero essere all'apertura dell'applicazione
@@ -179,10 +186,13 @@ class MainWindow(QMainWindow):
         self.clearScrollArea(self.main_list_columns_layout)
         # Popolo il layout
         columnlist = self.model.get_column_names()
+        print(columnlist)
         for i in columnlist:
             self.add_checkbox_columns(i)
         self.main_list_columns.widget().adjustSize()
         self.main_list_columns.setMinimumWidth(self.main_list_columns.widget().width() + 30)
+        # Salvo larghezza iniziale widget per reset
+        self.columnwidgetsize=self.main_list_columns.minimumWidth()
 
         # impostazione lista split nella scroll area
         # Pulisco prima il layout
@@ -193,6 +203,8 @@ class MainWindow(QMainWindow):
             self.add_radio_split(ruoli[i], nesempi[i])
         self.main_list_split.widget().adjustSize()
         self.main_list_split.setMinimumWidth(self.main_list_split.widget().width() + 30)
+        # Salvo larghezza iniziale widget per reset
+        self.splitnwidgetsize = self.main_list_split.minimumWidth()
 
     def openLoadNewFileWindow(self):
         # apertura schermata nuovo file per utilizzo
@@ -202,7 +214,7 @@ class MainWindow(QMainWindow):
     def useFileSetup(self):
         """Esegue il setup della GUI di utilizzo una volta caricato il file di utilizzo tramite l'apposita finestra"""
         # Imposto la tabella per la visualizzazione del file caricato, vengono considerate le solo colonne elaborate
-        self.usetable= TableModel(self.model.usedata.enabledcolumns)
+        self.usetable = TableModel(self.model.usedata.enabledcolumns)
         self.table_use.setModel(self.usetable)
         # Imposto la label per nome file
         filename = self.model.get_use_datafilename()
@@ -265,6 +277,7 @@ class MainWindow(QMainWindow):
         self.groupBox_3.setEnabled(False)
 
     """-------------------------Abilita disabilita contenuto delle scroll Area---------------------------------------"""
+
     def enablescrolls(self):
         self.main_list_columns.widget().setEnabled(True)
         self.main_list_split.widget().setEnabled(True)
@@ -342,7 +355,12 @@ class MainWindow(QMainWindow):
         self.results_scaling.setText("Scaling: " + scaling)
         self.results_algorithm.setText("Algoritmo di apprendimento: " + algorithm)
         # stampa lista colonne ignorate
-        self.results_ignored.setText("Proprietà o colonne ignorate:".join(ignoredcolumns))
+        self.results_ignored.setText("Proprietà o colonne ignorate:")
+        nessuna = " Nessuna"
+        for item in ignoredcolumns:
+            nessuna=""
+            self.results_ignored.setText(self.results_ignored.text()+", "+item)
+        self.results_ignored.setText(self.results_ignored.text()+nessuna)
 
     def setlabelsTrainMetrics(self, acc: float, prec: float, rec: float, f1: float):
         # punteggi passati in decimale
@@ -377,7 +395,7 @@ class MainWindow(QMainWindow):
         """
 
         # Apertura finestra di attesa
-        waitdialog= WaitingDialog(self)
+        waitdialog = WaitingDialog(self)
         waitdialog.show()
 
         # Addestramento modello e setup ui risultati
@@ -456,9 +474,10 @@ class MainWindow(QMainWindow):
         # Reset: abilita tutte le colonne, disabilita train e test set, blocca le box
         # Reset modello:
         self.model.reset_settings()
-        self.datatable.updatemodel()
 
         # Reset variabili:
+        self.datatable = TableModel(self.model.data.enabledcolumns)
+        self.table_data.setModel(self.datatable)
         self.traintable: TableModel = None
         self.testtable: TableModel = None
         self.usetable: TableModel = None
@@ -475,6 +494,9 @@ class MainWindow(QMainWindow):
         # Reset bottoni main page
         self.disableMainButtonTrain()
 
+        # Abilito scroll areas con checkbox e bottoni
+        self.enablescrolls()
+
         # Impostazione lista colonne nella scroll area
         # Pulisco prima il layout
         self.clearScrollArea(self.main_list_columns_layout)
@@ -483,7 +505,7 @@ class MainWindow(QMainWindow):
         for i in columnlist:
             self.add_checkbox_columns(i)
         self.main_list_columns.widget().adjustSize()
-        self.main_list_columns.setMinimumWidth(self.main_list_columns.widget().width() + 30)
+        self.main_list_columns.setMinimumWidth(self.columnwidgetsize)
 
         # impostazione lista split nella scroll area
         # Pulisco prima il layout
@@ -493,7 +515,7 @@ class MainWindow(QMainWindow):
         for i in range(len(ruoli)):
             self.add_radio_split(ruoli[i], nesempi[i])
         self.main_list_split.widget().adjustSize()
-        self.main_list_split.setMinimumWidth(self.main_list_split.widget().width() + 30)
+        self.main_list_split.setMinimumWidth(self.splitnwidgetsize)
 
     def buttonDataExport(self):
         # chiama opensave dialog per ottere il path di salvataggio poi invoca la funzione del modello per salvare
@@ -568,7 +590,6 @@ class MainWindow(QMainWindow):
         self.usetable.updatemodel()
         # Informo il dialog del successo
         dialog.success(True)
-
 
     def buttonUseExport(self):
         # chiama opensave dialog per ottere il path di salvataggio poi invoca la funzione del modello per salvare
@@ -1489,10 +1510,6 @@ if __name__ == "__main__":
 
     # Avvio esecuzione UI
     mainwindow.openFirstWindow()
-
-    plt.plot([1, 2, 3, 4])
-    plt.ylabel('some numbers')
-    plt.show()
 
     # chiusura programma
     sys.exit(app.exec_())
