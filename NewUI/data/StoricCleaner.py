@@ -20,8 +20,13 @@ class StoricCleaner:
         # Droppo le colonne Cessata e CessataDataInfo che non riguardano le Persone Fisiche in questo dataset
         df.drop(columns=["Cessata", "CessataDataInfo"], inplace=True)
 
-        # droppo la colonna AnnoNascita perchè inutile, utilizzo DataNascita
-        df.drop(columns="AnnoNascita", inplace=True)
+        # droppo la colonna AnnoNascita se presente per errore perchè inutile, utilizzo DataNascita
+        if 'AnnoNascita' in df.columns:
+            df.drop(columns="AnnoNascita", inplace=True)
+
+        # droppo la colonna 'IDTitoloCredito se presente per errore perchè inutile
+        if 'IDTitoloCredito' in df.columns:
+            df.drop(columns="IDTitoloCredito", inplace=True)
 
         # imposto i valori nulli di DecedutoDataInfo ad 'assente'
         df[["DecedutoDataInfo"]] = df[["DecedutoDataInfo"]].fillna("assente")
@@ -251,7 +256,7 @@ class StoricCleaner:
     def pf_cleanUselessColumns(self, df: pd.DataFrame):
         # DROPPO LE COLONNE CHE NON VERRANNO PIU' UTILIZZATE PERCHE' NON RILEVANTI AI FINI DELLA CLASSIFICAZIONE:
         df.drop(
-            columns=["IDTitoloCredito", "DataNascita", "TipoPersonalità", "PEC", "DataEmissioneTitolo",
+            columns=["DataNascita", "TipoPersonalità", "PEC", "DataEmissioneTitolo",
                      "DataPagamentoTotale", "DataDeceduto"],
             inplace=True)
 
@@ -283,7 +288,7 @@ class StoricCleaner:
                   'ValoreTitolo': 'sum', 'Pagato120Giorni': 'sum', 'NumeroTitoliAperti': 'max',
                   'DovutoTitoliAperti': 'max', 'ImportoTitoliAperti': 'max',
                   'NumeroTitoliSaldati': 'max', 'ImportoTitoliSaldati': 'max', 'NumeroTitoliRecenti': 'max',
-                  'TotaleTitoliRecenti': 'max', 'Eta': 'max', 'Vetusta': 'max', 'TipoCredito': 'sum'}
+                  'TotaleTitoliRecenti': 'max', 'Eta': 'max', 'Vetusta': 'max', 'TitoliCredito': 'sum'}
 
         # Procedo con l'aggregazione dei titoli appartenenti allo stesso documento/credito:
         df = df.groupby(["idAnagrafica", "DataCaricoTitolo", "DataPrimaNotifica"]).agg(aggprm)
@@ -314,8 +319,16 @@ class StoricCleaner:
     def pg_setUp(self, df: pd.DataFrame):
         # Droppo le colonne Deceduto, DecedutoDataInfo, AnnoNascita, DataNascita, CittadinanzaItaliana che non
         # riguardano le Persone Fisiche in questo dataset
-        df.drop(columns=["Deceduto", "DecedutoDataInfo", "DataNascita", "AnnoNascita", "CittadinanzaItaliana"],
+        df.drop(columns=["Deceduto", "DecedutoDataInfo", "DataNascita", "CittadinanzaItaliana"],
                 inplace=True)
+
+        # droppo la colonna AnnoNascita se presente per errore perchè inutile
+        if 'AnnoNascita' in df.columns:
+            df.drop(columns="AnnoNascita", inplace=True)
+
+        # droppo la colonna 'IDTitoloCredito se presente per errore perchè inutile
+        if 'IDTitoloCredito' in df.columns:
+            df.drop(columns="IDTitoloCredito", inplace=True)
 
         # imposto i valori nulli di DecedutoDataInfo ad 'assente'
         df[["CessataDataInfo"]] = df[["CessataDataInfo"]].fillna("assente")
@@ -491,7 +504,7 @@ class StoricCleaner:
     def pg_cleanUselessColumns(self, df: pd.DataFrame):
         # DROPPO LE COLONNE CHE NON VERRANNO PIU' UTILIZZATE PERCHE' NON RILEVANTI AI FINI DELLA CLASSIFICAZIONE:
         df.drop(
-            columns=["IDTitoloCredito", "TipoPersonalità", "DataEmissioneTitolo", "DataPagamentoTotale", "DataCessata"],
+            columns=["TipoPersonalità", "DataEmissioneTitolo", "DataPagamentoTotale", "DataCessata"],
             inplace=True)
 
         return df
@@ -521,7 +534,7 @@ class StoricCleaner:
                   'ValoreTitolo': 'sum', 'Pagato120Giorni': 'sum', 'NumeroTitoliAperti': 'max',
                   'DovutoTitoliAperti': 'max', 'ImportoTitoliAperti': 'max',
                   'NumeroTitoliSaldati': 'max', 'ImportoTitoliSaldati': 'max', 'NumeroTitoliRecenti': 'max',
-                  'TotaleTitoliRecenti': 'max', 'Vetusta': 'max', 'TipoCredito': 'sum'}
+                  'TotaleTitoliRecenti': 'max', 'Vetusta': 'max', 'TitoliCredito': 'sum'}
 
         # Procedo con l'aggregazione dei titoli appartenenti allo stesso documento/credito:
         df = df.groupby(["idAnagrafica", "DataCaricoTitolo", "DataPrimaNotifica"]).agg(aggprm)

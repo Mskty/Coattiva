@@ -88,24 +88,31 @@ class MainWindow(QMainWindow):
             self.model.generate_train_test(date)
 
             # Ho generato train e test nel modello ora genero le tabelle
+
+            # Genero traintable
             self.traintable = TableModel(self.model.train.enabledcolumns)
             self.table_train.setModel(self.traintable)
-            self.testtable = TableModel(self.model.test.enabledcolumns)
-            self.table_test.setModel(self.testtable)
-
-            # Inserisco il testo nelle tab di train e test
+            # Inserisco il testo nelle tab di train
             traininfo = self.model.get_train_info()
             self.setlabelsTrain(traininfo[0], traininfo[1], traininfo[2])
-            testinfo = self.model.get_test_info()
-            self.setlabelsTest(testinfo[0], testinfo[1], testinfo[2])
-
-            # Abilito le tabs
+            # Abilito la tab train
             self.enableTrain()
-            self.enableTest()
+
+            # Controllo se è stato generato il testset altrimenti non genero la tabella testtable
+            if self.model.is_test_present():
+                self.testtable = TableModel(self.model.test.enabledcolumns)
+                self.table_test.setModel(self.testtable)
+                # Inserisco il testo nelle tab di test
+                testinfo = self.model.get_test_info()
+                self.setlabelsTest(testinfo[0], testinfo[1], testinfo[2])
+                # Abilito la tab test
+                self.enableTest()
 
             # Abilito radio e addestra modello
             self.enableradios()
             self.enableMainButtonTrain()
+
+
 
     def resetUI(self):
         """ Resetta solamente gli elementi ui allo stato in cui dovrebbero essere all'apertura dell'applicazione
@@ -424,6 +431,9 @@ class MainWindow(QMainWindow):
             self.test_recall.setText("na")
             self.test_f1.setText("na")
 
+        # Abilito tab risultati
+        self.enableRisultati()
+
         # Abilito e setto label tipo per la parte utilizza
         self.enableUtilizza()
         self.setlabelUtilizzaType(self.model.get_traintype())
@@ -463,7 +473,7 @@ class MainWindow(QMainWindow):
         self.disableradios()
 
         # Reset bottoni main page
-        self.disableTrain()
+        self.disableMainButtonTrain()
 
         # Impostazione lista colonne nella scroll area
         # Pulisco prima il layout
@@ -537,7 +547,7 @@ class MainWindow(QMainWindow):
 
     def buttonTestPrc(self):
         # grafico prc train
-        self.model.get_prc_curve_train()
+        self.model.get_prc_curve_test()
 
     def buttonResultsInfo(self):
         # TODO apertura scheda info metriche
@@ -1479,6 +1489,10 @@ if __name__ == "__main__":
 
     # Avvio esecuzione UI
     mainwindow.openFirstWindow()
+
+    plt.plot([1, 2, 3, 4])
+    plt.ylabel('some numbers')
+    plt.show()
 
     # chiusura programma
     sys.exit(app.exec_())

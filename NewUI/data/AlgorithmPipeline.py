@@ -105,7 +105,6 @@ class AlgorithmPipeline:
         # Separazione colonna label
         Y = dataset["label"].to_numpy()
         X = dataset.drop(columns="label").to_numpy()
-
         skl.metrics.plot_confusion_matrix(self.classifier,X, Y,cmap=plt.cm.Blues, values_format="")
 
 

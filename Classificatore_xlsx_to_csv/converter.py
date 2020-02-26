@@ -20,7 +20,7 @@ def load_raw_data_excel(raw_data_path) -> pd.DataFrame:
         :return:
         """
     data = pd.read_excel(raw_data_path,
-                         sheetname=0,
+                         sheet_name=0,
                          header=0,
                          index_col=False,
                          keep_default_na=True)

@@ -57,8 +57,8 @@ class TracciatoDialog(QtWidgets.QDialog):
                            "Campo numerico intero contenente il numero di titoli riferiti allo stesso contribuente con stessa data di carico del titolo. Non viene considerato il titolo stesso nel conteggio",
                            "Campo numerico decimale contenente la somma del valore dei titoli riferiti allo stesso contribuente con stessa data di carico del titolo. Non viene considerato il titolo stesso nel conteggio"]
 
-        else:
-            if self.filetype== NewFileEnum.OLD:
+        """else:
+            if self.filetype== NewFileEnum.OLD: """ #TODO old
 
 
         # Popolo la tabella

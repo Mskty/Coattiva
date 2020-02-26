@@ -94,6 +94,12 @@ class Model:
         pred = self.workingalgorithm.predict(self.data.enabledcolumns)
         self.usedata.attach_predictions(pred)
 
+    def is_test_present(self) -> bool:
+        if self.test is None:
+            return False
+        else:
+            return True
+
     # Setter
 
     def set_data(self, type: PFPGEnum, filename: str):

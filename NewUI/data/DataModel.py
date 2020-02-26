@@ -136,7 +136,11 @@ class DataModel:
         # Ritorno train e test set
 
         trainset = TrainModel(self.type, trainenabled, traindisabled)
-        testset = TestModel(self.type, testenabled, testdisabled)
+
+        # Genero testset solo se non vuoto
+        testset= None
+        if testenabled.empty is not True:
+            testset = TestModel(self.type, testenabled, testdisabled)
 
         return trainset, testset
 

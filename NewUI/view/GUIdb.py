@@ -14,7 +14,7 @@ from data.Model import *
 from model.TableModel import *
 from view.FirstWindow import *
 from view.LoadNewFile import *
-
+from view.WaitingDialog import *
 
 class MainWindow(QMainWindow):
 
@@ -314,6 +314,11 @@ class MainWindow(QMainWindow):
             self.test_precision.setText("na")
             self.test_recall.setText("na")
             self.test_f1.setText("na")
+
+        waitdialog = WaitingDialog(self)
+        waitdialog.show()
+        waitdialog.success(True)
+
 
     #TODO PARTE UTILIZZA
 

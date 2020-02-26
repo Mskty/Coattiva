@@ -207,12 +207,12 @@ class LoadNewFile(QtWidgets.QDialog):
         self.tracciato.setText(_translate("Dialog", "Tracciato"))
 
 
-if __name__ == "__main__":
+"""if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
     Dialog = LoadNewFile()
     Dialog.show()
     # chiusura programma
-    sys.exit(app.exec_())
+    sys.exit(app.exec_())"""
 
 
