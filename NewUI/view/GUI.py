@@ -40,6 +40,9 @@ class MainWindow(QMainWindow):
         # Dialog di errore
         self.error_dialog = QtWidgets.QErrorMessage(self)
 
+        # Variabile di stato
+        self.opened=False
+
     """ Funzioni """
 
     def clearScrollArea(self, layout: QtWidgets.QVBoxLayout):
@@ -146,8 +149,11 @@ class MainWindow(QMainWindow):
 
     def openFirstWindow(self):
         # apertura schermata inziale con passaggio della mainwindow come parent
-        self.hide()
-        FirstWindow(self).show()
+        dialog = FirstWindow(self)
+        dialog.exec_()
+        if not self.opened:
+            # Se era la prima apertura della applicazione e chiudo il dialog chiudo tutto
+            sys.exit()
 
     def firstSetup(self):
         """ Esegue il setup inziale della GUI una volta caricato il file di addestramento nella firstwindow avendo quindi
@@ -155,6 +161,9 @@ class MainWindow(QMainWindow):
         Crea quindi la tabella data con rispettivo TableModel nella view.
         Popola infine le scrollview con le checkbox per le colonne e i possibili split dei dati in train e test
         Serve anche come reset nel caso venga caricato un nuovo file premento il pulsante 'Caricamento nuovo file'"""
+
+        # Imposto la variabile di stato per l'apertura su true
+        self.opened = True
 
         # Resetto le tab e i modelli nel caso siano popolati
         self.resetUI()
@@ -364,6 +373,10 @@ class MainWindow(QMainWindow):
 
     def setlabelsTrainMetrics(self, acc: float, prec: float, rec: float, f1: float):
         # punteggi passati in decimale
+        acc = acc * 100
+        prec = prec * 100
+        rec = rec * 100
+        f1 = f1 * 100
         self.train_accuracy.setText("{0:.2f}".format(acc) + "%")
         self.train_precision.setText("{0:.2f}".format(prec) + "%")
         self.train_recall.setText("{0:.2f}".format(rec) + "%")
@@ -371,6 +384,10 @@ class MainWindow(QMainWindow):
 
     def setlabelsTestMetrics(self, acc: float, prec: float, rec: float, f1: float):
         # punteggi passati in decimale
+        acc = acc*100
+        prec = prec*100
+        rec = rec*100
+        f1 = f1*100
         self.test_accuracy.setText("{0:.2f}".format(acc) + "%")
         self.test_precision.setText("{0:.2f}".format(prec) + "%")
         self.test_recall.setText("{0:.2f}".format(rec) + "%")
@@ -466,8 +483,6 @@ class MainWindow(QMainWindow):
 
     def buttonLoadNewTrainFile(self):
         # Chiama la firstwindow
-        # ( al momento questa operazione risulta in un completo reset dell'app e non è annullabile )
-        self.hide()
         self.openFirstWindow()
 
     def buttonReset(self):
@@ -493,6 +508,9 @@ class MainWindow(QMainWindow):
 
         # Reset bottoni main page
         self.disableMainButtonTrain()
+
+        # Reset bottoni Utilizza
+        self.disableUseApply()
 
         # Abilito scroll areas con checkbox e bottoni
         self.enablescrolls()

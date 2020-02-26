@@ -7,6 +7,7 @@
 # WARNING! All changes made in this file will be lost!
 
 from view.GUI import *
+from view.WaitingDialog import *
 
 
 class LoadNewFile(QtWidgets.QDialog):
@@ -176,6 +177,7 @@ class LoadNewFile(QtWidgets.QDialog):
         # SLOTS
         self.radio_storici.clicked.connect(lambda: self.setType(NewFileEnum.OLD))
         self.radio_recenti.clicked.connect(lambda: self.setType(NewFileEnum.NEW))
+        self.loadfile.clicked.connect(lambda: self.onClickedLoadFileButton())
 
         # Disable help button
         self.setWindowFlags(self.windowFlags() & ~QtCore.Qt.WindowContextHelpButtonHint)

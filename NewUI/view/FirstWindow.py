@@ -7,6 +7,7 @@
 # WARNING! All changes made in this file will be lost!
 
 from view.GUI import *
+from view.WaitingDialog import *
 
 
 class FirstWindow(QtWidgets.QDialog):
