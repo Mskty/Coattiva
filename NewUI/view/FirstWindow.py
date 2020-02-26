@@ -8,6 +8,7 @@
 
 from view.GUI import *
 from view.WaitingDialog import *
+from view.tracciato import *
 
 
 class FirstWindow(QtWidgets.QDialog):
@@ -76,7 +77,8 @@ class FirstWindow(QtWidgets.QDialog):
                 self.error_dialog.showMessage(str(e))
 
     def onClickedTracciatoButton(self):
-        pass
+        tracciato= TracciatoDialog(type=self.type, parent=self)
+        tracciato.exec_()
 
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")

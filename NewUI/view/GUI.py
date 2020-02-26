@@ -217,7 +217,7 @@ class MainWindow(QMainWindow):
 
     def openLoadNewFileWindow(self):
         # apertura schermata nuovo file per utilizzo
-        dialog = LoadNewFile(self)
+        dialog = LoadNewFile(self.model.train.type, self)
         dialog.exec_()
 
     def useFileSetup(self):

@@ -8,12 +8,13 @@
 
 from view.GUI import *
 from view.WaitingDialog import *
+from view.tracciato import *
 
 
 class LoadNewFile(QtWidgets.QDialog):
     # inizializzazione
 
-    def __init__(self, parent = None):
+    def __init__(self, typepfpg: PFPGEnum, parent = None):
         # Inizializzazione con parent mainwindow
         super().__init__(parent)
         self.mainwindow = parent
@@ -21,6 +22,7 @@ class LoadNewFile(QtWidgets.QDialog):
         self.error_dialog = QtWidgets.QErrorMessage(self)
 
         # Inizializzazione variabili proprie
+        self.typepfpg = typepfpg
         self.type: NewFileEnum = NewFileEnum.NEW
         self.filename = ""
 
@@ -50,6 +52,7 @@ class LoadNewFile(QtWidgets.QDialog):
         self.mainwindow.useFileSetup()
         self.close()
 
+    # SLOTS
     def onClickedLoadFileButton(self):
         filename = self.openFileNameDialog()
         if filename:
@@ -66,6 +69,10 @@ class LoadNewFile(QtWidgets.QDialog):
                 dialog.success(False)
                 # Stampa eccezione
                 self.error_dialog.showMessage(str(e))
+
+    def onClickedTracciatoButton(self):
+        tracciato= TracciatoDialog(type=self.typepfpg, parent=self, filetype=self.type)
+        tracciato.exec_()
 
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
@@ -178,6 +185,7 @@ class LoadNewFile(QtWidgets.QDialog):
         self.radio_storici.clicked.connect(lambda: self.setType(NewFileEnum.OLD))
         self.radio_recenti.clicked.connect(lambda: self.setType(NewFileEnum.NEW))
         self.loadfile.clicked.connect(lambda: self.onClickedLoadFileButton())
+        self.tracciato.clicked.connect(lambda: self.onClickedTracciatoButton())
 
         # Disable help button
         self.setWindowFlags(self.windowFlags() & ~QtCore.Qt.WindowContextHelpButtonHint)
