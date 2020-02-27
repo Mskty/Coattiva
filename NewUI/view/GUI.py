@@ -15,6 +15,7 @@ from model.TableModel import *
 from view.FirstWindow import *
 from view.LoadNewFile import *
 from view.WaitingDialog import *
+from view.MetricheDialog import *
 
 
 class MainWindow(QMainWindow):
@@ -141,7 +142,7 @@ class MainWindow(QMainWindow):
 
     def add_radio_split(self, ruolo: str, esempi: int):
         # Aggiunge radio button al layout della scrollview main_list_columns
-        radio = QtWidgets.QRadioButton("fino a data: " + ruolo + " titoli: " + str(esempi))
+        radio = QtWidgets.QRadioButton("fino a ruolo: " + ruolo + " esempi: " + str(esempi))
         # utilizzo l'objectname per salvare il dato del ruolo
         radio.setObjectName(ruolo)
         radio.toggled.connect(lambda: self.onClickedSplitRadio())
@@ -590,8 +591,9 @@ class MainWindow(QMainWindow):
         self.model.get_prc_curve_test()
 
     def buttonResultsInfo(self):
-        # TODO apertura scheda info metriche
-        pass
+        # Apertura scheda info metriche
+        dialog= MetricheDialog()
+        dialog.exec_()
 
     def buttonUseLoadFile(self):
         # apri finestra LoadNewFile
@@ -1406,14 +1408,14 @@ class MainWindow(QMainWindow):
         self.label_4.setText(_translate("MainWindow",
                                         "Eliminare il check dal nome della colonna che si desidera ignorare per l\'addestramento:"))
         self.label_8.setText(_translate("MainWindow",
-                                        "Per il modello predittivo verranno utilizzate solamente le colonne rimaste selezionate."))
+                                        "Nell'utilizzo del modello predittivo verranno utilizzate solamente le colonne rimaste selezionate."))
         self.label_5.setText(_translate("MainWindow",
-                                        "Selezionare come suddividere i dati in training e test set tra le opzioni disponibili:"))
-        self.label_12.setText(_translate("MainWindow", "Visualizzabile nelle schede Train e Test."))
+                                        "Selezionare fino a quale ruolo comprenderà il training set:"))
+        self.label_12.setText(_translate("MainWindow", "I ruoli successivi alla data scelta comporranno il test set"))
         self.label_3.setText(_translate("MainWindow", "Addestramento Modello"))
         self.label.setText(_translate("MainWindow", "PREFERENZE RIGUARDANTI L\'ADDESTRAMENTO DEL MODELLO PREDITTIVO"))
         self.filelabelratio.setText(_translate("MainWindow",
-                                               "1) I titoli contenuti nel training set hanno label per % positiva e % negativa, selezionare un algoritmo di sampling per equilibrare gli esempi."))
+                                               "1) I titoli contenuti nel training set hanno label per % positiva e % negativa, è possibile utilizzare un algoritmo di sampling per equilibrarli."))
         self.label_2.setText(
             _translate("MainWindow", "2) Selezionare la tipologia di normalizzazione da applicare ai dati."))
         self.label_6.setText(_translate("MainWindow",
@@ -1433,12 +1435,12 @@ class MainWindow(QMainWindow):
         self.algorithm4.setText(_translate("MainWindow", "Random Forest Classifier"))
         self.algorithm5.setText(_translate("MainWindow", "XGB Classifier"))
         self.label_10.setText(_translate("MainWindow",
-                                         "Clicca per addestrare il modello preddittivo sui titoli contenuti nel training set:"))
+                                         "Clicca 'Addestra Modello' per addestrare il modello preddittivo sui titoli contenuti nel training set:"))
         self.main_button_train.setText(_translate("MainWindow", "Addestra Modello"))
         self.label_9.setText(_translate("MainWindow",
-                                        "Una volta addestrato saranno visualizzabili le predizioni su training e test set in una nuova colonna aggiunta alle rispettive tabelle, inoltre le metriche relative all\' efficacia del modello saranno visualizzabili nella sezione Risultati. Sarà inoltre possibile utilizzare il modello addestrato nella sezione Utilizza."))
+                                        "Una volta addestrato saranno visualizzabili le predizioni su training e test set nella colonna 'predizione' aggiunta alle rispettive tabelle, inoltre le metriche relative all\' efficacia del modello saranno visualizzabili nella sezione Risultati. Sarà inoltre possibile utilizzare il modello addestrato nella sezione Utilizza."))
         self.label_11.setText(_translate("MainWindow",
-                                         "E\' possibile addestrare nuovamente il modello predittivo dopo aver modificato alcuni  parametri, inclusi le colonne da considerare e la suddivisione tra training set e test set, premendo il pulsante Reset e nuovamente il pulsante Addestra."))
+                                         "E\' possibile addestrare nuovamente il modello predittivo dopo aver modificato alcuni parametri premendo il pulsante Reset e nuovamente il pulsante Addestra."))
         self.main_button_file.setText(_translate("MainWindow", "Caricamento nuovo file"))
         self.main_button_reset.setText(_translate("MainWindow", "Reset"))
         self.TabWidget.setTabText(self.TabWidget.indexOf(self.Main), _translate("MainWindow", "Main"))
