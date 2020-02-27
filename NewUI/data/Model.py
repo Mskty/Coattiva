@@ -105,7 +105,7 @@ class Model:
     def set_data(self, type: PFPGEnum, filename: str):
         # Inzizializza o resetta i parametri del modello a partire da un nuovo file di dati storici
         self.data = DataModel(type, filename=filename)  # fa già pulizia e preparazione
-        self.datafilename=filename
+        self.datafilename = filename
         # get columns
         self.columns = self.data.get_columnsnames()
         # get traintestsplit
@@ -118,7 +118,7 @@ class Model:
 
     def set_use_data(self, typefile: NewFileEnum, filename: str):
         # Inizializza i dati su cui si dovrà utilizzare il modello a partire da un file
-        self.usedata = NewDataModel(self.train.type, typefile, self.columns, filename) # fa  già pulizia e preparazione
+        self.usedata = NewDataModel(self.train.type, typefile, self.columns, filename)  # fa  già pulizia e preparazione
 
     def reset_settings(self):
         # Resetta train test, algoritmo, nuovo file di utilizzo e colonne selezionate
@@ -168,8 +168,11 @@ class Model:
     def get_datafilename(self):
         return self.datafilename
 
-    def get_use_datafilename(self):
-        return self.use_datafilename
+    def get_use_datafiletype(self):
+        if self.usedata.filetype == NewFileEnum.OLD:
+            return "Dati Storici"
+        elif self.usedata.filetype == NewFileEnum.NEW:
+            return "Dati Recenti"
 
     def get_traintype(self):
         if self.data.type == PFPGEnum.PF:
@@ -260,20 +263,6 @@ class Model:
         plt.close()
         self.workingalgorithm.plot_precision_recall(self.test.enabledcolumns)
         plt.show()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     """ ----------------------------------------------DEBUG FUNCTIONS----------------------------------------------- """
 

@@ -40,8 +40,8 @@ class MetricheDialog(QtWidgets.QDialog):
 
     def setupUi(self, MetricheDialog):
         MetricheDialog.setObjectName("MetricheDialog")
-        MetricheDialog.resize(500, 400)
-        MetricheDialog.setMinimumSize(QtCore.QSize(500, 400))
+        MetricheDialog.resize(858, 400)
+        MetricheDialog.setMinimumSize(QtCore.QSize(858, 400))
         font = QtGui.QFont()
         font.setFamily("Arial")
         MetricheDialog.setFont(font)

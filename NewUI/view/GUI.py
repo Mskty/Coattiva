@@ -16,6 +16,7 @@ from view.FirstWindow import *
 from view.LoadNewFile import *
 from view.WaitingDialog import *
 from view.MetricheDialog import *
+from view.NewColumnsDialog import *
 
 
 class MainWindow(QMainWindow):
@@ -38,6 +39,10 @@ class MainWindow(QMainWindow):
         self.testtable: TableModel = None
         self.usetable: TableModel = None
 
+        # Variabile larghezza scrollareas
+        self.splitnwidgetsize=None
+        self.columnwidgetsize= None
+
         # Dialog di errore
         self.error_dialog = QtWidgets.QErrorMessage(self)
 
@@ -45,6 +50,8 @@ class MainWindow(QMainWindow):
         self.opened=False
 
     """ Funzioni """
+
+    """-------------------------------------------------SCROLLARES------------------------------------------------"""
 
     def clearScrollArea(self, layout: QtWidgets.QVBoxLayout):
         # PER ELIMINARE I WIDGET DA UN LAYOUT NELLA SCROLLAREA
@@ -125,6 +132,78 @@ class MainWindow(QMainWindow):
             self.enableradios()
             self.enableMainButtonTrain()
 
+    def add_radio_split(self, ruolo: str, esempi: int):
+        # Aggiunge radio button al layout della scrollview main_list_columns
+        radio = QtWidgets.QRadioButton("fino a ruolo: " + ruolo + " esempi: " + str(esempi))
+        # utilizzo l'objectname per salvare il dato del ruolo
+        radio.setObjectName(ruolo)
+        radio.toggled.connect(lambda: self.onClickedSplitRadio())
+        self.main_list_split_layout.addWidget(radio)
+
+    """-------------------------------------------------COMBOBOXES------------------------------------------------"""
+
+    def setOnClickDataCombo(self):
+        # Imposta il corretto modello di tabella dati quando viene cambiata la selezione
+        text= self.combo_data.currentText()
+        if text=="Dati Originali":
+            self.datatable.data=self.model.data.original_df
+        elif text=="Dati Aggregati":
+            self.datatable.data = self.model.data.cleaned_df
+        elif text=="Dati Preparati":
+            self.datatable.data = self.model.data.enabledcolumns
+        # Aggiorno tabella
+        self.datatable.updatemodel()
+
+    def setDataCombo(self):
+        # Imposta il contenuto e slots della combobox nella parte dati
+        self.combo_data.clear()
+        names=["Dati Originali", "Dati Aggregati", "Dati Preparati"]
+        self.combo_data.addItems(names)
+        # Imposto come default l'opzione preparati
+        index = self.combo_data.findText("Dati Preparati")
+        self.combo_data.setCurrentIndex(index)
+        self.setOnClickDataCombo()
+        #SLOT
+        self.combo_data.activated.connect(lambda : self.setOnClickDataCombo())
+
+    def setOnClickUseCombo(self):
+        # Imposta il corretto modello di tabella utilizza quando viene cambiata la selezione
+        text = self.combo_use.currentText()
+        if text == "Dati Originali":
+            self.usetable.data = self.model.usedata.original_df
+        elif text == "Dati Aggregati":
+            self.usetable.data = self.model.usedata.cleaned_df
+        elif text == "Dati Preparati":
+            self.usetable.data = self.model.usedata.enabledcolumns
+        # Aggiorno tabella
+        self.usetable.updatemodel()
+
+    def setUseCombo(self):
+        # Imposta il contenuto e slots della combobox nella parte utilizza
+        self.combo_use.clear()
+        # Controllo di che tipo sono i dati caricati
+        oldnewtype=self.model.get_use_datafiletype()
+        if oldnewtype=="Dati Storici":
+            names = ["Dati Originali", "Dati Aggregati", "Dati Preparati"]
+        elif oldnewtype=="Dati Recenti":
+            names = ["Dati Originali", "Dati Preparati"]
+
+        self.combo_use.addItems(names)
+        # Imposto come default l'opzione preparati
+        index = self.combo_use.findText("Dati Preparati")
+        self.combo_use.setCurrentIndex(index)
+        self.setOnClickUseCombo()
+        # SLOT
+        self.combo_use.activated.connect(lambda: self.setOnClickDataCombo())
+
+    def enableUseCombo(self):
+        self.combo_use.setEnabled(True)
+
+    def disableUseCombo(self):
+        self.combo_use.setEnabled(False)
+
+
+
     def resetUI(self):
         """ Resetta solamente gli elementi ui allo stato in cui dovrebbero essere all'apertura dell'applicazione
             lasciando inalterate le variabili di modello"""
@@ -139,14 +218,10 @@ class MainWindow(QMainWindow):
         self.disableradios()
         self.disableMainButtonTrain()
         self.disableUseApply()
+        # Combobox
+        self.disableUseCombo()
+        self.combo_use.clear()
 
-    def add_radio_split(self, ruolo: str, esempi: int):
-        # Aggiunge radio button al layout della scrollview main_list_columns
-        radio = QtWidgets.QRadioButton("fino a ruolo: " + ruolo + " esempi: " + str(esempi))
-        # utilizzo l'objectname per salvare il dato del ruolo
-        radio.setObjectName(ruolo)
-        radio.toggled.connect(lambda: self.onClickedSplitRadio())
-        self.main_list_split_layout.addWidget(radio)
 
     def openFirstWindow(self):
         # apertura schermata inziale con passaggio della mainwindow come parent
@@ -191,6 +266,9 @@ class MainWindow(QMainWindow):
         datainfo = self.model.get_data_info()
         self.setlabelsData(datainfo[0], datainfo[1], datainfo[2])
 
+        # Imposto la ComboBox nel Tab dati
+        self.setDataCombo()
+
         # Impostazione lista colonne nella scroll area
         # Pulisco prima il layout
         self.clearScrollArea(self.main_list_columns_layout)
@@ -200,9 +278,12 @@ class MainWindow(QMainWindow):
         for i in columnlist:
             self.add_checkbox_columns(i)
         self.main_list_columns.widget().adjustSize()
-        self.main_list_columns.setMinimumWidth(self.main_list_columns.widget().width() + 30)
-        # Salvo larghezza iniziale widget per reset
-        self.columnwidgetsize=self.main_list_columns.minimumWidth()
+        if self.columnwidgetsize is None:
+            self.main_list_columns.setMinimumWidth(self.main_list_columns.widget().width() + 30)
+            # Salvo larghezza iniziale widget per reset
+            self.columnwidgetsize=self.main_list_columns.minimumWidth()
+        else:
+            self.main_list_columns.setMinimumWidth(self.columnwidgetsize)
 
         # impostazione lista split nella scroll area
         # Pulisco prima il layout
@@ -212,9 +293,12 @@ class MainWindow(QMainWindow):
         for i in range(len(ruoli)):
             self.add_radio_split(ruoli[i], nesempi[i])
         self.main_list_split.widget().adjustSize()
-        self.main_list_split.setMinimumWidth(self.main_list_split.widget().width() + 30)
-        # Salvo larghezza iniziale widget per reset
-        self.splitnwidgetsize = self.main_list_split.minimumWidth()
+        if self.splitnwidgetsize is None:
+            self.main_list_split.setMinimumWidth(self.main_list_split.widget().width() + 30)
+            # Salvo larghezza iniziale widget per reset
+            self.splitnwidgetsize = self.main_list_split.minimumWidth()
+        else:
+            self.main_list_split.setMinimumWidth(self.splitnwidgetsize)
 
     def openLoadNewFileWindow(self):
         # apertura schermata nuovo file per utilizzo
@@ -229,7 +313,10 @@ class MainWindow(QMainWindow):
         # Imposto la label per nome file
         filename = self.model.get_use_datafilename()
         self.setlabelUtilizzaFilename(filename)
-        # Abilito il bottone per l'utilizzo del modello sui nuovi dati
+        # Inizializzo la combobox
+        self.setUseCombo()
+        # Abilito il bottone per l'utilizzo del modello sui nuovi dati e la combobox
+        self.enableUseCombo()
         self.enableUseApply()
 
     def openSaveDialog(self):
@@ -510,8 +597,13 @@ class MainWindow(QMainWindow):
         # Reset bottoni main page
         self.disableMainButtonTrain()
 
-        # Reset bottoni Utilizza
+        # Reset combobox Dati
+        self.setDataCombo()
+
+        # Reset bottone e combobox Utilizza
         self.disableUseApply()
+        self.disableUseCombo()
+        self.combo_use.clear()
 
         # Abilito scroll areas con checkbox e bottoni
         self.enablescrolls()
@@ -535,6 +627,11 @@ class MainWindow(QMainWindow):
             self.add_radio_split(ruoli[i], nesempi[i])
         self.main_list_split.widget().adjustSize()
         self.main_list_split.setMinimumWidth(self.splitnwidgetsize)
+
+    def buttonDataPreprocessInfo(self):
+        # chiama NewColumnsDialog per ottenere informazioni sulle colonne aggiunte
+        dialog= NewColumnsDialog()
+        dialog.exec_()
 
     def buttonDataExport(self):
         # chiama opensave dialog per ottere il path di salvataggio poi invoca la funzione del modello per salvare
@@ -911,6 +1008,9 @@ class MainWindow(QMainWindow):
         self.label_data_positive.setObjectName("label_data_positive")
         self.formLayout_3.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.label_data_positive)
         self.verticalLayout_2.addLayout(self.formLayout_3)
+
+        self.horizontalLayout_box = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_box.setSpacing(0)
         self.formLayout_4 = QtWidgets.QFormLayout()
         self.formLayout_4.setObjectName("formLayout_4")
         self.label_18 = QtWidgets.QLabel(self.Data)
@@ -919,7 +1019,16 @@ class MainWindow(QMainWindow):
         self.label_data_negative = QtWidgets.QLabel(self.Data)
         self.label_data_negative.setObjectName("label_data_negative")
         self.formLayout_4.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.label_data_negative)
-        self.verticalLayout_2.addLayout(self.formLayout_4)
+        self.horizontalLayout_box.addLayout(self.formLayout_4)
+        self.combo_data= QtWidgets.QComboBox(self.Data)
+        spacerItem_data = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_box.addItem(spacerItem_data)
+        self.combo_data.setObjectName("combo_data")
+        self.horizontalLayout_box.addWidget(self.combo_data)
+
+        self.verticalLayout_2.addLayout(self.horizontalLayout_box)
+
+
         self.table_data = QtWidgets.QTableView(self.Data)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
@@ -932,6 +1041,9 @@ class MainWindow(QMainWindow):
         self.verticalLayout_2.addWidget(self.table_data)
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
+        self.data_preprocess_info = QtWidgets.QPushButton(self.Data)
+        self.data_preprocess_info.setObjectName("data_preprocess_info")
+        self.horizontalLayout.addWidget(self.data_preprocess_info)
         spacerItem14 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem14)
         self.data_export = QtWidgets.QPushButton(self.Data)
@@ -1335,11 +1447,14 @@ class MainWindow(QMainWindow):
         self.use_loadfile = QtWidgets.QPushButton(self.Utilizza)
         self.use_loadfile.setObjectName("use_loadfile")
         self.horizontalLayout_8.addWidget(self.use_loadfile)
-        spacerItem34 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_8.addItem(spacerItem34)
         self.use_apply = QtWidgets.QPushButton(self.Utilizza)
         self.use_apply.setObjectName("use_apply")
         self.horizontalLayout_8.addWidget(self.use_apply)
+        spacerItem34 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_8.addItem(spacerItem34)
+        self.combo_use = QtWidgets.QComboBox(self.Utilizza)
+        self.combo_use.setObjectName("combo_use")
+        self.horizontalLayout_8.addWidget(self.combo_use)
         self.verticalLayout_5.addLayout(self.horizontalLayout_8)
         self.table_use = QtWidgets.QTableView(self.Utilizza)
         self.table_use.setObjectName("table_use")
@@ -1383,6 +1498,7 @@ class MainWindow(QMainWindow):
         self.main_button_train.clicked.connect(lambda: self.buttonTrainModel())
         self.main_button_file.clicked.connect(lambda: self.buttonLoadNewTrainFile())
         self.main_button_reset.clicked.connect(lambda: self.buttonReset())
+        self.data_preprocess_info.clicked.connect(lambda: self.buttonDataPreprocessInfo())
         self.data_export.clicked.connect(lambda: self.buttonDataExport())
         self.train_export.clicked.connect(lambda: self.buttonTrainExport())
         self.test_export.clicked.connect(lambda: self.buttonTestExport())
@@ -1449,8 +1565,9 @@ class MainWindow(QMainWindow):
         self.label_14.setText(_translate("MainWindow", "Numero di titoli presenti:"))
         self.label_16.setText(_translate("MainWindow", "Numero di titoli con label positiva:"))
         self.label_data_positive.setText(_translate("MainWindow", "nessuno"))
-        self.label_18.setText(_translate("MainWindow", "Numero di titoli con label Negativa:"))
+        self.label_18.setText(_translate("MainWindow", "Numero di titoli con label Negativa: "))
         self.label_data_negative.setText(_translate("MainWindow", "nessuno"))
+        self.data_preprocess_info.setText(_translate("MainWindow", "Informazioni Colonne Aggiuntive"))
         self.data_export.setText(_translate("MainWindow", "Esporta"))
         self.TabWidget.setTabText(self.TabWidget.indexOf(self.Data), _translate("MainWindow", "Data"))
         self.label_15.setText(_translate("MainWindow", "Informazioni sui dati di addestramento in-sample:"))

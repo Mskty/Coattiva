@@ -8,7 +8,7 @@ class NewDataModel:
 
     def __init__(self, type: PFPGEnum, filetype:NewFileEnum, columns: list, filename: str ):
         try:
-            self.df: pd.DataFrame = pd.read_csv(filename)
+            self.original_df: pd.DataFrame = pd.read_csv(filename)
         except Exception:
             print("no file passed")
         self.type: PFPGEnum = type
@@ -18,10 +18,10 @@ class NewDataModel:
         # Se dati storici allora eseguo anche la pulizia altrimenti solo preparazione
         if self.filetype == NewFileEnum.OLD:
             # Pulizia dei dati
-            cleaner = StoricCleaner(self.type, self.df)
-            self.df = cleaner.clean()
+            cleaner = StoricCleaner(self.type, self.original_df)
+            self.cleaned_df = cleaner.clean()
             # Preprocessamento
-            preprocesser = StoricPreprocesser(self.type, self.df)
+            preprocesser = StoricPreprocesser(self.type, self.cleaned_df)
             self.df = preprocesser.prepare()
         elif self.filetype == NewFileEnum.NEW:
             # Preprocessamento

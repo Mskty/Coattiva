@@ -12,19 +12,19 @@ class DataModel:
 
     def __init__(self, type: PFPGEnum, data: pd.DataFrame = None, filename: str = None):
         try:
-            self.df: pd.DataFrame = pd.read_csv(filename)
+            self.original_df: pd.DataFrame = pd.read_csv(filename)
         except Exception:
             print("no file passed")
         if data is not None:
-            self.df: pd.DataFrame = data
+            self.original_df: pd.DataFrame = data
         self.type: PFPGEnum = type
 
         # Pulizia dei dati
-        cleaner = StoricCleaner(self.type, self.df)
-        self.df = cleaner.clean()
+        cleaner = StoricCleaner(self.type, self.original_df)
+        self.cleaned_df = cleaner.clean()
 
         # Preparazione dei dati
-        preprocesser = StoricPreprocesser(self.type, self.df)
+        preprocesser = StoricPreprocesser(self.type, self.cleaned_df)
         self.df = preprocesser.prepare()
 
         # Inizializzazione colonne abilitate e disabilitate
