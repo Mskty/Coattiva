@@ -731,7 +731,7 @@ class MainWindow(QMainWindow):
         # chiama opensave dialog per ottere il path di salvataggio poi invoca la funzione del modello per salvare
         filepath = self.openSaveDialog()
         try:
-            self.model.export_data(filepath)
+            self.model.export_usedata(filepath)
         except:
             pass
 
