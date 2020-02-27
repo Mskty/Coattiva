@@ -33,6 +33,7 @@ class NewColumnsDialog(QtWidgets.QDialog):
         MetricheDialog.setObjectName("MetricheDialog")
         MetricheDialog.resize(858, 400)
         MetricheDialog.setMinimumSize(QtCore.QSize(858, 400))
+        MetricheDialog.setWindowModality(QtCore.Qt.NonModal)
         font = QtGui.QFont()
         font.setFamily("Arial")
         MetricheDialog.setFont(font)

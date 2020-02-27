@@ -9,6 +9,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtGui import QStandardItemModel
 from PyQt5.QtWidgets import QMainWindow, QFileDialog, QHeaderView
+import time as time
 
 from data.Model import *
 from model.TableModel import *
@@ -265,7 +266,7 @@ class MainWindow(QMainWindow):
     """ Funzioni SLOTS """
 
     def buttonTrainModel(self):
-        waitdialog = WaitingDialog(self)
+        waitdialog = WaitingDialog()
         waitdialog.show()
         # addestramento modello e setup ui risultati
         self.model.train_algorithm()
@@ -316,8 +317,8 @@ class MainWindow(QMainWindow):
             self.test_recall.setText("na")
             self.test_f1.setText("na")
 
-
-        waitdialog.success(True)
+        time.sleep(10)
+        #waitdialog.success(True)
 
 
     #TODO PARTE UTILIZZA

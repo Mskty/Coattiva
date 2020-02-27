@@ -33,12 +33,11 @@ class WaitingDialog(QtWidgets.QDialog):
         button=QtWidgets.QPushButton("Chiudi")
         button.clicked.connect(lambda: self.close())
         self.verticalLayout.addWidget(button)
-        print("wut")
         #self.setWindowFlags(self.windowFlags() & QtCore.Qt.WindowCloseButtonHint)
 
     def setupUi(self, WaitingDialog):
         WaitingDialog.setObjectName("WaitingDialog")
-        WaitingDialog.setWindowModality(QtCore.Qt.ApplicationModal)
+        WaitingDialog.setWindowModality(QtCore.Qt.NonModal)
         WaitingDialog.resize(320, 100)
         WaitingDialog.setMinimumSize(QtCore.QSize(320, 100))
         WaitingDialog.setMaximumSize(QtCore.QSize(320, 100))

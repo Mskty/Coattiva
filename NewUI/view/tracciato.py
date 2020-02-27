@@ -138,6 +138,7 @@ class TracciatoDialog(QtWidgets.QDialog):
         TracciatoDialog.setObjectName("TracciatoDialog")
         TracciatoDialog.resize(500, 400)
         TracciatoDialog.setMinimumSize(QtCore.QSize(500, 400))
+        TracciatoDialog.setWindowModality(QtCore.Qt.NonModal)
         font = QtGui.QFont()
         font.setFamily("Arial")
         font.setPointSize(10)
