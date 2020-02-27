@@ -38,7 +38,7 @@ class Model:
         self.test.export_to_csv(filepath)
 
     def export_usedata(self, filepath: str):
-        self.usedata.export_to_csv(filepath)
+        self.usedata.export_full_to_csv(filepath)
 
     def enablecolumn(self, column: str):
         # Abilita colonne in data, trainset e testset (se presenti)
@@ -119,6 +119,7 @@ class Model:
     def set_use_data(self, typefile: NewFileEnum, filename: str):
         # Inizializza i dati su cui si dovrà utilizzare il modello a partire da un file
         self.usedata = NewDataModel(self.train.type, typefile, self.columns, filename)  # fa  già pulizia e preparazione
+        self.use_datafilename=filename
 
     def reset_settings(self):
         # Resetta train test, algoritmo, nuovo file di utilizzo e colonne selezionate
@@ -209,7 +210,10 @@ class Model:
                 self.train.get_sampling_negative_label()]
 
     def get_disabledcolumns(self) -> list:
-        return self.data.disabledcolumns
+        # Ottiene la lista di colonne disattivate
+        disabledcolumns = list(self.data.disabledcolumns.columns.values)
+        disabledcolumns.remove("DataCaricoTitolo")
+        return disabledcolumns
 
     def get_sampling(self):
         if self.train.sampler == SamplingEnum.NONE:

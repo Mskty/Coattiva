@@ -181,7 +181,6 @@ class MainWindow(QMainWindow):
     def setOnClickUseCombo(self):
         # Imposta il corretto modello di tabella utilizza quando viene cambiata la selezione
         text = self.combo_use.currentText()
-        print(text)
         if text == "Dati Originali":
             self.usetable.data = self.model.usedata.original_df
         elif text == "Dati Aggregati":
@@ -329,11 +328,11 @@ class MainWindow(QMainWindow):
         # Imposto la label per nome file
         filename = self.model.get_use_datafilename()
         self.setlabelUtilizzaFilename(filename)
-        # Inizializzo la combobox
-        self.setUseCombo()
         # Abilito il bottone per l'utilizzo del modello sui nuovi dati e la combobox
-        self.enableUseCombo()
         self.enableUseApply()
+        # Inizializzo la combobox
+        self.enableUseCombo()
+        self.setUseCombo()
 
     def openSaveDialog(self):
         # Apre un dialog per ottenere un percorso su cui salvare un file
@@ -725,6 +724,8 @@ class MainWindow(QMainWindow):
         self.usetable.updatemodel()
         # Informo il dialog del successo
         dialog.success(True)
+        # Mi disabilito
+        self.disableUseApply()
 
     def buttonUseExport(self):
         # chiama opensave dialog per ottere il path di salvataggio poi invoca la funzione del modello per salvare

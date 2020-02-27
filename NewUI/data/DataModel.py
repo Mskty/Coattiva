@@ -30,7 +30,8 @@ class DataModel:
         # Inizializzazione colonne abilitate e disabilitate
         self.enabledcolumns = self.df.copy()
         self.enabledcolumns.drop(columns="DataCaricoTitolo", inplace=True)
-        self.disabledcolumns = self.df["DataCaricoTitolo"].copy()
+        self.disabledcolumns = pd.DataFrame()
+        self.disabledcolumns["DataCaricoTitolo"] = self.df["DataCaricoTitolo"].copy()
 
     # Getter functions
 
@@ -78,7 +79,8 @@ class DataModel:
     def enableallcolumns(self):
         self.enabledcolumns = self.df.copy()
         self.enabledcolumns.drop(columns="DataCaricoTitolo", inplace=True)
-        self.disabledcolumns = self.df["DataCaricoTitolo"].copy()
+        self.disabledcolumns = pd.DataFrame()
+        self.disabledcolumns["DataCaricoTitolo"] = self.df["DataCaricoTitolo"].copy()
 
     # Creazione oggetti TrainModel e TestModel
 

@@ -38,18 +38,28 @@ class NewDataModel:
         return len(self.enabledcolumns)
 
     def attach_predictions(self, pred: list):
-        self.df.insert(0, "predizione", pred)
+        if self.filetype == NewFileEnum.NEW:
+            self.original_df.insert(0, "predizione", pred)
+        elif self.filetype == NewFileEnum.OLD:
+            self.cleaned_df.insert(0, "predizione", pred)
         self.enabledcolumns.insert(0, "predizione", pred)
 
+
     def remove_predictions(self):
-        self.df.drop(columns="predizione", inplace=True)
+        if self.filetype == NewFileEnum.NEW:
+            self.original_df.drop(columns="predizione", inplace=True)
+        elif self.filetype == NewFileEnum.OLD:
+            self.cleaned_df.drop(columns="predizione", inplace=True)
         self.enabledcolumns.drop(columns="predizione", inplace=True)
 
     def export_to_csv(self, export_file_path):
         self.enabledcolumns.to_csv(export_file_path, index=None, header=True)
 
     def export_full_to_csv(self, export_file_path):
-        self.df.to_csv(export_file_path, index=None, header=True)
+        if self.filetype == NewFileEnum.NEW:
+            self.original_df.to_csv(export_file_path, index=None, header=True)
+        elif self.filetype == NewFileEnum.OLD:
+            self.cleaned_df.to_csv(export_file_path, index=None, header=True)
 
     def export_just_predictions_to_csv(self, export_file_path):
         self.df["predizione"].to_csv(export_file_path, index=None, header=True)
