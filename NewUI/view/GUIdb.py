@@ -265,9 +265,10 @@ class MainWindow(QMainWindow):
     """ Funzioni SLOTS """
 
     def buttonTrainModel(self):
+        waitdialog = WaitingDialog(self)
+        waitdialog.show()
         # addestramento modello e setup ui risultati
         self.model.train_algorithm()
-
 
 
         # aggiunta predizioni e risultati trainset
@@ -315,8 +316,7 @@ class MainWindow(QMainWindow):
             self.test_recall.setText("na")
             self.test_f1.setText("na")
 
-        waitdialog = WaitingDialog(self)
-        waitdialog.show()
+
         waitdialog.success(True)
 
 

@@ -64,7 +64,12 @@ class AlgorithmPipeline:
         Y = dataset["label"].to_numpy()
         X = dataset.drop(columns="label").to_numpy()
 
+        # Generazione del grafico
         skl.metrics.plot_roc_curve(self.classifier, X, Y)
+        ax = plt.gca()
+        ax.plot([0, 1], [0, 1], 'r--', label="Selezione Casuale (AUC = 0.5)")
+        ax.plot([0, 0, 1], [0, 1, 1], 'g-.', label="Classificatore Perfetto (AUC = 1.0)")
+        ax.legend(loc='lower right')
 
     def plot_precision_recall(self, dataset: pd.DataFrame):
         # fa comparire il grafico della precision vs recall con threshold della decision function (default 0)
@@ -85,7 +90,14 @@ class AlgorithmPipeline:
         Y = dataset["label"].to_numpy()
         X = dataset.drop(columns="label").to_numpy()
 
+        # Generazione del grafico
+
         skl.metrics.plot_precision_recall_curve(self.classifier, X, Y)
+        ax = plt.gca()
+        ax.plot([0, 1, 1], [1, 1, 0.5], 'g-.', label="Classificatore Perfetto (AP = 1.0)")
+        ax.set(ylabel="Precisione",
+               xlabel="Recall")
+        ax.legend(loc='lower right')
 
     def plot_confusion_matrix(self, dataset: pd.DataFrame):
         # da comparire il grafico della confusion matrix
@@ -105,4 +117,10 @@ class AlgorithmPipeline:
         # Separazione colonna label
         Y = dataset["label"].to_numpy()
         X = dataset.drop(columns="label").to_numpy()
-        skl.metrics.plot_confusion_matrix(self.classifier, X, Y, cmap=plt.cm.Blues, values_format="")
+
+        # Generazione del grafico
+        class_labels=["Positivo", "Negativo"]
+        skl.metrics.plot_confusion_matrix(self.classifier, X, Y, cmap=plt.cm.Blues, values_format="", display_labels=class_labels)
+        ax = plt.gca()
+        ax.set(ylabel="Risultati reali",
+               xlabel="Risultati predetti")

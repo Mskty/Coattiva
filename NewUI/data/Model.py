@@ -237,31 +237,37 @@ class Model:
     def get_confusion_matrix_train(self):
         plt.close()
         self.workingalgorithm.plot_confusion_matrix(self.train.enabledcolumns)
+        plt.title("Confusion Matrix per Training set")
         plt.show()
 
     def get_confusion_matrix_test(self):
         plt.close()
         self.workingalgorithm.plot_confusion_matrix(self.test.enabledcolumns)
+        plt.title("Confusion Matrix per Test set")
         plt.show()
 
     def get_auc_curve_train(self):
         plt.close()
         self.workingalgorithm.plot_roc_curve(self.train.enabledcolumns)
+        plt.title("Roc-Auc Curve per Training set")
         plt.show()
 
     def get_auc_curve_test(self):
         plt.close()
         self.workingalgorithm.plot_roc_curve(self.test.enabledcolumns)
+        plt.title("Roc-Auc Curve per Test set")
         plt.show()
 
     def get_prc_curve_train(self):
         plt.close()
         self.workingalgorithm.plot_precision_recall(self.train.enabledcolumns)
+        plt.title("Precision-Recall Curve per Training set")
         plt.show()
 
     def get_prc_curve_test(self):
         plt.close()
         self.workingalgorithm.plot_precision_recall(self.test.enabledcolumns)
+        plt.title("Precision-Recall Curve per Test set")
         plt.show()
 
     """ ----------------------------------------------DEBUG FUNCTIONS----------------------------------------------- """
