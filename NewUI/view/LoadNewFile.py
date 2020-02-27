@@ -39,8 +39,8 @@ class LoadNewFile(QtWidgets.QDialog):
     def openFileNameDialog(self):
         # Apre finesta per recupero file e lo passa al modello se corretto
         options = QFileDialog.Options()
-        fileName, _ = QFileDialog.getOpenFileName(self, "QFileDialog.getOpenFileName()", "",
-                                                  "All Files (*);;CSV Files (*.csv)", options=options)
+        fileName, _ = QFileDialog.getOpenFileName(self, "Carica File csv", "",
+                                                  "CSV Files (*.csv)", options=options)
         # DEBUG
         if fileName:
             print(fileName)

@@ -322,7 +322,7 @@ class MainWindow(QMainWindow):
     def openSaveDialog(self):
         # Apre un dialog per ottenere un percorso su cui salvare un file
         options = QFileDialog.Options()
-        fileName, _ = QFileDialog.getSaveFileName(self, "QFileDialog.getSaveFileName()", "",
+        fileName, _ = QFileDialog.getSaveFileName(self, "Crea/Salva File csv", "",
                                                   "Csv Files (*.csv)", options=options)
         # DEBUG
         if fileName:
