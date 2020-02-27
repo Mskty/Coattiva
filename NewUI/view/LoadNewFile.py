@@ -56,7 +56,8 @@ class LoadNewFile(QtWidgets.QDialog):
     def onClickedLoadFileButton(self):
         filename = self.openFileNameDialog()
         if filename:
-            dialog=WaitingDialog(self)
+            text = "Attendi mentre i dati contenuti sul file selezionato vengono elaborati"
+            dialog=WaitingDialog(self,text)
             dialog.show()
             try:
                 self.mainwindow.model.set_use_data(self.type, filename)

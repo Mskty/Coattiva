@@ -60,10 +60,10 @@ class FirstWindow(QtWidgets.QDialog):
 
     def onClickedLoadFileButton(self):
         filename = self.openFileNameDialog()
-        dialog = WaitingDialog(self)
-        dialog.show()
         if filename:
-
+            text = "Attendi mentre i titoli di credito storici vengono puliti, aggregati e preparati all'utilizzo"
+            dialog = WaitingDialog(self, text)
+            dialog.show()
             try:
                 self.mainwindow.model.set_data(self.type, filename)
                 # informo il dialog del successo

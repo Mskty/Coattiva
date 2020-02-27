@@ -10,10 +10,12 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 
 class WaitingDialog(QtWidgets.QDialog):
 
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, text=None):
         # Inizializzazione con parent
         super().__init__(parent)
         self.setupUi(self)
+        if text is not None:
+            self.label.setText(text)
 
     def success(self, success: bool):
         # Operazione terminata lo scrivo e permetto di chiudere la finestra
@@ -49,6 +51,7 @@ class WaitingDialog(QtWidgets.QDialog):
         self.verticalLayout.setObjectName("verticalLayout")
         self.label = QtWidgets.QLabel(WaitingDialog)
         self.label.setAlignment(QtCore.Qt.AlignCenter)
+        self.label.setWordWrap(True)
         self.label.setObjectName("label")
         self.verticalLayout.addWidget(self.label)
         self.progressBar = QtWidgets.QProgressBar(WaitingDialog)

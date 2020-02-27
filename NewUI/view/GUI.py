@@ -418,9 +418,9 @@ class MainWindow(QMainWindow):
 
     def setlabelFileLabelRatio(self, positivelabel: float, negativelabel: float):
         self.filelabelratio.setText(
-            "1) I titoli contenuti nel training set hanno label per {0:.2f}".format(positivelabel) +
+            "1) I titoli contenuti nel training set hanno label al {0:.2f}".format(positivelabel) +
             "% positiva e {0:.2f}".format(negativelabel) +
-            "% negativa, selezionare un algoritmo di sampling per equilibrare gli esempi.")
+            "% negativa, è possibile selezionare un algoritmo di sampling per equilibrarli.")
 
     # Tab data
     def setlabelsData(self, tot: int, pos: int, neg: int):
@@ -500,6 +500,7 @@ class MainWindow(QMainWindow):
         """
 
         # Apertura finestra di attesa
+        text = "Attendi mentre il modello predittivo viene addestrato e testato sui dati storici"
         waitdialog = WaitingDialog(self)
         waitdialog.show()
 
@@ -699,7 +700,8 @@ class MainWindow(QMainWindow):
     def buttonUseApply(self):
         # Riporta i risultati del modello sulla tabella del file di utilizzo
         # Dialog di attesa
-        dialog = WaitingDialog(self)
+        text="Attendi mentre il modello effettua predizioni sui dati inseriti"
+        dialog = WaitingDialog(self,text)
         dialog.show()
         # Ottieni predizioni
         self.model.predict_use_data()
