@@ -168,6 +168,9 @@ class MainWindow(QMainWindow):
         self.combo_data.clear()
         names=["Dati Originali", "Dati Aggregati", "Dati Preparati"]
         self.combo_data.addItems(names)
+        # Size
+        width = self.combo_use.minimumSizeHint().width()
+        self.combo_use.setMinimumWidth(width)
         # Imposto come default l'opzione preparati
         index = self.combo_data.findText("Dati Preparati")
         self.combo_data.setCurrentIndex(index)
@@ -178,6 +181,7 @@ class MainWindow(QMainWindow):
     def setOnClickUseCombo(self):
         # Imposta il corretto modello di tabella utilizza quando viene cambiata la selezione
         text = self.combo_use.currentText()
+        print(text)
         if text == "Dati Originali":
             self.usetable.data = self.model.usedata.original_df
         elif text == "Dati Aggregati":
@@ -198,12 +202,15 @@ class MainWindow(QMainWindow):
             names = ["Dati Originali", "Dati Preparati"]
 
         self.combo_use.addItems(names)
+        #Size
+        width=self.combo_use.minimumSizeHint().width()
+        self.combo_use.setMinimumWidth(width)
         # Imposto come default l'opzione preparati
         index = self.combo_use.findText("Dati Preparati")
         self.combo_use.setCurrentIndex(index)
         self.setOnClickUseCombo()
         # SLOT
-        self.combo_use.activated.connect(lambda: self.setOnClickDataCombo())
+        self.combo_use.activated.connect(lambda: self.setOnClickUseCombo())
 
     def enableUseCombo(self):
         self.combo_use.setEnabled(True)

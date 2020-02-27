@@ -174,6 +174,9 @@ class Model:
         elif self.usedata.filetype == NewFileEnum.NEW:
             return "Dati Recenti"
 
+    def get_use_datafilename(self):
+        return self.use_datafilename
+
     def get_traintype(self):
         if self.data.type == PFPGEnum.PF:
             return "Persone Fisiche"

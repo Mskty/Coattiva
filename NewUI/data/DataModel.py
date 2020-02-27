@@ -3,12 +3,12 @@ from utility.Enums import *
 from data.TrainModel import *
 from data.TestModel import *
 from data.StoricCleaner import *
-from data.Preprocesser import *
+from data.StoricPreprocesser import *
 
 
 class DataModel:
 
-    # La colonna DataCaricoTitolo e label è sempre abilitata
+    # La label è sempre abilitata mentre DataCaricoTitolo sempre disabilitata
 
     def __init__(self, type: PFPGEnum, data: pd.DataFrame = None, filename: str = None):
         try:
@@ -24,12 +24,13 @@ class DataModel:
         self.cleaned_df = cleaner.clean()
 
         # Preparazione dei dati
-        preprocesser = Preprocesser(self.type, self.cleaned_df)
+        preprocesser = StoricPreprocesser(self.type, self.cleaned_df)
         self.df = preprocesser.prepare()
 
         # Inizializzazione colonne abilitate e disabilitate
         self.enabledcolumns = self.df.copy()
-        self.disabledcolumns = pd.DataFrame()
+        self.enabledcolumns.drop(columns="DataCaricoTitolo", inplace=True)
+        self.disabledcolumns = self.df["DataCaricoTitolo"].copy()
 
     # Getter functions
 
@@ -76,7 +77,8 @@ class DataModel:
 
     def enableallcolumns(self):
         self.enabledcolumns = self.df.copy()
-        self.disabledcolumns = pd.DataFrame()
+        self.enabledcolumns.drop(columns="DataCaricoTitolo", inplace=True)
+        self.disabledcolumns = self.df["DataCaricoTitolo"].copy()
 
     # Creazione oggetti TrainModel e TestModel
 
@@ -133,8 +135,8 @@ class DataModel:
         testdisabled = self.disabledcolumns[self.disabledcolumns.index.isin(testindex)].copy()
 
         # Drop della colonna DataCaricoTitolo una volta separati i due set
-        trainenabled.drop(columns="DataCaricoTitolo", inplace=True)
-        testenabled.drop(columns="DataCaricoTitolo", inplace=True)
+        traindisabled.drop(columns="DataCaricoTitolo", inplace=True)
+        testdisabled.drop(columns="DataCaricoTitolo", inplace=True)
 
         # Ritorno train e test set
 
@@ -149,4 +151,4 @@ class DataModel:
 
     # Esportazione dati su csv
     def export_to_csv(self, export_file_path):
-        self.enabledcolumns.to_csv(export_file_path, index=None, header=True)
+        self.df.to_csv(export_file_path, index=None, header=True)

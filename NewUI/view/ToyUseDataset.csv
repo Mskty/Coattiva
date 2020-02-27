@@ -1,0 +1,6 @@
+label,DataCaricoTitolo,Telefono,IndirizzoResidenza,CittadinanzaItaliana,Deceduto,ValoreTitolo,NumeroTitoliAperti,DovutoTitoliAperti,ImportoTitoliAperti,NumeroTitoliSaldati,ImportoTitoliSaldati,NumeroTitoliRecenti,TotaleTitoliRecenti,Eta,Vetusta,TitoliCredito
+True,2015-01-01,1,"31031, TV",1,0,90,0,0,0,0,0,2,90,45,0,2
+False,2015-01-01,1,"31056, PD",1,0,150,2,100,100,5,200,3,150,55,0,3
+True,2018-01-01,0,"31042, EE",1,0,100,5,250,250,5,200,1,100,58,1096,1
+False,2018-01-01,0,"31050, MU",0,1,70,1,50,70,0,0,2,70,73,1096,2
+True,2018-01-01,1,"31059, TV",1,0,20,0,0,0,10,1000,1,20,33,1096,1
