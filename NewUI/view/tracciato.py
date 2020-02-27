@@ -139,9 +139,10 @@ class TracciatoDialog(QtWidgets.QDialog):
         TracciatoDialog.resize(500, 400)
         TracciatoDialog.setMinimumSize(QtCore.QSize(500, 400))
         TracciatoDialog.setWindowModality(QtCore.Qt.NonModal)
+        # FONT GENERALE
         font = QtGui.QFont()
         font.setFamily("Arial")
-        font.setPointSize(10)
+        font.setPointSize(9)
         TracciatoDialog.setFont(font)
         self.verticalLayout = QtWidgets.QVBoxLayout(TracciatoDialog)
         self.verticalLayout.setObjectName("verticalLayout")
@@ -193,6 +194,15 @@ class TracciatoDialog(QtWidgets.QDialog):
 
         # Disable help button
         self.setWindowFlags(self.windowFlags() & ~QtCore.Qt.WindowContextHelpButtonHint)
+
+        # FONTs
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setPointSize(12)
+        font.setBold(True)
+        self.label.setFont(font)
+        font.setPointSize(9)
+        self.tableWidget.horizontalHeader().setFont(font)
 
         self.retranslateUi(TracciatoDialog)
         QtCore.QMetaObject.connectSlotsByName(TracciatoDialog)

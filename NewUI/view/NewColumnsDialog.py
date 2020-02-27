@@ -36,6 +36,7 @@ class NewColumnsDialog(QtWidgets.QDialog):
         MetricheDialog.setWindowModality(QtCore.Qt.NonModal)
         font = QtGui.QFont()
         font.setFamily("Arial")
+        font.setPointSize(9)
         MetricheDialog.setFont(font)
         self.verticalLayout = QtWidgets.QVBoxLayout(MetricheDialog)
         self.verticalLayout.setObjectName("verticalLayout")
@@ -43,7 +44,8 @@ class NewColumnsDialog(QtWidgets.QDialog):
         self.label.setMinimumSize(QtCore.QSize(0, 40))
         font = QtGui.QFont()
         font.setFamily("Arial")
-        font.setPointSize(10)
+        font.setBold(True)
+        font.setPointSize(12)
         self.label.setFont(font)
         self.label.setAlignment(QtCore.Qt.AlignCenter)
         self.label.setObjectName("label")
@@ -54,10 +56,6 @@ class NewColumnsDialog(QtWidgets.QDialog):
         self.line.setObjectName("line")
         self.verticalLayout.addWidget(self.line)
         self.label_2 = QtWidgets.QLabel(MetricheDialog)
-        font = QtGui.QFont()
-        font.setFamily("Arial")
-        font.setPointSize(9)
-        self.label_2.setFont(font)
         self.label_2.setAlignment(QtCore.Qt.AlignJustify|QtCore.Qt.AlignVCenter)
         self.label_2.setWordWrap(True)
         self.label_2.setObjectName("label_2")
@@ -78,6 +76,13 @@ class NewColumnsDialog(QtWidgets.QDialog):
 
         # Disable help button
         self.setWindowFlags(self.windowFlags() & ~QtCore.Qt.WindowContextHelpButtonHint)
+
+        # FONTs
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setBold(True)
+        font.setPointSize(9)
+        self.tableWidget.horizontalHeader().setFont(font)
 
         self.retranslateUi(MetricheDialog)
         QtCore.QMetaObject.connectSlotsByName(MetricheDialog)

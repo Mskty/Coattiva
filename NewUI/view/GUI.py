@@ -134,8 +134,17 @@ class MainWindow(QMainWindow):
 
     def add_radio_split(self, ruolo: str, esempi: int):
         # Aggiunge radio button al layout della scrollview main_list_columns
-        radio = QtWidgets.QRadioButton("fino a ruolo: " + ruolo + " esempi: " + str(esempi))
-        # utilizzo l'objectname per salvare il dato del ruolo
+        totali=self.model.data.get_rows()
+        train=esempi
+        test=totali-esempi
+        if test > 0:
+            radio = QtWidgets.QRadioButton(
+                "Fino a ruolo: " + ruolo + "\nEsempi per training: " + str(train) + "\nEsempi per test: "+str(test))
+        else:
+            radio = QtWidgets.QRadioButton(
+                "Fino a ruolo: " + ruolo + "\nEsempi per training: " + str(train) + "\nTest set vuoto \n(migliori "
+                                                                                    "performance)")
+            # utilizzo l'objectname per salvare il dato del ruolo
         radio.setObjectName(ruolo)
         radio.toggled.connect(lambda: self.onClickedSplitRadio())
         self.main_list_split_layout.addWidget(radio)
@@ -444,7 +453,7 @@ class MainWindow(QMainWindow):
     def setlabelsRisultati(self, type: str, totallable: int, positivelabel: float, negativelabel: float, sampling: str,
                            scaling: str, algorithm: str, ignoredcolumns: list):
         self.results_typep.setText("Tipologia di titoli di credito: " + type)
-        self.results_number_examples.setText("Numero di esempi utilizzati nell'addestramento:" + str(totallable) +
+        self.results_number_examples.setText("Numero di esempi utilizzati nell'addestramento: " + str(totallable) +
                                              ", di cui {0:.2f}".format(
                                                  positivelabel) + "% con label positiva e {0:.2f}".format(
             negativelabel) + "% con label negativa")
@@ -729,6 +738,13 @@ class MainWindow(QMainWindow):
         sizePolicy.setHeightForWidth(MainWindow.sizePolicy().hasHeightForWidth())
         MainWindow.setSizePolicy(sizePolicy)
         MainWindow.setMinimumSize(QtCore.QSize(900, 800))
+
+        # FONT GENERALE
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setPointSize(9)
+        MainWindow.setFont(font)
+
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.centralwidget)
@@ -951,12 +967,12 @@ class MainWindow(QMainWindow):
         spacerItem12 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.MinimumExpanding,
                                              QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_7.addItem(spacerItem12)
-        self.main_button_reset = QtWidgets.QPushButton(self.Main)
-        self.main_button_reset.setObjectName("main_button_reset")
-        self.horizontalLayout_7.addWidget(self.main_button_reset)
         self.main_button_train = QtWidgets.QPushButton(self.Main)
         self.main_button_train.setObjectName("main_button_train")
         self.horizontalLayout_7.addWidget(self.main_button_train)
+        self.main_button_reset = QtWidgets.QPushButton(self.Main)
+        self.main_button_reset.setObjectName("main_button_reset")
+        self.horizontalLayout_7.addWidget(self.main_button_reset)
         self.verticalLayout_6.addLayout(self.horizontalLayout_7)
         self.verticalLayout_13 = QtWidgets.QVBoxLayout()
         self.verticalLayout_13.setObjectName("verticalLayout_13")
@@ -1475,15 +1491,66 @@ class MainWindow(QMainWindow):
         self.verticalLayout.addWidget(self.TabWidget)
         MainWindow.setCentralWidget(self.centralwidget)
 
+        #FONTS per le label e tabelle
+
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setPointSize(9)
+        font.setBold(True)
+        self.TabWidget.tabBar().setFont(font)
+        # Tab main
+        self.label_7.setFont(font)
+        self.label_5.setFont(font)
+        self.label.setFont(font)
+        self.label_10.setFont(font)
+        self.label_3.setFont(font)
+        self.main_button_reset.setFont(font)
+        self.main_button_train.setFont(font)
+        # Tab data train test
+        self.label_13.setFont(font)
+        self.label_15.setFont(font)
+        self.label_27.setFont(font)
+        self.label_data_total.setFont(font)
+        self.label_data_positive.setFont(font)
+        self.label_data_negative.setFont(font)
+        self.label_train_total.setFont(font)
+        self.label_train_positive.setFont(font)
+        self.label_train_negative.setFont(font)
+        self.label_test_total.setFont(font)
+        self.label_test_positive.setFont(font)
+        self.label_test_negative.setFont(font)
+        # Tab risultati
+        self.label_29.setFont(font)
+        self.label_36.setFont(font)
+        self.label_37.setFont(font)
+        self.label_32.setFont(font)
+        self.label_34.setFont(font)
+        self.label_47.setFont(font)
+        self.label_48.setFont(font)
+        self.label_30.setFont(font)
+        self.label_44.setFont(font)
+        self.label_31.setFont(font)
+        self.label_45.setFont(font)
+        self.label_49.setFont(font)
+        self.label_50.setFont(font)
+        self.label_46.setFont(font)
+        # Tab utilizza
+        self.label_22.setFont(font)
+        self.use_loadfile.setFont(font)
+        self.use_apply.setFont(font)
+        #Tabelle
+        self.table_data.horizontalHeader().setFont(font)
+        self.table_train.horizontalHeader().setFont(font)
+        self.table_test.horizontalHeader().setFont(font)
+        self.table_use.horizontalHeader().setFont(font)
+
+
+
         # RetranslateUi
         self.retranslateUi(MainWindow)
 
         # Set iniziale delle tabs
         self.TabWidget.setCurrentIndex(0)
-        self.disableTrain()
-        self.disableTest()
-        self.disableRisultati()
-        self.disableUtilizza()
 
         # Slots
         self.sampling1.toggled.connect(lambda: self.model.set_sampling(SamplingEnum.NONE))
@@ -1526,9 +1593,9 @@ class MainWindow(QMainWindow):
         self.label_4.setText(_translate("MainWindow",
                                         "Eliminare il check dal nome della colonna che si desidera ignorare per l\'addestramento:"))
         self.label_8.setText(_translate("MainWindow",
-                                        "Nell'utilizzo del modello predittivo verranno utilizzate solamente le colonne rimaste selezionate."))
+                                        "Verranno utilizzate solamente le colonne rimaste selezionate."))
         self.label_5.setText(_translate("MainWindow",
-                                        "Selezionare fino a quale ruolo comprenderà il training set:"))
+                                        "Selezionare fino a quale ruolo genererà il training set:"))
         self.label_12.setText(_translate("MainWindow", "I ruoli successivi alla data scelta comporranno il test set"))
         self.label_3.setText(_translate("MainWindow", "Addestramento Modello"))
         self.label.setText(_translate("MainWindow", "PREFERENZE RIGUARDANTI L\'ADDESTRAMENTO DEL MODELLO PREDITTIVO"))
@@ -1556,9 +1623,9 @@ class MainWindow(QMainWindow):
                                          "Clicca 'Addestra Modello' per addestrare il modello preddittivo sui titoli contenuti nel training set:"))
         self.main_button_train.setText(_translate("MainWindow", "Addestra Modello"))
         self.label_9.setText(_translate("MainWindow",
-                                        "Una volta addestrato saranno visualizzabili le predizioni su training e test set nella colonna 'predizione' aggiunta alle rispettive tabelle, inoltre le metriche relative all\' efficacia del modello saranno visualizzabili nella sezione Risultati. Sarà inoltre possibile utilizzare il modello addestrato nella sezione Utilizza."))
+                                        "Una volta addestrato saranno visualizzabili le predizioni su training e test set nella colonna 'predizione' aggiunta alle rispettive tabelle.\nLe metriche relative all\' efficacia del modello saranno visualizzabili nella sezione Risultati.\nSarà inoltre possibile utilizzare il modello addestrato nella sezione Utilizza."))
         self.label_11.setText(_translate("MainWindow",
-                                         "E\' possibile addestrare nuovamente il modello predittivo dopo aver modificato alcuni parametri premendo il pulsante Reset e nuovamente il pulsante Addestra."))
+                                         "E\' possibile addestrare un nuovo modello predittivo premendo il pulsante Reset e nuovamente il pulsante Addestra."))
         self.main_button_file.setText(_translate("MainWindow", "Caricamento nuovo file"))
         self.main_button_reset.setText(_translate("MainWindow", "Reset"))
         self.TabWidget.setTabText(self.TabWidget.indexOf(self.Main), _translate("MainWindow", "Main"))

@@ -2,7 +2,7 @@ from utility.funzioni import *
 from utility.Enums import *
 
 
-class StoricPreprocesser:
+class Preprocesser:
 
     def __init__(self, type: PFPGEnum, df: pd.DataFrame):
         self.__type = type

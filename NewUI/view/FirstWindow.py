@@ -83,6 +83,12 @@ class FirstWindow(QtWidgets.QDialog):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
         Dialog.resize(500, 400)
+        # FONT DI BASE
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setPointSize(9)
+        Dialog.setFont(font)
+
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -204,6 +210,18 @@ class FirstWindow(QtWidgets.QDialog):
 
         self.verticalLayout.addLayout(self.verticalLayout_2)
 
+        # FONTS
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setBold(True)
+        font.setPointSize(12)
+        self.label.setFont(font)
+        font.setPointSize(9)
+        self.label_6.setFont(font)
+        self.label_2.setFont(font)
+        self.label_3.setFont(font)
+        self.loadfile.setFont(font)
+
         # SLOTS
         self.radio_pf.clicked.connect(lambda: self.setType(PFPGEnum.PF))
         self.radio_pg.clicked.connect(lambda: self.setType(PFPGEnum.PG))
@@ -223,21 +241,21 @@ class FirstWindow(QtWidgets.QDialog):
         self.label.setText(_translate("Dialog", "BENVENUTO"))
         self.label_4.setText(_translate("Dialog",
                                         "E\' possibile caricare un file .csv contenente i titoli di credito storici "
-                                        "da cui partire ad addestrare un modello predittivo per la classificazione "
-                                        "delle label."))
+                                        "con cui addestrare un modello predittivo per la classificazione "
+                                        "di nuovi titoli."))
         self.label_6.setText(_translate("Dialog",
                                         "Il file deve seguire il tracciato utilizzato da questo applicativo per "
                                         "essere valido."))
         self.label_5.setText(_translate("Dialog",
                                         "Se il file risulta valido allora verranno automaticamente applicate "
-                                        "operazioni di pulizia e preprocessamento dei dati per renderli utilizzabili "
+                                        "operazioni di pulizia e preparazione dei dati per renderli utilizzabili "
                                         "come base per l\'algoritmo di apprendimento."))
         self.label_2.setText(
-            _translate("Dialog", "Scegli il tipo di debitori a cui sono riferiti i titoli di credito:"))
+            _translate("Dialog", "Scegli il tipo di contribuenti a cui sono riferiti i titoli di credito:"))
         self.radio_pf.setText(_translate("Dialog", "Persone Fisiche"))
         self.radio_pg.setText(_translate("Dialog", "Persone Giuridiche"))
         self.label_3.setText(
-            _translate("Dialog", "Premi per selezionare il file .csv contenente i dati storici sui titoli di credito:"))
+            _translate("Dialog", "Premi per selezionare il file contenente i titoli storici:"))
         self.loadfile.setText(_translate("Dialog", "Carica File"))
         self.label_7.setText(_translate("Dialog", "Premi per visualizzare il tracciato richiesto per il file .csv:"))
         self.tracciato.setText(_translate("Dialog", "Tracciato"))

@@ -78,6 +78,12 @@ class LoadNewFile(QtWidgets.QDialog):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
         Dialog.resize(500, 400)
+        # FONT DI BASE
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setPointSize(9)
+        Dialog.setFont(font)
+
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -182,6 +188,18 @@ class LoadNewFile(QtWidgets.QDialog):
 
         self.verticalLayout.addLayout(self.verticalLayout_5)
 
+        # FONTS
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setBold(True)
+        font.setPointSize(12)
+        self.label_2.setFont(font)
+        font.setPointSize(9)
+        self.label_5.setFont(font)
+        self.label_6.setFont(font)
+        self.label_3.setFont(font)
+        self.loadfile.setFont(font)
+
         # SLOTS
         self.radio_storici.clicked.connect(lambda: self.setType(NewFileEnum.OLD))
         self.radio_recenti.clicked.connect(lambda: self.setType(NewFileEnum.NEW))
@@ -207,7 +225,7 @@ class LoadNewFile(QtWidgets.QDialog):
         self.label.setText(_translate("Dialog",
                                       "E\' possibile caricare un file contenente dati storici col medesimo tracciato "
                                       "di quello utilizzato per l\'addestramento del modello oppure un file "
-                                      "contenente solamente titoli recenti facenti parte dello stesso ruolo."))
+                                      "contenente solamente titoli recenti facenti parte di uno stesso ruolo."))
         self.label_6.setText(_translate("Dialog", "Scegli il tipo di dati contenuti nel file da elaborare:"))
         self.radio_recenti.setText(_translate("Dialog", "Dati Recenti"))
         self.radio_storici.setText(_translate("Dialog", "Dati Storici"))
@@ -216,14 +234,5 @@ class LoadNewFile(QtWidgets.QDialog):
         self.loadfile.setText(_translate("Dialog", "Carica File"))
         self.label_7.setText(_translate("Dialog", "Premi per visualizzare il tracciato richiesto per il file .csv:"))
         self.tracciato.setText(_translate("Dialog", "Tracciato"))
-
-
-"""if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    Dialog = LoadNewFile()
-    Dialog.show()
-    # chiusura programma
-    sys.exit(app.exec_())"""
 
 

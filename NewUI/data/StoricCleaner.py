@@ -12,8 +12,6 @@ class StoricCleaner:
         elif self.__type == PFPGEnum.PG:
             self.__df = df[df.TipoPersonalità == "PF"].copy()
 
-
-
     """----------------------------------------------Persone Fisiche-----------------------------------------------"""
 
     def pf_setUp(self, df: pd.DataFrame):

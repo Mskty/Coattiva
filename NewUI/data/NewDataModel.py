@@ -1,5 +1,5 @@
-from data.StoricCleaner import StoricCleaner
-from data.StoricPreprocesser import StoricPreprocesser
+from data.StoricCleaner import *
+from data.Preprocesser import *
 from utility.funzioni import *
 from utility.Enums import *
 
@@ -21,11 +21,11 @@ class NewDataModel:
             cleaner = StoricCleaner(self.type, self.original_df)
             self.cleaned_df = cleaner.clean()
             # Preprocessamento
-            preprocesser = StoricPreprocesser(self.type, self.cleaned_df)
+            preprocesser = Preprocesser(self.type, self.cleaned_df)
             self.df = preprocesser.prepare()
         elif self.filetype == NewFileEnum.NEW:
             # Preprocessamento
-            preprocesser = StoricPreprocesser(self.type, self.df)
+            preprocesser = Preprocesser(self.type, self.df)
             self.df = preprocesser.prepare()
 
         # Mantengo solo le colonne da utilizzare

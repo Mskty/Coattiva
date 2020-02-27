@@ -3,7 +3,7 @@ from utility.Enums import *
 from data.TrainModel import *
 from data.TestModel import *
 from data.StoricCleaner import *
-from data.StoricPreprocesser import *
+from data.Preprocesser import *
 
 
 class DataModel:
@@ -24,7 +24,7 @@ class DataModel:
         self.cleaned_df = cleaner.clean()
 
         # Preparazione dei dati
-        preprocesser = StoricPreprocesser(self.type, self.cleaned_df)
+        preprocesser = Preprocesser(self.type, self.cleaned_df)
         self.df = preprocesser.prepare()
 
         # Inizializzazione colonne abilitate e disabilitate

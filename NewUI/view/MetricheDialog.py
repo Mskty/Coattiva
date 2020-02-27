@@ -43,16 +43,20 @@ class MetricheDialog(QtWidgets.QDialog):
         MetricheDialog.resize(858, 400)
         MetricheDialog.setMinimumSize(QtCore.QSize(858, 400))
         MetricheDialog.setWindowModality(QtCore.Qt.NonModal)
+        #FONT GENERICO
         font = QtGui.QFont()
         font.setFamily("Arial")
+        font.setPointSize(9)
         MetricheDialog.setFont(font)
+
         self.verticalLayout = QtWidgets.QVBoxLayout(MetricheDialog)
         self.verticalLayout.setObjectName("verticalLayout")
         self.label = QtWidgets.QLabel(MetricheDialog)
         self.label.setMinimumSize(QtCore.QSize(0, 40))
         font = QtGui.QFont()
         font.setFamily("Arial")
-        font.setPointSize(10)
+        font.setPointSize(12)
+        font.setBold(True)
         self.label.setFont(font)
         self.label.setAlignment(QtCore.Qt.AlignCenter)
         self.label.setObjectName("label")
@@ -63,10 +67,6 @@ class MetricheDialog(QtWidgets.QDialog):
         self.line.setObjectName("line")
         self.verticalLayout.addWidget(self.line)
         self.label_2 = QtWidgets.QLabel(MetricheDialog)
-        font = QtGui.QFont()
-        font.setFamily("Arial")
-        font.setPointSize(9)
-        self.label_2.setFont(font)
         self.label_2.setAlignment(QtCore.Qt.AlignJustify|QtCore.Qt.AlignVCenter)
         self.label_2.setWordWrap(True)
         self.label_2.setObjectName("label_2")
@@ -88,6 +88,13 @@ class MetricheDialog(QtWidgets.QDialog):
 
         # Disable help button
         self.setWindowFlags(self.windowFlags() & ~QtCore.Qt.WindowContextHelpButtonHint)
+
+        # FONTs
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setBold(True)
+        font.setPointSize(9)
+        self.tableWidget.horizontalHeader().setFont(font)
 
         self.retranslateUi(MetricheDialog)
         QtCore.QMetaObject.connectSlotsByName(MetricheDialog)

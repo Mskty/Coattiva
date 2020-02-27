@@ -41,6 +41,12 @@ class WaitingDialog(QtWidgets.QDialog):
         WaitingDialog.resize(320, 100)
         WaitingDialog.setMinimumSize(QtCore.QSize(320, 100))
         WaitingDialog.setMaximumSize(QtCore.QSize(320, 100))
+        # FONT DI BASE
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setPointSize(9)
+        WaitingDialog.setFont(font)
+
         font = QtGui.QFont()
         font.setFamily("Arial")
         font.setBold(True)
