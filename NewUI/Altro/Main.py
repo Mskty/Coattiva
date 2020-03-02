@@ -11,7 +11,7 @@ from PyQt5.QtWidgets import QFileDialog, QMainWindow
 
 from model.TableModel import *
 from utility.utility import *
-from view.FirstWindow import *
+from view.MainFileWindow import *
 
 
 class MainWindow(QMainWindow):
@@ -29,7 +29,7 @@ class MainWindow(QMainWindow):
     def openFirstWindow(self):
         # apertura schermata inziale
         self.hide()
-        FirstWindow(self).show()
+        MainFileWindow(self).show()
 
 
     def setupUi(self, MainWindow):

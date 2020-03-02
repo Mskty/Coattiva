@@ -13,6 +13,7 @@ from PyQt5.QtWidgets import QMainWindow, QFileDialog
 from data.Model import *
 from model.TableModel import *
 from view.FirstWindow import *
+from view.MainFileWindow import *
 from view.LoadNewFile import *
 from view.WaitingDialog import *
 from view.MetricheDialog import *
@@ -237,10 +238,14 @@ class MainWindow(QMainWindow):
         self.disableUseCombo()
         self.combo_use.clear()
 
-
     def openFirstWindow(self):
-        # apertura schermata inziale con passaggio della mainwindow come parent
-        dialog = FirstWindow(self)
+        # apertura schermata inziale di addestramento con passaggio della mainwindow come parent
+        window= FirstWindow(self)
+        window.show()
+
+    def openMainFileWindow(self):
+        # apertura schermata di caricamento di nuovo file con passaggio della mainwindow come parent
+        dialog = MainFileWindow(self)
         dialog.exec_()
         if not self.opened:
             # Se era la prima apertura della applicazione e chiudo il dialog chiudo tutto
@@ -586,8 +591,8 @@ class MainWindow(QMainWindow):
         waitdialog.success(True)
 
     def buttonLoadNewTrainFile(self):
-        # Chiama la firstwindow
-        self.openFirstWindow()
+        # Chiama la mainfilewindow
+        self.openMainFileWindow()
 
     def buttonReset(self):
         # Reset: abilita tutte le colonne, disabilita train e test set, blocca le box

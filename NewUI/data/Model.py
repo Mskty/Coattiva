@@ -91,7 +91,7 @@ class Model:
         self.test.attach_predictions(pred)
 
     def predict_use_data(self):
-        pred = self.workingalgorithm.predict(self.data.enabledcolumns)
+        pred = self.workingalgorithm.predict(self.usedata.enabledcolumns)
         self.usedata.attach_predictions(pred)
 
     def is_test_present(self) -> bool:

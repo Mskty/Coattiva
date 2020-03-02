@@ -14,7 +14,7 @@ from view.tracciato import *
 class FirstWindow(QtWidgets.QDialog):
     # inizializzazione
 
-    def __init__(self, parent = None):
+    def __init__(self, parent=None):
         # Inizializzazione con parent mainwindow
         super().__init__(parent)
         self.mainwindow = parent
@@ -77,7 +77,7 @@ class FirstWindow(QtWidgets.QDialog):
                 self.error_dialog.showMessage(str(e))
 
     def onClickedTracciatoButton(self):
-        tracciato= TracciatoDialog(type=self.type, parent=self)
+        tracciato = TracciatoDialog(type=self.type, parent=self)
         tracciato.exec_()
 
     def setupUi(self, Dialog):
@@ -173,6 +173,10 @@ class FirstWindow(QtWidgets.QDialog):
         self.verticalLayout_2 = QtWidgets.QVBoxLayout()
         self.verticalLayout_2.setSizeConstraint(QtWidgets.QLayout.SetNoConstraint)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
+
+        self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_3.setObjectName("horizontalLayout_3")
+
         self.label_3 = QtWidgets.QLabel(Dialog)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
@@ -182,18 +186,26 @@ class FirstWindow(QtWidgets.QDialog):
         self.label_3.setAlignment(QtCore.Qt.AlignCenter)
         self.label_3.setObjectName("label_3")
         self.label_3.setMinimumHeight(40)
-        self.verticalLayout_2.addWidget(self.label_3)
-
-        self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_3.setObjectName("horizontalLayout_3")
+        self.horizontalLayout_3.addWidget(self.label_3)
         spacerItem2 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_3.addItem(spacerItem2)
         self.loadfile = QtWidgets.QPushButton(Dialog)
         self.loadfile.setObjectName("loadfile")
         self.horizontalLayout_3.addWidget(self.loadfile)
-        spacerItem3 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_3.addItem(spacerItem3)
         self.verticalLayout_2.addLayout(self.horizontalLayout_3)
+
+        self.horizontalLayout_4 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_4.setObjectName("horizontalLayout_4")
+        self.label_10 = QtWidgets.QLabel(Dialog)
+        self.label_10.setObjectName("label_10")
+        self.label_10.setMinimumHeight(40)
+        self.horizontalLayout_4.addWidget(self.label_10)
+        spacerItem3 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_4.addItem(spacerItem3)
+        self.converter = QtWidgets.QPushButton(Dialog)
+        self.converter.setObjectName("converter")
+        self.horizontalLayout_4.addWidget(self.converter)
+        self.verticalLayout_2.addLayout(self.horizontalLayout_4)
 
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
@@ -257,5 +269,8 @@ class FirstWindow(QtWidgets.QDialog):
         self.label_3.setText(
             _translate("Dialog", "Premi per selezionare il file contenente i titoli storici:"))
         self.loadfile.setText(_translate("Dialog", "Carica File"))
+        self.label_10.setText(
+            _translate("Dialog", "Premi per convertire un file da excel a csv:"))
+        self.converter.setText(_translate("Dialog", "Convertitore"))
         self.label_7.setText(_translate("Dialog", "Premi per visualizzare il tracciato richiesto per il file .csv:"))
         self.tracciato.setText(_translate("Dialog", "Tracciato"))

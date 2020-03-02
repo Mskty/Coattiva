@@ -13,7 +13,7 @@ import time as time
 
 from data.Model import *
 from model.TableModel import *
-from view.FirstWindow import *
+from view.MainFileWindow import *
 from view.LoadNewFile import *
 from view.WaitingDialog import *
 
@@ -88,7 +88,7 @@ class MainWindow(QMainWindow):
     def openFirstWindow(self):
         # apertura schermata inziale
         self.hide()
-        dialog= FirstWindow(self)
+        dialog= MainFileWindow(self)
 
     def firstSetup(self):
         # la finestra di caricamento file di addestramento è stata chiusa, setto la gui
