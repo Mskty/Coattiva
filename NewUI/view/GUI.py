@@ -18,6 +18,7 @@ from view.LoadNewFile import *
 from view.WaitingDialog import *
 from view.MetricheDialog import *
 from view.NewColumnsDialog import *
+from view.WelcomeWindow import *
 
 
 class MainWindow(QMainWindow):
@@ -41,14 +42,14 @@ class MainWindow(QMainWindow):
         self.usetable: TableModel = None
 
         # Variabile larghezza scrollareas
-        self.splitnwidgetsize=None
-        self.columnwidgetsize= None
+        self.splitnwidgetsize = None
+        self.columnwidgetsize = None
 
         # Dialog di errore
         self.error_dialog = QtWidgets.QErrorMessage(self)
 
         # Variabile di stato
-        self.opened=False
+        self.opened = False
 
     """ Funzioni """
 
@@ -135,12 +136,12 @@ class MainWindow(QMainWindow):
 
     def add_radio_split(self, ruolo: str, esempi: int):
         # Aggiunge radio button al layout della scrollview main_list_columns
-        totali=self.model.data.get_rows()
-        train=esempi
-        test=totali-esempi
+        totali = self.model.data.get_rows()
+        train = esempi
+        test = totali - esempi
         if test > 0:
             radio = QtWidgets.QRadioButton(
-                "Fino a ruolo: " + ruolo + "\nEsempi per training: " + str(train) + "\nEsempi per test: "+str(test))
+                "Fino a ruolo: " + ruolo + "\nEsempi per training: " + str(train) + "\nEsempi per test: " + str(test))
         else:
             radio = QtWidgets.QRadioButton(
                 "Fino a ruolo: " + ruolo + "\nEsempi per training: " + str(train) + "\nTest set vuoto \n(migliori "
@@ -154,12 +155,12 @@ class MainWindow(QMainWindow):
 
     def setOnClickDataCombo(self):
         # Imposta il corretto modello di tabella dati quando viene cambiata la selezione
-        text= self.combo_data.currentText()
-        if text=="Dati Originali":
-            self.datatable.data=self.model.data.original_df
-        elif text=="Dati Aggregati":
+        text = self.combo_data.currentText()
+        if text == "Dati Originali":
+            self.datatable.data = self.model.data.original_df
+        elif text == "Dati Aggregati":
             self.datatable.data = self.model.data.cleaned_df
-        elif text=="Dati Preparati":
+        elif text == "Dati Preparati":
             self.datatable.data = self.model.data.enabledcolumns
         # Aggiorno tabella
         self.datatable.updatemodel()
@@ -167,7 +168,7 @@ class MainWindow(QMainWindow):
     def setDataCombo(self):
         # Imposta il contenuto e slots della combobox nella parte dati
         self.combo_data.clear()
-        names=["Dati Originali", "Dati Aggregati", "Dati Preparati"]
+        names = ["Dati Originali", "Dati Aggregati", "Dati Preparati"]
         self.combo_data.addItems(names)
         # Size
         width = self.combo_use.minimumSizeHint().width()
@@ -176,8 +177,8 @@ class MainWindow(QMainWindow):
         index = self.combo_data.findText("Dati Preparati")
         self.combo_data.setCurrentIndex(index)
         self.setOnClickDataCombo()
-        #SLOT
-        self.combo_data.activated.connect(lambda : self.setOnClickDataCombo())
+        # SLOT
+        self.combo_data.activated.connect(lambda: self.setOnClickDataCombo())
 
     def setOnClickUseCombo(self):
         # Imposta il corretto modello di tabella utilizza quando viene cambiata la selezione
@@ -195,15 +196,15 @@ class MainWindow(QMainWindow):
         # Imposta il contenuto e slots della combobox nella parte utilizza
         self.combo_use.clear()
         # Controllo di che tipo sono i dati caricati
-        oldnewtype=self.model.get_use_datafiletype()
-        if oldnewtype=="Dati Storici":
+        oldnewtype = self.model.get_use_datafiletype()
+        if oldnewtype == "Dati Storici":
             names = ["Dati Originali", "Dati Aggregati", "Dati Preparati"]
-        elif oldnewtype=="Dati Recenti":
+        elif oldnewtype == "Dati Recenti":
             names = ["Dati Originali", "Dati Preparati"]
 
         self.combo_use.addItems(names)
-        #Size
-        width=self.combo_use.minimumSizeHint().width()
+        # Size
+        width = self.combo_use.minimumSizeHint().width()
         self.combo_use.setMinimumWidth(width)
         # Imposto come default l'opzione preparati
         index = self.combo_use.findText("Dati Preparati")
@@ -218,7 +219,7 @@ class MainWindow(QMainWindow):
     def disableUseCombo(self):
         self.combo_use.setEnabled(False)
 
-
+    """------------------------------------------GUI SETUPS--------------------------------------------------------"""
 
     def resetUI(self):
         """ Resetta solamente gli elementi ui allo stato in cui dovrebbero essere all'apertura dell'applicazione
@@ -237,19 +238,6 @@ class MainWindow(QMainWindow):
         # Combobox
         self.disableUseCombo()
         self.combo_use.clear()
-
-    def openFirstWindow(self):
-        # apertura schermata inziale di addestramento con passaggio della mainwindow come parent
-        window= FirstWindow(self)
-        window.show()
-
-    def openMainFileWindow(self):
-        # apertura schermata di caricamento di nuovo file con passaggio della mainwindow come parent
-        dialog = MainFileWindow(self)
-        dialog.exec_()
-        if not self.opened:
-            # Se era la prima apertura della applicazione e chiudo il dialog chiudo tutto
-            sys.exit()
 
     def firstSetup(self):
         """ Esegue il setup inziale della GUI una volta caricato il file di addestramento nella firstwindow avendo quindi
@@ -301,7 +289,7 @@ class MainWindow(QMainWindow):
         if self.columnwidgetsize is None:
             self.main_list_columns.setMinimumWidth(self.main_list_columns.widget().width() + 30)
             # Salvo larghezza iniziale widget per reset
-            self.columnwidgetsize=self.main_list_columns.minimumWidth()
+            self.columnwidgetsize = self.main_list_columns.minimumWidth()
         else:
             self.main_list_columns.setMinimumWidth(self.columnwidgetsize)
 
@@ -320,11 +308,6 @@ class MainWindow(QMainWindow):
         else:
             self.main_list_split.setMinimumWidth(self.splitnwidgetsize)
 
-    def openLoadNewFileWindow(self):
-        # apertura schermata nuovo file per utilizzo
-        dialog = LoadNewFile(self.model.train.type, self)
-        dialog.exec_()
-
     def useFileSetup(self):
         """Esegue il setup della GUI di utilizzo una volta caricato il file di utilizzo tramite l'apposita finestra"""
         # Imposto la tabella per la visualizzazione del file caricato, vengono considerate le solo colonne elaborate
@@ -338,6 +321,33 @@ class MainWindow(QMainWindow):
         # Inizializzo la combobox
         self.enableUseCombo()
         self.setUseCombo()
+
+    """--------------------------------------------------APERTURA FINESTRE-------------------------------------------"""
+
+    def openWelcomeWindow(self):
+        # apertura schermata di selezione modalità di utilizzo con passaggio della mainwindow come parent
+        window = WelcomeWindow(self)
+        self.hide()
+        window.show()
+
+    def openFirstWindow(self):
+        # apertura schermata inziale di addestramento con passaggio della mainwindow come parent
+        window = FirstWindow(self)
+        self.hide()
+        window.show()
+
+    def openMainFileWindow(self):
+        # apertura schermata di caricamento di nuovo file con passaggio della mainwindow come parent
+        dialog = MainFileWindow(self)
+        dialog.exec_()
+        if not self.opened:
+            # Se era la prima apertura della applicazione e chiudo il dialog chiudo tutto
+            sys.exit()
+
+    def openLoadNewFileWindow(self):
+        # apertura schermata nuovo file per utilizzo
+        dialog = LoadNewFile(self.model.train.type, self)
+        dialog.exec_()
 
     def openSaveDialog(self):
         # Apre un dialog per ottenere un percorso su cui salvare un file
@@ -472,9 +482,9 @@ class MainWindow(QMainWindow):
         self.results_ignored.setText("Proprietà o colonne ignorate:")
         nessuna = " Nessuna"
         for item in ignoredcolumns:
-            nessuna=""
-            self.results_ignored.setText(self.results_ignored.text()+", "+item)
-        self.results_ignored.setText(self.results_ignored.text()+nessuna)
+            nessuna = ""
+            self.results_ignored.setText(self.results_ignored.text() + ", " + item)
+        self.results_ignored.setText(self.results_ignored.text() + nessuna)
 
     def setlabelsTrainMetrics(self, acc: float, prec: float, rec: float, f1: float):
         # punteggi passati in decimale
@@ -489,10 +499,10 @@ class MainWindow(QMainWindow):
 
     def setlabelsTestMetrics(self, acc: float, prec: float, rec: float, f1: float):
         # punteggi passati in decimale
-        acc = acc*100
-        prec = prec*100
-        rec = rec*100
-        f1 = f1*100
+        acc = acc * 100
+        prec = prec * 100
+        rec = rec * 100
+        f1 = f1 * 100
         self.test_accuracy.setText("{0:.2f}".format(acc) + "%")
         self.test_precision.setText("{0:.2f}".format(prec) + "%")
         self.test_recall.setText("{0:.2f}".format(rec) + "%")
@@ -648,7 +658,7 @@ class MainWindow(QMainWindow):
 
     def buttonDataPreprocessInfo(self):
         # chiama NewColumnsDialog per ottenere informazioni sulle colonne aggiunte
-        dialog= NewColumnsDialog()
+        dialog = NewColumnsDialog()
         dialog.exec_()
 
     def buttonDataExport(self):
@@ -707,7 +717,7 @@ class MainWindow(QMainWindow):
 
     def buttonResultsInfo(self):
         # Apertura scheda info metriche
-        dialog= MetricheDialog()
+        dialog = MetricheDialog()
         dialog.exec_()
 
     def buttonUseLoadFile(self):
@@ -717,8 +727,8 @@ class MainWindow(QMainWindow):
     def buttonUseApply(self):
         # Riporta i risultati del modello sulla tabella del file di utilizzo
         # Dialog di attesa
-        text="Attendi mentre il modello effettua predizioni sui dati inseriti"
-        dialog = WaitingDialog(self,text)
+        text = "Attendi mentre il modello effettua predizioni sui dati inseriti"
+        dialog = WaitingDialog(self, text)
         dialog.show()
         # Ottieni predizioni
         self.model.predict_use_data()
@@ -1048,14 +1058,13 @@ class MainWindow(QMainWindow):
         self.label_data_negative.setObjectName("label_data_negative")
         self.formLayout_4.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.label_data_negative)
         self.horizontalLayout_box.addLayout(self.formLayout_4)
-        self.combo_data= QtWidgets.QComboBox(self.Data)
+        self.combo_data = QtWidgets.QComboBox(self.Data)
         spacerItem_data = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_box.addItem(spacerItem_data)
         self.combo_data.setObjectName("combo_data")
         self.horizontalLayout_box.addWidget(self.combo_data)
 
         self.verticalLayout_2.addLayout(self.horizontalLayout_box)
-
 
         self.table_data = QtWidgets.QTableView(self.Data)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
@@ -1501,7 +1510,7 @@ class MainWindow(QMainWindow):
         self.verticalLayout.addWidget(self.TabWidget)
         MainWindow.setCentralWidget(self.centralwidget)
 
-        #FONTS per le label e tabelle
+        # FONTS per le label e tabelle
 
         font = QtGui.QFont()
         font.setFamily("Arial")
@@ -1548,13 +1557,11 @@ class MainWindow(QMainWindow):
         self.label_22.setFont(font)
         self.use_loadfile.setFont(font)
         self.use_apply.setFont(font)
-        #Tabelle
+        # Tabelle
         self.table_data.horizontalHeader().setFont(font)
         self.table_train.horizontalHeader().setFont(font)
         self.table_test.horizontalHeader().setFont(font)
         self.table_use.horizontalHeader().setFont(font)
-
-
 
         # RetranslateUi
         self.retranslateUi(MainWindow)
@@ -1725,7 +1732,7 @@ if __name__ == "__main__":
     mainwindow = MainWindow()
 
     # Avvio esecuzione UI
-    mainwindow.openFirstWindow()
+    mainwindow.openWelcomeWindow()
 
     # chiusura programma
     sys.exit(app.exec_())

@@ -246,9 +246,6 @@ class FirstWindow(QtWidgets.QMainWindow):
         self.converter.clicked.connect(lambda: self.onClickedConverterButton())
         self.tracciato.clicked.connect(lambda: self.onClickedTracciatoButton())
 
-        # Disable help button
-        self.setWindowFlags(self.windowFlags() & ~QtCore.Qt.WindowContextHelpButtonHint)
-
         # RetranslateUi
         self.retranslateUi(Dialog)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
