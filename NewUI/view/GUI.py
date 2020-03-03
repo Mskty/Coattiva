@@ -344,9 +344,6 @@ class MainWindow(QMainWindow):
         options = QFileDialog.Options()
         fileName, _ = QFileDialog.getSaveFileName(self, "Crea/Salva File csv", "",
                                                   "Csv Files (*.csv)", options=options)
-        # DEBUG
-        if fileName:
-            print(fileName)
         return fileName
 
     """----------------------------------------Abilita disabilita tabs-----------------------------------------------"""

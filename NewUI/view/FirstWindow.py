@@ -9,14 +9,15 @@
 from view.GUI import *
 from view.WaitingDialog import *
 from view.tracciato import *
+from view.ConverterWindow import *
 
 
-class FirstWindow(QtWidgets.QDialog):
+class FirstWindow(QtWidgets.QMainWindow):
     # inizializzazione
 
     def __init__(self, parent=None):
         # Inizializzazione con parent mainwindow
-        super().__init__(parent)
+        super().__init__()
         self.mainwindow = parent
         self.setupUi(self)
         self.error_dialog = QtWidgets.QErrorMessage(self)
@@ -40,9 +41,6 @@ class FirstWindow(QtWidgets.QDialog):
         options = QFileDialog.Options()
         fileName, _ = QFileDialog.getOpenFileName(self, "Carica File csv", "",
                                                   "CSV Files (*.csv)", options=options)
-        # DEBUG
-        if fileName:
-            print(fileName)
 
         return fileName
 
@@ -50,11 +48,8 @@ class FirstWindow(QtWidgets.QDialog):
         # Mainwindow non visibile alla prima apertura dell'applicazione ma visibile una volta che era già stato aperto
         # un file
         self.mainwindow.firstSetup()
-        if self.mainwindow.isVisible():
-            self.close()
-        else:
-            self.close()
-            self.mainwindow.show()
+        self.close()
+        self.mainwindow.show()
 
     # SLOTS
 
@@ -75,6 +70,10 @@ class FirstWindow(QtWidgets.QDialog):
                 dialog.success(False)
                 # Stampa eccezione
                 self.error_dialog.showMessage(str(e))
+
+    def onClickedConverterButton(self):
+        converter = ConverterWindow(self)
+        converter.exec_()
 
     def onClickedTracciatoButton(self):
         tracciato = TracciatoDialog(type=self.type, parent=self)
@@ -100,14 +99,18 @@ class FirstWindow(QtWidgets.QDialog):
         cp = QtWidgets.QDesktopWidget().availableGeometry().center()
         qr.moveCenter(cp)
         self.move(qr.topLeft())
-        self.verticalLayout = QtWidgets.QVBoxLayout(Dialog)
+
+        self.centralwidget = QtWidgets.QWidget(Dialog)
+        self.centralwidget.setObjectName("centralwidget")
+
+        self.verticalLayout = QtWidgets.QVBoxLayout(self.centralwidget)
         self.verticalLayout.setSizeConstraint(QtWidgets.QLayout.SetDefaultConstraint)
         self.verticalLayout.setContentsMargins(9, 9, 9, 9)
         self.verticalLayout.setSpacing(0)
         self.verticalLayout.setObjectName("verticalLayout")
         self.verticalLayout_4 = QtWidgets.QVBoxLayout()
         self.verticalLayout_4.setObjectName("verticalLayout_4")
-        self.label = QtWidgets.QLabel(Dialog)
+        self.label = QtWidgets.QLabel(self.centralwidget)
         self.label.setEnabled(True)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Minimum)
         sizePolicy.setHorizontalStretch(0)
@@ -119,19 +122,19 @@ class FirstWindow(QtWidgets.QDialog):
         self.label.setWordWrap(False)
         self.label.setObjectName("label")
         self.verticalLayout_4.addWidget(self.label)
-        self.line = QtWidgets.QFrame(Dialog)
+        self.line = QtWidgets.QFrame(self.centralwidget)
         self.line.setFrameShape(QtWidgets.QFrame.HLine)
         self.line.setFrameShadow(QtWidgets.QFrame.Sunken)
         self.line.setObjectName("line")
         self.verticalLayout_4.addWidget(self.line)
         self.verticalLayout_5 = QtWidgets.QVBoxLayout()
         self.verticalLayout_5.setObjectName("verticalLayout_5")
-        self.label_4 = QtWidgets.QLabel(Dialog)
+        self.label_4 = QtWidgets.QLabel(self.centralwidget)
         self.label_4.setAlignment(QtCore.Qt.AlignJustify | QtCore.Qt.AlignVCenter)
         self.label_4.setWordWrap(True)
         self.label_4.setObjectName("label_4")
         self.verticalLayout_5.addWidget(self.label_4)
-        self.label_6 = QtWidgets.QLabel(Dialog)
+        self.label_6 = QtWidgets.QLabel(self.centralwidget)
         self.label_6.setAlignment(QtCore.Qt.AlignCenter)
         self.label_6.setWordWrap(True)
         self.label_6.setObjectName("label_6")
@@ -142,12 +145,12 @@ class FirstWindow(QtWidgets.QDialog):
         self.verticalLayout_3.setObjectName("verticalLayout_3")
         self.verticalLayout_6 = QtWidgets.QVBoxLayout()
         self.verticalLayout_6.setObjectName("verticalLayout_6")
-        self.label_5 = QtWidgets.QLabel(Dialog)
+        self.label_5 = QtWidgets.QLabel(self.centralwidget)
         self.label_5.setAlignment(QtCore.Qt.AlignJustify | QtCore.Qt.AlignVCenter)
         self.label_5.setWordWrap(True)
         self.label_5.setObjectName("label_5")
         self.verticalLayout_6.addWidget(self.label_5)
-        self.label_2 = QtWidgets.QLabel(Dialog)
+        self.label_2 = QtWidgets.QLabel(self.centralwidget)
         self.label_2.setAlignment(QtCore.Qt.AlignCenter)
         self.label_2.setObjectName("label_2")
         self.label_2.setMinimumHeight(40)
@@ -156,12 +159,12 @@ class FirstWindow(QtWidgets.QDialog):
         self.horizontalLayout.setObjectName("horizontalLayout")
         spacerItem = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem)
-        self.radio_pf = QtWidgets.QRadioButton(Dialog)
+        self.radio_pf = QtWidgets.QRadioButton(self.centralwidget)
         self.radio_pf.setObjectName("radio_pf")
         self.radio_pf.setMinimumHeight(40)
         self.horizontalLayout.addWidget(self.radio_pf)
         self.radio_pf.setChecked(True)
-        self.radio_pg = QtWidgets.QRadioButton(Dialog)
+        self.radio_pg = QtWidgets.QRadioButton(self.centralwidget)
         self.radio_pg.setObjectName("radio_pg")
         self.radio_pf.setMinimumHeight(40)
         self.horizontalLayout.addWidget(self.radio_pg)
@@ -177,7 +180,7 @@ class FirstWindow(QtWidgets.QDialog):
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
 
-        self.label_3 = QtWidgets.QLabel(Dialog)
+        self.label_3 = QtWidgets.QLabel(self.centralwidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -189,38 +192,40 @@ class FirstWindow(QtWidgets.QDialog):
         self.horizontalLayout_3.addWidget(self.label_3)
         spacerItem2 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_3.addItem(spacerItem2)
-        self.loadfile = QtWidgets.QPushButton(Dialog)
+        self.loadfile = QtWidgets.QPushButton(self.centralwidget)
         self.loadfile.setObjectName("loadfile")
         self.horizontalLayout_3.addWidget(self.loadfile)
         self.verticalLayout_2.addLayout(self.horizontalLayout_3)
 
         self.horizontalLayout_4 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_4.setObjectName("horizontalLayout_4")
-        self.label_10 = QtWidgets.QLabel(Dialog)
+        self.label_10 = QtWidgets.QLabel(self.centralwidget)
         self.label_10.setObjectName("label_10")
         self.label_10.setMinimumHeight(40)
         self.horizontalLayout_4.addWidget(self.label_10)
         spacerItem3 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_4.addItem(spacerItem3)
-        self.converter = QtWidgets.QPushButton(Dialog)
+        self.converter = QtWidgets.QPushButton(self.centralwidget)
         self.converter.setObjectName("converter")
         self.horizontalLayout_4.addWidget(self.converter)
         self.verticalLayout_2.addLayout(self.horizontalLayout_4)
 
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
-        self.label_7 = QtWidgets.QLabel(Dialog)
+        self.label_7 = QtWidgets.QLabel(self.centralwidget)
         self.label_7.setObjectName("label_7")
         self.label_7.setMinimumHeight(40)
         self.horizontalLayout_2.addWidget(self.label_7)
         spacerItem4 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_2.addItem(spacerItem4)
-        self.tracciato = QtWidgets.QPushButton(Dialog)
+        self.tracciato = QtWidgets.QPushButton(self.centralwidget)
         self.tracciato.setObjectName("tracciato")
         self.horizontalLayout_2.addWidget(self.tracciato)
         self.verticalLayout_2.addLayout(self.horizontalLayout_2)
 
         self.verticalLayout.addLayout(self.verticalLayout_2)
+
+        Dialog.setCentralWidget(self.centralwidget)
 
         # FONTS
         font = QtGui.QFont()
@@ -238,6 +243,7 @@ class FirstWindow(QtWidgets.QDialog):
         self.radio_pf.clicked.connect(lambda: self.setType(PFPGEnum.PF))
         self.radio_pg.clicked.connect(lambda: self.setType(PFPGEnum.PG))
         self.loadfile.clicked.connect(lambda: self.onClickedLoadFileButton())
+        self.converter.clicked.connect(lambda: self.onClickedConverterButton())
         self.tracciato.clicked.connect(lambda: self.onClickedTracciatoButton())
 
         # Disable help button

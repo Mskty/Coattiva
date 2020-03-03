@@ -41,10 +41,6 @@ class LoadNewFile(QtWidgets.QDialog):
         options = QFileDialog.Options()
         fileName, _ = QFileDialog.getOpenFileName(self, "Carica File csv", "",
                                                   "CSV Files (*.csv)", options=options)
-        # DEBUG
-        if fileName:
-            print(fileName)
-
         return fileName
 
     def returnToMain(self):
@@ -70,6 +66,10 @@ class LoadNewFile(QtWidgets.QDialog):
                 dialog.success(False)
                 # Stampa eccezione
                 self.error_dialog.showMessage(str(e))
+
+    def onClickedConverterButton(self):
+        converter = ConverterWindow(self)
+        converter.exec_()
 
     def onClickedTracciatoButton(self):
         tracciato= TracciatoDialog(type=self.typepfpg, parent=self, filetype=self.type)
@@ -216,6 +216,7 @@ class LoadNewFile(QtWidgets.QDialog):
         # SLOTS
         self.radio_storici.clicked.connect(lambda: self.setType(NewFileEnum.OLD))
         self.radio_recenti.clicked.connect(lambda: self.setType(NewFileEnum.NEW))
+        self.converter.clicked.connect(lambda: self.onClickedConverterButton())
         self.loadfile.clicked.connect(lambda: self.onClickedLoadFileButton())
         self.tracciato.clicked.connect(lambda: self.onClickedTracciatoButton())
 

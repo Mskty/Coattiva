@@ -76,6 +76,10 @@ class MainFileWindow(QtWidgets.QDialog):
                 # Stampa eccezione
                 self.error_dialog.showMessage(str(e))
 
+    def onClickedConverterButton(self):
+        converter = ConverterWindow(self)
+        converter.exec_()
+
     def onClickedTracciatoButton(self):
         tracciato= TracciatoDialog(type=self.type, parent=self)
         tracciato.exec_()
@@ -238,6 +242,7 @@ class MainFileWindow(QtWidgets.QDialog):
         # SLOTS
         self.radio_pf.clicked.connect(lambda: self.setType(PFPGEnum.PF))
         self.radio_pg.clicked.connect(lambda: self.setType(PFPGEnum.PG))
+        self.converter.clicked.connect(lambda: self.onClickedConverterButton())
         self.loadfile.clicked.connect(lambda: self.onClickedLoadFileButton())
         self.tracciato.clicked.connect(lambda: self.onClickedTracciatoButton())
 
