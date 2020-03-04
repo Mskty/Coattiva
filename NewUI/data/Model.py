@@ -91,14 +91,27 @@ class Model:
         self.test.attach_predictions(pred)
 
     def predict_use_data(self):
+        # Aggiunge predizioni alla tabella del usedatamodel
         pred = self.workingalgorithm.predict(self.usedata.enabledcolumns)
         self.usedata.attach_predictions(pred)
 
     def is_test_present(self) -> bool:
+        # Ritorna true se nel modello è presente un test set
         if self.test is None:
             return False
         else:
             return True
+
+    def serialize_algorithm(self, filename: str):
+        # Serializza l'algoritmo sul file indicato
+        if filename:
+            self.workingalgorithm.serialize(filename)
+
+    def algorithm_from_file(self, filename: str):
+        # Crea un nuovo algoritmo dal file indicato
+        if filename:
+            self.workingalgorithm = AlgorithmPipeline()
+            self.workingalgorithm.deserialize(filename)
 
     # Setter
 

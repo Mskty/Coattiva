@@ -1,3 +1,5 @@
+import pickle
+
 from utility.funzioni import *
 from utility.Score import *
 
@@ -11,7 +13,7 @@ class AlgorithmPipeline:
     # Classificatore già addestrato su training set
     # Scaler già addestrato su training set
 
-    def __init__(self, classifier, scaler=None, columnstoscale: list = None):
+    def __init__(self, classifier=None, scaler=None, columnstoscale: list = None):
         self.classifier = classifier
         self.scaler = scaler
         self.columnstoscale = columnstoscale
@@ -49,6 +51,7 @@ class AlgorithmPipeline:
     def plot_roc_curve(self, dataset: pd.DataFrame):
         # fa comparire il grafico della roc_curve
         dataset = dataset.copy()
+        self.serialize()
 
         # Applicazione scaler su colonne non categoriche (columnstoscale) se presente
         if self.scaler != None:
@@ -120,8 +123,24 @@ class AlgorithmPipeline:
         X = dataset.drop(columns="label").to_numpy()
 
         # Generazione del grafico
-        class_labels=["Positivo", "Negativo"]
-        skl.metrics.plot_confusion_matrix(self.classifier, X, Y, cmap=plt.cm.Blues, values_format="", display_labels=class_labels)
+        class_labels = ["Positivo", "Negativo"]
+        skl.metrics.plot_confusion_matrix(self.classifier, X, Y, cmap=plt.cm.Blues, values_format="",
+                                          display_labels=class_labels)
         ax = plt.gca()
         ax.set(ylabel="Risultati reali",
                xlabel="Risultati predetti")
+
+    def serialize(self, filename=None):
+        # Serializza il modello attualmente addestrato in un file
+        modlist = [self.classifier, self.scaler, self.columnstoscale]
+        s = pickle.dump(modlist, open(filename, 'wb'))
+        modlist_loaded = pickle.load(open(filename, 'rb'))
+        print("serialized")
+
+    def deserialize(self, filename=None):
+        # Carica un modello già addestrato in precedenza da file, deve essere già stato creato l'oggetto
+        modlist_loaded = pickle.load(open(filename, 'rb'))
+        self.classifier = modlist_loaded[0]
+        self.scaler = modlist_loaded[1]
+        self.columnstoscale = modlist_loaded[2]
+        print("deserialized")

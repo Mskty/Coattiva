@@ -479,11 +479,11 @@ class MainWindow(QMainWindow):
         self.results_scaling.setText("Scaling: " + scaling)
         self.results_algorithm.setText("Algoritmo di apprendimento: " + algorithm)
         # stampa lista colonne ignorate
-        self.results_ignored.setText("Proprietà o colonne ignorate:")
+        self.results_ignored.setText("Proprietà o colonne ignorate: ")
         nessuna = " Nessuna"
         for item in ignoredcolumns:
             nessuna = ""
-            self.results_ignored.setText(self.results_ignored.text() + ", " + item)
+            self.results_ignored.setText(self.results_ignored.text() + item + ", ")
         self.results_ignored.setText(self.results_ignored.text() + nessuna)
 
     def setlabelsTrainMetrics(self, acc: float, prec: float, rec: float, f1: float):
