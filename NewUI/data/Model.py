@@ -118,7 +118,12 @@ class Model:
 
     def set_use_data(self, typefile: NewFileEnum, filename: str):
         # Inizializza i dati su cui si dovrà utilizzare il modello a partire da un file
-        self.usedata = NewDataModel(self.train.type, typefile, self.columns, filename)  # fa  già pulizia e preparazione
+        columns = list(self.train.enabledcolumns.columns.values)
+        if "predizione" in columns:
+            columns.remove("predizione")
+        if "label" in columns:
+            columns.remove("label")
+        self.usedata = NewDataModel(self.train.type, typefile, columns, filename)  # fa  già pulizia e preparazione
         self.use_datafilename=filename
 
     def reset_settings(self):

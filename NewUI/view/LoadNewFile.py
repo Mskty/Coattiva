@@ -53,7 +53,7 @@ class LoadNewFile(QtWidgets.QDialog):
         filename = self.openFileNameDialog()
         if filename:
             text = "Attendi mentre i dati contenuti sul file selezionato vengono elaborati"
-            dialog=WaitingDialog(self,text)
+            dialog=WaitingDialog(self.mainwindow,text,self.mapToGlobal(self.rect().center()))
             dialog.show()
             try:
                 self.mainwindow.model.set_use_data(self.type, filename)

@@ -47,6 +47,7 @@ class FirstWindow(QtWidgets.QMainWindow):
     def returnToMain(self):
         # Mainwindow non visibile alla prima apertura dell'applicazione ma visibile una volta che era già stato aperto
         # un file
+        print("here")
         self.mainwindow.firstSetup()
         self.close()
         self.mainwindow.show()
@@ -57,7 +58,8 @@ class FirstWindow(QtWidgets.QMainWindow):
         filename = self.openFileNameDialog()
         if filename:
             text = "Attendi mentre i titoli di credito storici vengono puliti, aggregati e preparati all'utilizzo"
-            dialog = WaitingDialog(self, text)
+            print(self.rect().center())
+            dialog = WaitingDialog(self.mainwindow, text, self.mapToGlobal(self.rect().center()))
             dialog.show()
             try:
                 self.mainwindow.model.set_data(self.type, filename)
@@ -95,6 +97,7 @@ class FirstWindow(QtWidgets.QMainWindow):
         Dialog.setSizePolicy(sizePolicy)
         Dialog.setMinimumSize(QtCore.QSize(500, 400))
         Dialog.setMaximumSize(QtCore.QSize(500, 400))
+        # Posiziono al cnetro dello schermo
         qr = self.frameGeometry()
         cp = QtWidgets.QDesktopWidget().availableGeometry().center()
         qr.moveCenter(cp)

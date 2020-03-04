@@ -8,14 +8,19 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+
 class WaitingDialog(QtWidgets.QDialog):
 
-    def __init__(self, parent=None, text=None):
+    def __init__(self, parent=None, text=None, position=None):
         # Inizializzazione con parent
         super().__init__(parent)
         self.setupUi(self)
         if text is not None:
             self.label.setText(text)
+        if position is not None:
+            qr = self.frameGeometry()
+            qr.moveCenter(position)
+            self.move(qr.topLeft())
 
     def success(self, success: bool):
         # Operazione terminata lo scrivo e permetto di chiudere la finestra
@@ -27,17 +32,16 @@ class WaitingDialog(QtWidgets.QDialog):
             text = "Operazione terminata con successo"
         else:
             text = "Operazione fallita"
-        label=QtWidgets.QLabel(text)
+        label = QtWidgets.QLabel(text)
         label.setAlignment(QtCore.Qt.AlignCenter)
         self.verticalLayout.addWidget(label)
-        button=QtWidgets.QPushButton("Chiudi")
+        button = QtWidgets.QPushButton("Chiudi")
         button.clicked.connect(lambda: self.close())
         self.verticalLayout.addWidget(button)
-        #self.setWindowFlags(self.windowFlags() & QtCore.Qt.WindowCloseButtonHint)
 
     def setupUi(self, WaitingDialog):
         WaitingDialog.setObjectName("WaitingDialog")
-        WaitingDialog.setWindowModality(QtCore.Qt.NonModal)
+        WaitingDialog.setWindowModality(QtCore.Qt.ApplicationModal)
         WaitingDialog.resize(320, 100)
         WaitingDialog.setMinimumSize(QtCore.QSize(320, 100))
         WaitingDialog.setMaximumSize(QtCore.QSize(320, 100))
@@ -78,12 +82,3 @@ class WaitingDialog(QtWidgets.QDialog):
         WaitingDialog.setWindowTitle(_translate("WaitingDialog", "Attendi"))
         self.label.setText(_translate("WaitingDialog", "Attendi il completamento dell\'operazione sui dati..."))
         self.progressBar.setFormat(_translate("WaitingDialog", "%p%"))
-
-
-if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    WaitingDialog = WaitingDialog()
-    WaitingDialog.show()
-    sys.exit(app.exec_())
-

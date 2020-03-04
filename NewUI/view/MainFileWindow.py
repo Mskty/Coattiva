@@ -62,7 +62,7 @@ class MainFileWindow(QtWidgets.QDialog):
         filename = self.openFileNameDialog()
         if filename:
             text = "Attendi mentre i titoli di credito storici vengono puliti, aggregati e preparati all'utilizzo"
-            dialog = WaitingDialog(self, text)
+            dialog = WaitingDialog(self.mainwindow, text,self.mapToGlobal(self.rect().center()))
             dialog.show()
             try:
                 self.mainwindow.model.set_data(self.type, filename)

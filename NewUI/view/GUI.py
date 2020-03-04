@@ -528,7 +528,7 @@ class MainWindow(QMainWindow):
 
         # Apertura finestra di attesa
         text = "Attendi mentre il modello predittivo viene addestrato e testato sui dati storici"
-        waitdialog = WaitingDialog(self)
+        waitdialog = WaitingDialog(self,text,self.mapToGlobal(self.rect().center()))
         waitdialog.show()
 
         # Addestramento modello e setup ui risultati
@@ -728,7 +728,7 @@ class MainWindow(QMainWindow):
         # Riporta i risultati del modello sulla tabella del file di utilizzo
         # Dialog di attesa
         text = "Attendi mentre il modello effettua predizioni sui dati inseriti"
-        dialog = WaitingDialog(self, text)
+        dialog = WaitingDialog(self, text, self.mapToGlobal(self.rect().center()))
         dialog.show()
         # Ottieni predizioni
         self.model.predict_use_data()

@@ -35,6 +35,7 @@ class AlgorithmPipeline:
             X = dataset.to_numpy()
 
         # Ritorno predizioni
+        print(dataset.columns)
         return self.classifier.predict(X)
 
     def metrics(self, dataset: pd.DataFrame) -> Score:
