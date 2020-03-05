@@ -2,6 +2,7 @@ import pickle
 
 from utility.funzioni import *
 from utility.Score import *
+from utility.Enums import *
 
 from sklearn.metrics import plot_precision_recall_curve
 from sklearn.metrics import plot_roc_curve
@@ -13,10 +14,13 @@ class AlgorithmPipeline:
     # Classificatore già addestrato su training set
     # Scaler già addestrato su training set
 
-    def __init__(self, classifier=None, scaler=None, columnstoscale: list = None):
+    def __init__(self, classifier=None, scaler=None, columnstoscale: list = None, columnlist: list = None,
+                 type: PFPGEnum = None):
         self.classifier = classifier
         self.scaler = scaler
         self.columnstoscale = columnstoscale
+        self.columnlist = columnlist
+        self.type: PFPGEnum = type
 
     def predict(self, dataset: pd.DataFrame):
         dataset = dataset.copy()
@@ -51,7 +55,6 @@ class AlgorithmPipeline:
     def plot_roc_curve(self, dataset: pd.DataFrame):
         # fa comparire il grafico della roc_curve
         dataset = dataset.copy()
-        self.serialize()
 
         # Applicazione scaler su colonne non categoriche (columnstoscale) se presente
         if self.scaler != None:
@@ -132,9 +135,8 @@ class AlgorithmPipeline:
 
     def serialize(self, filename=None):
         # Serializza il modello attualmente addestrato in un file
-        modlist = [self.classifier, self.scaler, self.columnstoscale]
+        modlist = [self.classifier, self.scaler, self.columnstoscale, self.columnlist, self.type]
         s = pickle.dump(modlist, open(filename, 'wb'))
-        modlist_loaded = pickle.load(open(filename, 'rb'))
         print("serialized")
 
     def deserialize(self, filename=None):
@@ -143,4 +145,6 @@ class AlgorithmPipeline:
         self.classifier = modlist_loaded[0]
         self.scaler = modlist_loaded[1]
         self.columnstoscale = modlist_loaded[2]
+        self.columnlist = modlist_loaded[3]
+        self.type = modlist_loaded[4]
         print("deserialized")

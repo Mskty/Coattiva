@@ -131,13 +131,14 @@ class Model:
 
     def set_use_data(self, typefile: NewFileEnum, filename: str):
         # Inizializza i dati su cui si dovrà utilizzare il modello a partire da un file
-        columns = list(self.train.enabledcolumns.columns.values)
+        columns = self.workingalgorithm.columnlist
         if "predizione" in columns:
             columns.remove("predizione")
         if "label" in columns:
             columns.remove("label")
-        self.usedata = NewDataModel(self.train.type, typefile, columns, filename)  # fa  già pulizia e preparazione
-        self.use_datafilename=filename
+        self.usedata = NewDataModel(self.workingalgorithm.type, typefile, columns,
+                                    filename)  # fa  già pulizia e preparazione
+        self.use_datafilename = filename
 
     def reset_settings(self):
         # Resetta train test, algoritmo, nuovo file di utilizzo e colonne selezionate
@@ -200,6 +201,12 @@ class Model:
         if self.data.type == PFPGEnum.PF:
             return "Persone Fisiche"
         elif self.data.type == PFPGEnum.PG:
+            return "Persone Giuridiche"
+
+    def get_algorithmtype(self):
+        if self.workingalgorithm.type == PFPGEnum.PF:
+            return "Persone Fisiche"
+        elif self.workingalgorithm.type == PFPGEnum.PG:
             return "Persone Giuridiche"
 
     def get_algorithm(self):

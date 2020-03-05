@@ -17,7 +17,19 @@ class WelcomeWindow(QtWidgets.QMainWindow):
         super().__init__()
         self.mainwindow = parent
         self.setupUi(self)
-        self.test=""
+        self.error_dialog = QtWidgets.QErrorMessage(self)
+
+    def openFileNameDialog(self):
+        # Apre finesta per recupero file e lo passa al modello se corretto
+        options = QFileDialog.Options()
+        filename, _ = QFileDialog.getOpenFileName(self, "Carica il file contenente il modello addestrato per "
+                                                        "utilizzarlo", "",
+                                                  "Model Files (*.sav)", options=options)
+        # DEBUG
+        if filename:
+            print(filename)
+
+        return filename
 
     def onClickedButtonAddestramento(self):
         # Apre firstwindow
@@ -26,7 +38,24 @@ class WelcomeWindow(QtWidgets.QMainWindow):
 
     def onClickedButtonUtilizza(self):
         # Permette di caricare un algoritmo e apre la GUI principale in modalità utilizzo
-        pass
+        filename = self.openFileNameDialog()
+        if filename:
+            text = "Attendi mentre il modello viene caricato da file"
+            dialog = WaitingDialog(self.mainwindow, text, self.mapToGlobal(self.rect().center()))
+            dialog.show()
+            try:
+                self.mainwindow.model.algorithm_from_file(filename)
+                # informo il dialog del successo
+                dialog.success(True)
+                # nessuna eccezione ritorno alla main
+                self.mainwindow.useSetup()
+                self.close()
+                self.mainwindow.show()
+            except Exception as e:
+                # Informo il dialog del fallimento
+                dialog.success(False)
+                # Stampa eccezione
+                self.error_dialog.showMessage(str(e))
 
     def setupUi(self, WelcomeWindow):
         WelcomeWindow.setObjectName("WelcomeWindow")
@@ -143,10 +172,15 @@ class WelcomeWindow(QtWidgets.QMainWindow):
         self.verticalLayout.addWidget(self.label_7)
         WelcomeWindow.setCentralWidget(self.centralwidget)
 
+        #FONT PER BOTTONI
+        font = QtGui.QFont()
+        font.setBold(True)
+        self.button_utilizzo.setFont(font)
+        self.button_addestramento.setFont(font)
+
         # SLOTS
         self.button_addestramento.clicked.connect(lambda: self.onClickedButtonAddestramento())
         self.button_utilizzo.clicked.connect(lambda: self.onClickedButtonUtilizza())
-
 
         self.retranslateUi(WelcomeWindow)
         QtCore.QMetaObject.connectSlotsByName(WelcomeWindow)
@@ -157,18 +191,12 @@ class WelcomeWindow(QtWidgets.QMainWindow):
         self.label.setText(_translate("WelcomeWindow", "CLASSIFICATORE COATTIVA"))
         self.label_2.setText(_translate("WelcomeWindow", "Selezionare a quale modalità accedere*:"))
         self.label_3.setText(_translate("WelcomeWindow", "1) Modalità addestramento: "))
-        self.label_5.setText(_translate("WelcomeWindow", "E\' possibile addestrare e utilizzare un modello di apprendimento partendo dai dati storici."))
+        self.label_5.setText(_translate("WelcomeWindow",
+                                        "E\' possibile addestrare e utilizzare un modello di apprendimento partendo dai dati storici."))
         self.button_addestramento.setText(_translate("WelcomeWindow", "Entra"))
         self.label_4.setText(_translate("WelcomeWindow", "2 Modalità utilizzo:"))
-        self.label_6.setText(_translate("WelcomeWindow", "E\' possibile caricare da file un modello già addestrato in precedenza e utilizzarlo su nuovi dati."))
+        self.label_6.setText(_translate("WelcomeWindow",
+                                        "E\' possibile caricare da file un modello già addestrato in precedenza e utilizzarlo su nuovi dati."))
         self.button_utilizzo.setText(_translate("WelcomeWindow", "Carica Modello"))
-        self.label_7.setText(_translate("WelcomeWindow", "* sarà necessario riavviare l\'applicativo per passare all\'altra modalità."))
-
-
-"""if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    WelcomeWindow = WelcomeWindow()
-    WelcomeWindow.show()
-    sys.exit(app.exec_())
-"""
+        self.label_7.setText(
+            _translate("WelcomeWindow", "* sarà necessario riavviare l\'applicativo per passare all\'altra modalità."))

@@ -116,6 +116,9 @@ class TrainModel:
         label_column = trainset["label"]
         trainset.drop(columns="label", inplace=True)
 
+        # Salvataggio nomi di tutte le colonne che verranno utilizzate
+        columnlist = list(self.enabledcolumns.columns.values)
+
         # Instanziazione scaler
         scaler = None
         columnstoscale = []
@@ -162,7 +165,7 @@ class TrainModel:
         classifier = classifier.fit(X, Y)
 
         # Ritorno pipeline
-        return AlgorithmPipeline(classifier,scaler,columnstoscale)
+        return AlgorithmPipeline(classifier,scaler,columnstoscale,columnlist,self.type)
 
     def attach_predictions(self, pred: list):
         # Aggiungo predizioni alla prima riga

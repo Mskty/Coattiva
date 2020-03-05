@@ -223,7 +223,13 @@ class MainWindow(QMainWindow):
 
     def resetUI(self):
         """ Resetta solamente gli elementi ui allo stato in cui dovrebbero essere all'apertura dell'applicazione
-            lasciando inalterate le variabili di modello"""
+            in modalità addestramento lasciando inalterate le variabili di modello"""
+        # Radios (prima operazione perchè setchecked da problemi chiamando il segnale)
+        self.sampling1.setChecked(True)
+        self.scaling1.setChecked(True)
+        self.algorithm1.setChecked(True)
+        self.disableradios()
+
         # scroll areas
         self.enablescrolls()
         # Tabs
@@ -232,9 +238,10 @@ class MainWindow(QMainWindow):
         self.disableRisultati()
         self.disableUtilizza()
         # Buttons
-        self.disableradios()
+        self.disableMainButtonSave()
         self.disableMainButtonTrain()
         self.disableUseApply()
+        self.disableUseExport()
         # Combobox
         self.disableUseCombo()
         self.combo_use.clear()
@@ -308,6 +315,26 @@ class MainWindow(QMainWindow):
         else:
             self.main_list_split.setMinimumWidth(self.splitnwidgetsize)
 
+    def useSetup(self):
+        """Esegue il setup della GUI di utilizzo aperta tramite il caricamento di un modello già addestrato"""
+        # Disabilito tutte le tabs tranne utilizza
+        self.disableMain()
+        self.disableData()
+        self.disableTrain()
+        self.disableTest()
+        self.disableRisultati()
+        # Abilito utilizza
+        self.enableUtilizza()
+        # Disabilito i bottoni non ancora attivabili finchè non viene caricato un file
+        self.disableUseApply()
+        self.disableUseExport()
+        # Disabilito la combobox finchè non viene caricato un file
+        self.disableUseCombo()
+        # Imposto Utilizza come tab corrente
+        self.TabWidget.setCurrentIndex(5)
+        # Imposto la label del tipo del modello
+        self.setlabelUtilizzaType(self.model.get_algorithmtype())
+
     def useFileSetup(self):
         """Esegue il setup della GUI di utilizzo una volta caricato il file di utilizzo tramite l'apposita finestra"""
         # Imposto la tabella per la visualizzazione del file caricato, vengono considerate le solo colonne elaborate
@@ -316,6 +343,8 @@ class MainWindow(QMainWindow):
         # Imposto la label per nome file
         filename = self.model.get_use_datafilename()
         self.setlabelUtilizzaFilename(filename)
+        # Abilito il bottone per esportare i dati caricati
+
         # Abilito il bottone per l'utilizzo del modello sui nuovi dati e la combobox
         self.enableUseApply()
         # Inizializzo la combobox
@@ -346,7 +375,7 @@ class MainWindow(QMainWindow):
 
     def openLoadNewFileWindow(self):
         # apertura schermata nuovo file per utilizzo
-        dialog = LoadNewFile(self.model.train.type, self)
+        dialog = LoadNewFile(self.model.workingalgorithm.type, self)
         dialog.exec_()
 
     def openSaveDialog(self):
@@ -358,10 +387,16 @@ class MainWindow(QMainWindow):
 
     """----------------------------------------Abilita disabilita tabs-----------------------------------------------"""
 
+    def enableMain(self):
+        self.TabWidget.setTabEnabled(0, True)
+
+    def disableMain(self):
+        self.TabWidget.setTabEnabled(0, False)
+
     def enableData(self):
         self.TabWidget.setTabEnabled(1, True)
 
-    def diableData(self):
+    def disableData(self):
         self.TabWidget.setTabEnabled(1, False)
 
     def enableTrain(self):
@@ -418,6 +453,12 @@ class MainWindow(QMainWindow):
     def disableMainButtonTrain(self):
         self.main_button_train.setEnabled(False)
 
+    def enableMainButtonSave(self):
+        self.main_button_save.setEnabled(True)
+
+    def disableMainButtonSave(self):
+        self.main_button_save.setEnabled(False)
+
     def enableUseApply(self):
         self.use_apply.setEnabled(True)
 
@@ -433,6 +474,12 @@ class MainWindow(QMainWindow):
         self.button_test_matrix.setEnabled(False)
         self.button_test_auc.setEnabled(False)
         self.button_test_prc.setEnabled(False)
+
+    def enableUseExport(self):
+        self.use_export.setEnabled(True)
+
+    def disableUseExport(self):
+        self.use_export.setEnabled(False)
 
     """ ----------------------------------------------Set testi delle labels--------------------------------------- """
 
@@ -528,7 +575,7 @@ class MainWindow(QMainWindow):
 
         # Apertura finestra di attesa
         text = "Attendi mentre il modello predittivo viene addestrato e testato sui dati storici"
-        waitdialog = WaitingDialog(self,text,self.mapToGlobal(self.rect().center()))
+        waitdialog = WaitingDialog(self, text, self.mapToGlobal(self.rect().center()))
         waitdialog.show()
 
         # Addestramento modello e setup ui risultati
@@ -594,6 +641,9 @@ class MainWindow(QMainWindow):
         self.disableradios()  # radio commands
         self.disableMainButtonTrain()  # self
 
+        # Abilito la possibilità di salvare il modello nel main
+        self.enableMainButtonSave()
+
         # Elaborazione terminata informo la schermata di attesa
         waitdialog.success(True)
 
@@ -603,6 +653,12 @@ class MainWindow(QMainWindow):
 
     def buttonReset(self):
         # Reset: abilita tutte le colonne, disabilita train e test set, blocca le box
+        # Reset radio boxes ( prima cosa perchè il setchecked chiama il segnale)
+        self.sampling1.setChecked(True)
+        self.scaling1.setChecked(True)
+        self.algorithm1.setChecked(True)
+        self.disableradios()
+
         # Reset modello:
         self.model.reset_settings()
 
@@ -619,17 +675,16 @@ class MainWindow(QMainWindow):
         self.disableRisultati()
         self.disableUtilizza()
 
-        # Reset radio boxes
-        self.disableradios()
-
         # Reset bottoni main page
+        self.disableMainButtonSave()
         self.disableMainButtonTrain()
 
         # Reset combobox Dati
         self.setDataCombo()
 
-        # Reset bottone e combobox Utilizza
+        # Reset bottoni e combobox Utilizza
         self.disableUseApply()
+        self.disableUseExport()
         self.disableUseCombo()
         self.combo_use.clear()
 
@@ -655,6 +710,17 @@ class MainWindow(QMainWindow):
             self.add_radio_split(ruoli[i], nesempi[i])
         self.main_list_split.widget().adjustSize()
         self.main_list_split.setMinimumWidth(self.splitnwidgetsize)
+
+    def buttonSave(self):
+        # chiama un dialog di salvataggio per ottere il path di salvataggio poi invoca la funzione del modello
+        options = QFileDialog.Options()
+        filename, _ = QFileDialog.getSaveFileName(self, "Salvataggio del modello addestrato", "",
+                                                  "Model Files (*.sav)", options=options)
+        if filename:
+            dialog = WaitingDialog(self, "Attendi il salvataggio del modello addestrato")
+            dialog.show()
+            self.model.serialize_algorithm(filename)
+            dialog.success(True)
 
     def buttonDataPreprocessInfo(self):
         # chiama NewColumnsDialog per ottenere informazioni sulle colonne aggiunte
@@ -1011,6 +1077,9 @@ class MainWindow(QMainWindow):
         self.horizontalLayout_6.setObjectName("horizontalLayout_6")
         spacerItem13 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_6.addItem(spacerItem13)
+        self.main_button_save = QtWidgets.QPushButton(self.Main)
+        self.main_button_save.setObjectName("main_button_save")
+        self.horizontalLayout_6.addWidget(self.main_button_save)
         self.main_button_file = QtWidgets.QPushButton(self.Main)
         self.main_button_file.setObjectName("main_button_file")
         self.horizontalLayout_6.addWidget(self.main_button_file)
@@ -1525,6 +1594,7 @@ class MainWindow(QMainWindow):
         self.label_3.setFont(font)
         self.main_button_reset.setFont(font)
         self.main_button_train.setFont(font)
+        self.main_button_save.setFont(font)
         # Tab data train test
         self.label_13.setFont(font)
         self.label_15.setFont(font)
@@ -1584,6 +1654,7 @@ class MainWindow(QMainWindow):
         self.main_button_train.clicked.connect(lambda: self.buttonTrainModel())
         self.main_button_file.clicked.connect(lambda: self.buttonLoadNewTrainFile())
         self.main_button_reset.clicked.connect(lambda: self.buttonReset())
+        self.main_button_save.clicked.connect(lambda: self.buttonSave())
         self.data_preprocess_info.clicked.connect(lambda: self.buttonDataPreprocessInfo())
         self.data_export.clicked.connect(lambda: self.buttonDataExport())
         self.train_export.clicked.connect(lambda: self.buttonTrainExport())
@@ -1644,6 +1715,7 @@ class MainWindow(QMainWindow):
         self.label_11.setText(_translate("MainWindow",
                                          "E\' possibile addestrare un nuovo modello predittivo premendo il pulsante Reset e nuovamente il pulsante Addestra."))
         self.main_button_file.setText(_translate("MainWindow", "Caricamento nuovo file"))
+        self.main_button_save.setText(_translate("MainWindow", "Salvataggio Modello Addestrato"))
         self.main_button_reset.setText(_translate("MainWindow", "Reset"))
         self.TabWidget.setTabText(self.TabWidget.indexOf(self.Main), _translate("MainWindow", "Main"))
         self.label_13.setText(_translate("MainWindow", "Informazioni sul file caricato:"))
