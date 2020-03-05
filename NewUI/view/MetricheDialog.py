@@ -9,6 +9,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QTableWidgetItem
 
+
 class MetricheDialog(QtWidgets.QDialog):
 
     def __init__(self, parent=None):
@@ -20,19 +21,23 @@ class MetricheDialog(QtWidgets.QDialog):
         self.tableWidget.insertRow(self.tableWidget.rowCount())
         self.tableWidget.setItem(0, 0, QTableWidgetItem("Accuratezza"))
         self.tableWidget.setItem(0, 1, QTableWidgetItem("0-100%"))
-        self.tableWidget.setItem(0, 2, QTableWidgetItem("Indica la percentuale di esempi che il modello addestrato ha predetto correttamente"))
+        self.tableWidget.setItem(0, 2, QTableWidgetItem(
+            "Indica la percentuale di esempi che il modello addestrato ha predetto correttamente"))
         self.tableWidget.insertRow(self.tableWidget.rowCount())
         self.tableWidget.setItem(1, 0, QTableWidgetItem("Precisione"))
         self.tableWidget.setItem(1, 1, QTableWidgetItem("0-100%"))
-        self.tableWidget.setItem(1, 2, QTableWidgetItem("Indica la precisione del modello sulle predizioni positive, ovvero quanti degli esempi predetti come positivi avevano anche label positiva e sono quindi corretti"))
+        self.tableWidget.setItem(1, 2, QTableWidgetItem(
+            "Indica la precisione del modello sulle predizioni positive, ovvero quanti degli esempi predetti come positivi avevano anche label positiva e sono quindi corretti"))
         self.tableWidget.insertRow(self.tableWidget.rowCount())
         self.tableWidget.setItem(2, 0, QTableWidgetItem("Recall"))
         self.tableWidget.setItem(2, 1, QTableWidgetItem("0-100%"))
-        self.tableWidget.setItem(2, 2, QTableWidgetItem("Indica la percentuale di esempi con label postiva che il modello addestrato ha predetto correttamente come positivi"))
+        self.tableWidget.setItem(2, 2, QTableWidgetItem(
+            "Indica la percentuale di esempi con label postiva che il modello addestrato ha predetto correttamente come positivi"))
         self.tableWidget.insertRow(self.tableWidget.rowCount())
         self.tableWidget.setItem(3, 0, QTableWidgetItem("F1 Score"))
         self.tableWidget.setItem(3, 1, QTableWidgetItem("0-100%"))
-        self.tableWidget.setItem(3, 2, QTableWidgetItem("Si tratta della media armonica tra precisione e recall. Assume il valore 100 quando sia precisione che recall valgono 100 (indicando che il modello è perfetto) mentre assume il valore 0 quando precisione o recall valgono 0. Fornisce quindi una punteggio generale alle prestazioni del modello"))
+        self.tableWidget.setItem(3, 2, QTableWidgetItem(
+            "Si tratta della media armonica tra precisione e recall. Assume il valore 100 quando sia precisione che recall valgono 100 (indicando che il modello è perfetto) mentre assume il valore 0 quando precisione o recall valgono 0. Fornisce quindi una punteggio generale alle prestazioni del modello"))
 
         # Imposto la grandezza delle righe
         self.tableWidget.resizeRowsToContents()
@@ -43,7 +48,7 @@ class MetricheDialog(QtWidgets.QDialog):
         MetricheDialog.resize(858, 400)
         MetricheDialog.setMinimumSize(QtCore.QSize(858, 400))
         MetricheDialog.setWindowModality(QtCore.Qt.NonModal)
-        #FONT GENERICO
+        # FONT GENERICO
         font = QtGui.QFont()
         font.setFamily("Arial")
         font.setPointSize(9)
@@ -67,7 +72,7 @@ class MetricheDialog(QtWidgets.QDialog):
         self.line.setObjectName("line")
         self.verticalLayout.addWidget(self.line)
         self.label_2 = QtWidgets.QLabel(MetricheDialog)
-        self.label_2.setAlignment(QtCore.Qt.AlignJustify|QtCore.Qt.AlignVCenter)
+        self.label_2.setAlignment(QtCore.Qt.AlignJustify | QtCore.Qt.AlignVCenter)
         self.label_2.setWordWrap(True)
         self.label_2.setObjectName("label_2")
         self.verticalLayout.addWidget(self.label_2)
@@ -109,9 +114,6 @@ class MetricheDialog(QtWidgets.QDialog):
                                                           "metriche per valutare le performance dell\'algoritmo, "
                                                           "sia sulla parte di training che sulla parte di test nel "
                                                           "caso sia presente. \n "
-                                        "I risultati sulla parte di training sono riportati per correttezza tuttavia "
+                                                          "I risultati sulla parte di training sono riportati per correttezza tuttavia "
                                                           "non sono rappresentativi di un caso di "
                                                           "utilizzo reale come nel caso della parte di test."))
-
-
-

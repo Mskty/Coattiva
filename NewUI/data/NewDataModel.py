@@ -6,7 +6,7 @@ from utility.Enums import *
 
 class NewDataModel:
 
-    def __init__(self, type: PFPGEnum, filetype:NewFileEnum, columns: list, filename: str ):
+    def __init__(self, type: PFPGEnum, filetype:NewFileEnum, columns: list, filename: str):
         try:
             self.original_df: pd.DataFrame = pd.read_csv(filename)
         except Exception:

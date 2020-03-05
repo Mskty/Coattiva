@@ -9,6 +9,7 @@
 from view.GUI import *
 from view.WaitingDialog import *
 from view.tracciato import *
+from view.ConverterWindow import *
 
 
 class LoadNewFile(QtWidgets.QDialog):
@@ -55,6 +56,7 @@ class LoadNewFile(QtWidgets.QDialog):
             text = "Attendi mentre i dati contenuti sul file selezionato vengono elaborati"
             dialog=WaitingDialog(self.mainwindow,text,self.mapToGlobal(self.rect().center()))
             dialog.show()
+            QtWidgets.QApplication.processEvents()
             try:
                 self.mainwindow.model.set_use_data(self.type, filename)
                 # informo il dialog del successo

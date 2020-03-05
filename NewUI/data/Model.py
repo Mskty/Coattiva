@@ -47,15 +47,15 @@ class Model:
         try:
             self.data.enablecolumns([column])
         except Exception:
-            print("no data loaded")
+            pass
         try:
             self.train.enablecolumns([column])
         except Exception:
-            print("no trainset")
+            pass
         try:
             self.test.enablecolumns([column])
         except Exception:
-            print("no testset")
+            pass
 
     def disablecolumn(self, column: str):
         # Disabilita colonne in data, trainset e testset (se presenti)
@@ -64,15 +64,15 @@ class Model:
         try:
             self.data.disablecolumns([column])
         except Exception:
-            print("no data loaded")
+            pass
         try:
             self.train.disablecolumns([column])
         except Exception:
-            print("no trainset")
+            pass
         try:
             self.test.disablecolumns([column])
         except Exception:
-            print("no testset")
+            pass
 
     # Addestramento e utilizzo modello predittivo
 

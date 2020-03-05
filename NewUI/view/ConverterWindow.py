@@ -63,16 +63,22 @@ class ConverterWindow(QDialog):
 
     def onClickedButtonSave(self):
         # Converto, salvo il file csv e chiudo la finestra
-        dialog=WaitingDialog(self)
-        data = pd.read_excel(self.xlsxfile,
-                             sheet_name=0,
-                             header=0,
-                             index_col=False,
-                             keep_default_na=True)
-        data.to_csv(self.csvfile, index=None, header=True)
-        dialog.success(True)
+        text="Attendi mentre il file viene convertito al formato csv"
+        dialog = WaitingDialog(self.mainwindow, text,self.mapToGlobal(self.rect().center()))
         dialog.show()
-        self.close()
+        QtWidgets.QApplication.processEvents()
+        try:
+            data = pd.read_excel(self.xlsxfile,
+                                 sheet_name=0,
+                                 header=0,
+                                 index_col=False,
+                                 keep_default_na=True)
+            data.to_csv(self.csvfile, index=None, header=True)
+            dialog.success(True)
+            self.close()
+        except Exception as e:
+            # Informo il dialog del fallimento
+            dialog.success(False)
 
 
     def setupUi(self, ConverterWindow):

@@ -21,8 +21,6 @@ class TracciatoDialog(QtWidgets.QDialog):
         self.filetype = filetype
         self.setupUi(self)
 
-    """self.tableWidget.resizeRowsToContents()"""
-
     def setContent(self):
         titlelist = []
         desclist = []

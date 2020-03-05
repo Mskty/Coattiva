@@ -47,7 +47,6 @@ class FirstWindow(QtWidgets.QMainWindow):
     def returnToMain(self):
         # Mainwindow non visibile alla prima apertura dell'applicazione ma visibile una volta che era già stato aperto
         # un file
-        print("here")
         self.mainwindow.firstSetup()
         self.close()
         self.mainwindow.show()
@@ -58,9 +57,9 @@ class FirstWindow(QtWidgets.QMainWindow):
         filename = self.openFileNameDialog()
         if filename:
             text = "Attendi mentre i titoli di credito storici vengono puliti, aggregati e preparati all'utilizzo"
-            print(self.rect().center())
             dialog = WaitingDialog(self.mainwindow, text, self.mapToGlobal(self.rect().center()))
             dialog.show()
+            QtWidgets.QApplication.processEvents()
             try:
                 self.mainwindow.model.set_data(self.type, filename)
                 # informo il dialog del successo

@@ -5,6 +5,7 @@
 # Created by: PyQt5 UI code generator 5.9.2
 #
 # WARNING! All changes made in this file will be lost!
+import threading
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtGui import QStandardItemModel
@@ -577,7 +578,7 @@ class MainWindow(QMainWindow):
         text = "Attendi mentre il modello predittivo viene addestrato e testato sui dati storici"
         waitdialog = WaitingDialog(self, text, self.mapToGlobal(self.rect().center()))
         waitdialog.show()
-
+        QtWidgets.QApplication.processEvents()
         # Addestramento modello e setup ui risultati
         self.model.train_algorithm()
 
@@ -719,6 +720,7 @@ class MainWindow(QMainWindow):
         if filename:
             dialog = WaitingDialog(self, "Attendi il salvataggio del modello addestrato")
             dialog.show()
+            QtWidgets.QApplication.processEvents()
             self.model.serialize_algorithm(filename)
             dialog.success(True)
 
@@ -796,6 +798,7 @@ class MainWindow(QMainWindow):
         text = "Attendi mentre il modello effettua predizioni sui dati inseriti"
         dialog = WaitingDialog(self, text, self.mapToGlobal(self.rect().center()))
         dialog.show()
+        QtWidgets.QApplication.processEvents()
         # Ottieni predizioni
         self.model.predict_use_data()
         # Refresh del modello per visualizzarle
@@ -1798,6 +1801,8 @@ class MainWindow(QMainWindow):
 
 if __name__ == "__main__":
     import sys
+    import warnings
+    warnings.filterwarnings("ignore")
 
     # Instanziazione app e mainwindow
     app = QtWidgets.QApplication(sys.argv)

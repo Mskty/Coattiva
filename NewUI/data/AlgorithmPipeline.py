@@ -137,7 +137,6 @@ class AlgorithmPipeline:
         # Serializza il modello attualmente addestrato in un file
         modlist = [self.classifier, self.scaler, self.columnstoscale, self.columnlist, self.type]
         s = pickle.dump(modlist, open(filename, 'wb'))
-        print("serialized")
 
     def deserialize(self, filename=None):
         # Carica un modello già addestrato in precedenza da file, deve essere già stato creato l'oggetto
@@ -147,4 +146,3 @@ class AlgorithmPipeline:
         self.columnstoscale = modlist_loaded[2]
         self.columnlist = modlist_loaded[3]
         self.type = modlist_loaded[4]
-        print("deserialized")
