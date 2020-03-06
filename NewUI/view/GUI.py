@@ -348,6 +348,7 @@ class MainWindow(QMainWindow):
 
         # Abilito il bottone per l'utilizzo del modello sui nuovi dati e la combobox
         self.enableUseApply()
+        self.enableUseExport()
         # Inizializzo la combobox
         self.enableUseCombo()
         self.setUseCombo()
