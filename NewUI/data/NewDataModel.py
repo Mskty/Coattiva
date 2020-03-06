@@ -8,7 +8,7 @@ class NewDataModel:
 
     def __init__(self, type: PFPGEnum, filetype:NewFileEnum, columns: list, filename: str):
         try:
-            self.original_df: pd.DataFrame = pd.read_csv(filename)
+            self.original_df: pd.DataFrame = pd.read_csv(filename, low_memory=False)
         except Exception:
             print("no file passed")
         self.type: PFPGEnum = type
@@ -30,7 +30,7 @@ class NewDataModel:
             self.df = preprocesser.prepare()
 
         # Mantengo solo le colonne da utilizzare
-        self.enabledcolumns = self.df[columns]
+        self.enabledcolumns = self.df[columns].copy()
 
     # Getter functions
 

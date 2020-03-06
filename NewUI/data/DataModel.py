@@ -12,7 +12,7 @@ class DataModel:
 
     def __init__(self, type: PFPGEnum, data: pd.DataFrame = None, filename: str = None):
         try:
-            self.original_df: pd.DataFrame = pd.read_csv(filename)
+            self.original_df: pd.DataFrame = pd.read_csv(filename, low_memory=False)
         except Exception:
             print("no file passed")
         if data is not None:
