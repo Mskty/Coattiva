@@ -73,8 +73,8 @@ class AlgorithmPipeline:
         # Generazione del grafico
         skl.metrics.plot_roc_curve(self.classifier, X, Y)
         ax = plt.gca()
-        ax.plot([0, 1], [0, 1], 'r--', label="Selezione Casuale (AUC = 0.5)")
-        ax.plot([0, 0, 1], [0, 1, 1], 'g-.', label="Classificatore Perfetto (AUC = 1.0)")
+        ax.plot([0, 1], [0, 1], 'r--', label="Selezione Casuale (AUC = 0.50)")
+        ax.plot([0, 0, 1], [0, 1, 1], 'g-.', label="Classificatore Perfetto (AUC = 1.00)")
         ax.legend(loc='lower right')
 
     def plot_precision_recall(self, dataset: pd.DataFrame):
@@ -100,7 +100,7 @@ class AlgorithmPipeline:
 
         skl.metrics.plot_precision_recall_curve(self.classifier, X, Y)
         ax = plt.gca()
-        ax.plot([0, 1, 1], [1, 1, 0.5], 'g-.', label="Classificatore Perfetto (AP = 1.0)")
+        ax.plot([0, 1, 1], [1, 1, 0.5], 'g-.', label="Classificatore Perfetto (AP = 1.00)")
         ax.set(ylabel="Precisione",
                xlabel="Recall")
         ax.legend(loc='lower right')

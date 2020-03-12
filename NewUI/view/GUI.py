@@ -583,9 +583,16 @@ class MainWindow(QMainWindow):
         # Addestramento modello e setup ui risultati
         self.model.train_algorithm()
 
-        # Aggiunta predizioni e risultati trainset
+        # Aggiunta predizioni trainset
         self.model.predict_train()
+        # Reinizializzo il modello traintable dato che i dati potrebbero essere cambiati se utilizzato sampling
+        self.traintable = TableModel(self.model.train.enabledcolumns)
+        self.table_train.setModel(self.traintable)
         self.traintable.updatemodel()
+        # Aggiorno le label nel caso ci sia stato undersampling o oversampling
+        traininfo = self.model.get_train_info()
+        self.setlabelsTrain(traininfo[0], traininfo[1], traininfo[2])
+
 
         # Labels fisse Tab risultati
         tipo = self.model.get_traintype()

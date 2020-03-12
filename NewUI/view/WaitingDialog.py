@@ -26,8 +26,6 @@ class WaitingDialog(QtWidgets.QDialog):
         # Operazione terminata lo scrivo e permetto di chiudere la finestra
         self.verticalLayout.removeWidget(self.label)
         self.label.setParent(None)
-        self.verticalLayout.removeWidget(self.progressBar)
-        self.progressBar.setParent(None)
         if success:
             text = "Operazione terminata con successo"
         else:
@@ -63,12 +61,6 @@ class WaitingDialog(QtWidgets.QDialog):
         self.label.setWordWrap(True)
         self.label.setObjectName("label")
         self.verticalLayout.addWidget(self.label)
-        self.progressBar = QtWidgets.QProgressBar(WaitingDialog)
-        self.progressBar.setMaximum(0)
-        self.progressBar.setProperty("value", -1)
-        self.progressBar.setTextVisible(False)
-        self.progressBar.setObjectName("progressBar")
-        self.verticalLayout.addWidget(self.progressBar)
 
         # Disable help button
         self.setWindowFlags(self.windowFlags() & ~QtCore.Qt.WindowContextHelpButtonHint)
@@ -81,4 +73,3 @@ class WaitingDialog(QtWidgets.QDialog):
         _translate = QtCore.QCoreApplication.translate
         WaitingDialog.setWindowTitle(_translate("WaitingDialog", "Attendi"))
         self.label.setText(_translate("WaitingDialog", "Attendi il completamento dell\'operazione sui dati..."))
-        self.progressBar.setFormat(_translate("WaitingDialog", "%p%"))

@@ -1,3 +1,5 @@
+from imblearn.under_sampling import RandomUnderSampler
+
 from utility.funzioni import *
 from data.AlgorithmPipeline import *
 from utility.Enums import *
@@ -47,30 +49,6 @@ class TrainModel:
     def get_negative_label(self) -> int:
         return len(self.enabledcolumns.loc[(self.enabledcolumns.label == 0)])
 
-    def get_sampling_rows(self) -> int:
-        if self.sampler == SamplingEnum.NONE:
-            return self.get_rows()
-        elif self.sampler == SamplingEnum.UNDER:
-            return self.get_positive_label() * 2
-        elif self.sampler == SamplingEnum.SMOTE:
-            return self.get_negative_label() * 2
-
-    def get_sampling_positive_label(self) -> int:
-        if self.sampler == SamplingEnum.NONE:
-            return self.get_positive_label()
-        elif self.sampler == SamplingEnum.UNDER:
-            return self.get_positive_label()
-        elif self.sampler == SamplingEnum.SMOTE:
-            return self.get_negative_label()
-
-    def get_sampling_negative_label(self) -> int:
-        if self.sampler == SamplingEnum.NONE:
-            return self.get_negative_label()
-        elif self.sampler == SamplingEnum.UNDER:
-            return self.get_positive_label()
-        elif self.sampler == SamplingEnum.SMOTE:
-            return self.get_negative_label()
-
     def disablecolumns(self, columns: list):
         print(list(self.enabledcolumns.columns.values))
         print(columns)
@@ -95,13 +73,15 @@ class TrainModel:
         if self.sampler != SamplingEnum.NONE:
             if self.sampler == SamplingEnum.UNDER:
                 # Undersampling randomico 50-50 label 1 e label 0
-                one_indices = trainset[trainset.label == 1].index
-                sample_size = sum(trainset.label == 1)  # Equivalent to len(trainset[trainset.label == 1])
-                zero_indices = trainset[trainset.label == 0].index
-                random_indices = np.random.choice(zero_indices, sample_size, replace=False)
-                # Unisco gli 1 e 0
-                under_indices = one_indices.union(random_indices)
-                trainset = trainset.loc[under_indices]  # nuovo training set con 50/50 di classe 1 e 0
+                X = trainset.drop(columns="label").values
+                Y = trainset["label"].values
+                rus = RandomUnderSampler(random_state=42)
+                X_rus, Y_rus = rus.fit_resample(X, Y)
+                # unisco X_rus e Y_rus di nuovo in trainset
+                trainset = pd.DataFrame(X_rus, columns=trainset.drop(columns="label").columns)
+                trainset["label"] = Y_rus
+                # Aggiorno i dati in enabledcolumns per contenere il nuovo trainset con sampling
+                self.enabledcolumns = trainset.copy()
             if self.sampler == SamplingEnum.SMOTE:
                 # SMOTE oversampling
                 X = trainset.drop(columns="label").values
@@ -111,6 +91,8 @@ class TrainModel:
                 # unisco X_sm e Y_sm di nuovo in trainset
                 trainset = pd.DataFrame(X_sm, columns=trainset.drop(columns="label").columns)
                 trainset["label"] = Y_sm
+                # Aggiorno i dati in enabledcolumns per contenere il nuovo trainset con sampling
+                self.enabledcolumns = trainset.copy()
 
         # Separazione label
         label_column = trainset["label"]

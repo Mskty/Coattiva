@@ -231,8 +231,8 @@ class Model:
         return [self.test.get_rows(), self.test.get_positive_label(), self.test.get_negative_label()]
 
     def get_sampling_info(self) -> list:
-        return [self.train.get_sampling_rows(), self.train.get_sampling_positive_label(),
-                self.train.get_sampling_negative_label()]
+        return [self.train.get_rows(), self.train.get_positive_label(),
+                self.train.get_negative_label()]
 
     def get_disabledcolumns(self) -> list:
         # Ottiene la lista di colonne disattivate
