@@ -10,7 +10,7 @@ class StoricCleaner:
         if self.__type == PFPGEnum.PF:
             self.__df = df[df.TipoPersonalità == "PF"].copy()
         elif self.__type == PFPGEnum.PG:
-            self.__df = df[df.TipoPersonalità == "PF"].copy()
+            self.__df = df[df.TipoPersonalità == "PG"].copy()
 
     """----------------------------------------------Persone Fisiche-----------------------------------------------"""
 
