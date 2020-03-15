@@ -26,94 +26,7 @@ class Model:
         self.traintestsplit: pd.DataFrame = None
         self.workingalgorithm: AlgorithmPipeline = None
 
-    # business
-
-    def export_data(self, filepath: str):
-        self.data.export_to_csv(filepath)
-
-    def export_trainset(self, filepath: str):
-        self.train.export_to_csv(filepath)
-
-    def export_testset(self, filepath: str):
-        self.test.export_to_csv(filepath)
-
-    def export_usedata(self, filepath: str):
-        self.usedata.export_full_to_csv(filepath)
-
-    def enablecolumn(self, column: str):
-        # Abilita colonne in data, trainset e testset (se presenti)
-        # Viene ignorata la usedata poichè il modello è gia addestrato nel momento in cui sarà presente
-        # E non è possibile abiltiare o disabilitare colonne
-        try:
-            self.data.enablecolumns([column])
-        except Exception:
-            pass
-        try:
-            self.train.enablecolumns([column])
-        except Exception:
-            pass
-        try:
-            self.test.enablecolumns([column])
-        except Exception:
-            pass
-
-    def disablecolumn(self, column: str):
-        # Disabilita colonne in data, trainset e testset (se presenti)
-        # Viene ignorata la usedata poichè il modello è gia addestrato nel momento in cui sarà presente
-        # E non è possibile abiltiare o disabilitare colonne
-        try:
-            self.data.disablecolumns([column])
-        except Exception:
-            pass
-        try:
-            self.train.disablecolumns([column])
-        except Exception:
-            pass
-        try:
-            self.test.disablecolumns([column])
-        except Exception:
-            pass
-
-    # Addestramento e utilizzo modello predittivo
-
-    def train_algorithm(self):
-        # Produce il modello addestrato a partire dal trainset selezionato
-        self.workingalgorithm = self.train.trainmodel()
-
-    def predict_train(self):
-        # Aggiunge predizioni alla tabella del trainmodel
-        pred = self.workingalgorithm.predict(self.train.enabledcolumns)
-        self.train.attach_predictions(pred)
-
-    def predict_test(self):
-        # Aggiunge predizioni alla tabella del testmodel
-        pred = self.workingalgorithm.predict(self.test.enabledcolumns)
-        self.test.attach_predictions(pred)
-
-    def predict_use_data(self):
-        # Aggiunge predizioni alla tabella del usedatamodel
-        pred = self.workingalgorithm.predict(self.usedata.enabledcolumns)
-        self.usedata.attach_predictions(pred)
-
-    def is_test_present(self) -> bool:
-        # Ritorna true se nel modello è presente un test set
-        if self.test is None:
-            return False
-        else:
-            return True
-
-    def serialize_algorithm(self, filename: str):
-        # Serializza l'algoritmo sul file indicato
-        if filename:
-            self.workingalgorithm.serialize(filename)
-
-    def algorithm_from_file(self, filename: str):
-        # Crea un nuovo algoritmo dal file indicato
-        if filename:
-            self.workingalgorithm = AlgorithmPipeline()
-            self.workingalgorithm.deserialize(filename)
-
-    # Setter
+    """---------------------------------------------------Funzioni Setter-------------------------------------------"""
 
     def set_data(self, type: PFPGEnum, filename: str):
         # Inzizializza o resetta i parametri del modello a partire da un nuovo file di dati storici
@@ -176,7 +89,9 @@ class Model:
     def set_algorithm(self, algorithm: ClassifierEnum):
         self.train.classifier = algorithm
 
-    # Getter (ritorna in formato da visualizzare su view)
+    """---------------------------------------------------Funzioni Getter-------------------------------------------"""
+
+    # I dati vengono ritornati in formato gestibile dalla view allo scopo di visualizzazione
 
     def get_column_names(self):
         return self.columns
@@ -264,6 +179,93 @@ class Model:
         scores = self.workingalgorithm.metrics(self.test.enabledcolumns)
         return [scores.accuracy, scores.precision, scores.recall, scores.f1]
 
+    """---------------------------------------------------Funzioni Business-----------------------------------------"""
+
+    def export_data(self, filepath: str):
+        self.data.export_to_csv(filepath)
+
+    def export_trainset(self, filepath: str):
+        self.train.export_to_csv(filepath)
+
+    def export_testset(self, filepath: str):
+        self.test.export_to_csv(filepath)
+
+    def export_usedata(self, filepath: str):
+        self.usedata.export_full_to_csv(filepath)
+
+    def enablecolumn(self, column: str):
+        # Abilita colonne in data, trainset e testset (se presenti)
+        # Viene ignorata la usedata poichè il modello è gia addestrato nel momento in cui sarà presente
+        # E non è possibile abiltiare o disabilitare colonne
+        try:
+            self.data.enablecolumns([column])
+        except Exception:
+            pass
+        try:
+            self.train.enablecolumns([column])
+        except Exception:
+            pass
+        try:
+            self.test.enablecolumns([column])
+        except Exception:
+            pass
+
+    def disablecolumn(self, column: str):
+        # Disabilita colonne in data, trainset e testset (se presenti)
+        # Viene ignorata la usedata poichè il modello è gia addestrato nel momento in cui sarà presente
+        # E non è possibile abiltiare o disabilitare colonne
+        try:
+            self.data.disablecolumns([column])
+        except Exception:
+            pass
+        try:
+            self.train.disablecolumns([column])
+        except Exception:
+            pass
+        try:
+            self.test.disablecolumns([column])
+        except Exception:
+            pass
+
+    # Addestramento e utilizzo modello predittivo
+
+    def train_algorithm(self):
+        # Produce il modello addestrato a partire dal trainset selezionato
+        self.workingalgorithm = self.train.trainmodel()
+
+    def predict_train(self):
+        # Aggiunge predizioni alla tabella del trainmodel
+        pred = self.workingalgorithm.predict(self.train.enabledcolumns)
+        self.train.attach_predictions(pred)
+
+    def predict_test(self):
+        # Aggiunge predizioni alla tabella del testmodel
+        pred = self.workingalgorithm.predict(self.test.enabledcolumns)
+        self.test.attach_predictions(pred)
+
+    def predict_use_data(self):
+        # Aggiunge predizioni alla tabella del usedatamodel
+        pred = self.workingalgorithm.predict(self.usedata.enabledcolumns)
+        self.usedata.attach_predictions(pred)
+
+    def is_test_present(self) -> bool:
+        # Ritorna true se nel modello è presente un test set
+        if self.test is None:
+            return False
+        else:
+            return True
+
+    def serialize_algorithm(self, filename: str):
+        # Serializza l'algoritmo sul file indicato
+        if filename:
+            self.workingalgorithm.serialize(filename)
+
+    def algorithm_from_file(self, filename: str):
+        # Crea un nuovo algoritmo dal file indicato
+        if filename:
+            self.workingalgorithm = AlgorithmPipeline()
+            self.workingalgorithm.deserialize(filename)
+
     """ -------------------------------------------------GRAFICI---------------------------------------------------- """
 
     def get_confusion_matrix_train(self):
@@ -301,59 +303,3 @@ class Model:
         self.workingalgorithm.plot_precision_recall(self.test.enabledcolumns)
         plt.title("Precision-Recall Curve per Test set")
         plt.show()
-
-    """ ----------------------------------------------DEBUG FUNCTIONS----------------------------------------------- """
-
-    def db_train_from_file(self, type: PFPGEnum = PFPGEnum.PF):
-        filename = "C:/Users/squer/Desktop/Coattiva/Datasets/export_trainset_PF.csv"
-        df = pd.read_csv(filename)
-        self.train = TrainModel(type, df, pd.DataFrame())
-
-    def db_test_from_file(self, type: PFPGEnum = PFPGEnum.PF):
-        filename = "C:/Users/squer/Desktop/Coattiva/Datasets/export_testset_PF.csv"
-        df = pd.read_csv(filename)
-        self.test = TestModel(type, df, pd.DataFrame())
-
-    def db_enablecolumn(self, column: str):
-        try:
-            print(column)
-            self.train.enablecolumns([column])
-        except Exception:
-            print("no trainset")
-        try:
-            self.test.enablecolumns([column])
-        except Exception:
-            print("no testset")
-
-    def db_disablecolumn(self, column: str):
-        try:
-            self.train.disablecolumns([column])
-        except Exception:
-            print("no trainset")
-        try:
-            self.test.disablecolumns([column])
-        except Exception:
-            print("no testset")
-
-    def db_get_traintype(self):
-        if self.train.type == PFPGEnum.PF:
-            return "Persone Fisiche"
-        elif self.train.type == PFPGEnum.PG:
-            return "Persone Giuridiche"
-
-    # Addestramento e utilizzo modello predittivo
-
-    # Setter
-
-    def db_set_data(self):
-        self.db_train_from_file()
-        self.db_test_from_file()
-        # get columns
-        self.columns = self.train.db_columnnames()
-        # get traintestsplit
-        # self.traintestsplit = self.data.train_test_splitter_possibilities()
-        # Reset train test and use_data
-        self.workingalgorithm = None
-
-    def db_get_disabledcolumns(self) -> list:
-        return self.train.disabledcolumns.columns.values

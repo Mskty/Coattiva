@@ -8,8 +8,6 @@ from data.StoricPreprocesser import *
 
 class DataModel:
 
-    # La label è sempre abilitata mentre DataCaricoTitolo sempre disabilitata
-
     def __init__(self, type: PFPGEnum, data: pd.DataFrame = None, filename: str = None):
         try:
             self.original_df: pd.DataFrame = pd.read_csv(filename, low_memory=False)
@@ -33,7 +31,7 @@ class DataModel:
         self.disabledcolumns = pd.DataFrame()
         self.disabledcolumns["DataCaricoTitolo"] = self.df["DataCaricoTitolo"].copy()
 
-    # Getter functions
+    """---------------------------------------------------Funzioni Getter-------------------------------------------"""
 
     def get_disabledcolumnsnames(self) -> list:
         return list(self.disabledcolumns.columns.values)
@@ -44,7 +42,8 @@ class DataModel:
     def get_columnsnames(self) -> list:
         # Ritorna la lista dei nomi delle colonne che sarà possibile disabilitare
         names = list(self.df.columns.values)
-        # Rimuovo label e DataCaricoTitolo perchè non disattivabili (e sono due colonne sempre presenti)
+        # Rimuovo label e DataCaricoTitolo perchè non disattivabili (e sono due colonne sempre presenti
+        # nell'elaborazione)
         names.remove("label")
         names.remove("DataCaricoTitolo")
         # Rimuovo ValoreTitolo in quanto è considerato il campo più importante e non può essere rimosso
@@ -60,7 +59,7 @@ class DataModel:
     def get_negative_label(self) -> int:
         return len(self.df.query("label==0"))
 
-    # Disabilita e abilita colonne
+    """--------------------------------------------------Funzioni Setter per colonne--------------------------------"""
 
     def disablecolumns(self, columns: list):
         if set(columns).issubset(set(list(self.df.columns.values))):
@@ -82,17 +81,18 @@ class DataModel:
         self.disabledcolumns = pd.DataFrame()
         self.disabledcolumns["DataCaricoTitolo"] = self.df["DataCaricoTitolo"].copy()
 
-    # Creazione oggetti TrainModel e TestModel
+    """-------------------------------------------------Funzioni Business-------------------------------------------"""
 
     def train_test_splitter_possibilities(self) -> pd.DataFrame:
         """
-            Dato il dataframe dei dati storici preparati ritorna un nuovo dataframe dove ogni riga
-            rappresenta la data di un ruolo presente nei dati storici. Ogni riga riporta, per quella data
-            quanti crediti appartengono a quel ruolo e tutti i precedenti (nesempi), quanti di questi sono
-            classificati come positivi (true), e quanti come negativi (false). L'idea è che ciascuna delle
-            date dei ruoli può essere utilizzata per splittare i dati storici in training set e test set,
-            vengono dunque riportate le possibili composizioni dei training set ad ogni data di ruolo scelta.
-            """
+        Dato il dataframe dei dati storici preparati ritorna un nuovo dataframe dove ogni riga
+        rappresenta la data di un ruolo presente nei dati storici. Ogni riga riporta, per quella data
+        quanti crediti appartengono a quel ruolo e tutti i precedenti (nesempi), quanti di questi sono
+        classificati come positivi (true), e quanti come negativi (false). L'idea è che ciascuna delle
+        date dei ruoli può essere utilizzata per splittare i dati storici in training set e test set,
+        vengono dunque riportate le possibili composizioni dei training set ad ogni data di ruolo scelta.
+        :return: un dataframe contenenti numero titoli e label (positive e negative) per ogni data di ruolo
+        """
         # Ricavo i ruoli
         ruoli = self.df.DataCaricoTitolo.unique()
 
@@ -151,6 +151,10 @@ class DataModel:
 
         return trainset, testset
 
-    # Esportazione dati su csv
     def export_to_csv(self, export_file_path):
+        """
+        Esporta i dati del dataframe elaborato su file csv nel percorso indicato
+        :param export_file_path: percorso di salvataggio del file csv
+        :return: None
+        """
         self.df.to_csv(export_file_path, index=None, header=True)

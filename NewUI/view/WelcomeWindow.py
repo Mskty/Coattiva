@@ -10,7 +10,6 @@ from view.GUI import *
 
 
 class WelcomeWindow(QtWidgets.QMainWindow):
-    # inizializzazione
 
     def __init__(self, parent=None):
         # Inizializzazione con parent mainwindow
@@ -20,24 +19,34 @@ class WelcomeWindow(QtWidgets.QMainWindow):
         self.error_dialog = QtWidgets.QErrorMessage(self)
 
     def openFileNameDialog(self):
-        # Apre finesta per recupero file e lo passa al modello se corretto
+        """
+        Apre una finestra che permette all'utente di selezionare un file di tipo sav contenente un modello addestrato
+        :return: nome del file selezionato dall'utente
+        """
         options = QFileDialog.Options()
         filename, _ = QFileDialog.getOpenFileName(self, "Carica il file contenente il modello addestrato per "
                                                         "utilizzarlo", "",
                                                   "Model Files (*.sav)", options=options)
-        # DEBUG
-        if filename:
-            print(filename)
-
         return filename
 
+    """-------------------------Funzioni SLOTS di bottoni presenti all'inizializzazione---------------------------- """
+
     def onClickedButtonAddestramento(self):
-        # Apre firstwindow
+        """
+        Chiude la finestra e invoca la funzione del parent mainwindow che permette di visualizzare la finestra di primo
+        accesso per la modalitò addestramento
+        :return: None
+        """
         self.close()
         self.mainwindow.openFirstWindow()
 
     def onClickedButtonUtilizza(self):
-        # Permette di caricare un algoritmo e apre la GUI principale in modalità utilizzo
+        """
+        Ottiene il nome di un file dall'utente, se questo è valido invoca la funzione del modello algorithm_from_file per
+        caricare nell'applicativo il modello addestrato contenuto in tale file.
+        Se l'elaborazione ha successo allora invoca la funzione returnToMain
+        :return: None
+        """
         filename = self.openFileNameDialog()
         if filename:
             text = "Attendi mentre il modello viene caricato da file"
@@ -58,6 +67,13 @@ class WelcomeWindow(QtWidgets.QMainWindow):
                 self.error_dialog.showMessage(str(e))
 
     def setupUi(self, WelcomeWindow):
+        """
+        Funzione autogenerata al momento della creazione della classe a partire dal file .ui di QtDesigner
+        Inizializza l'interfaccia grafica della WelcomeWindow predisponendo tutti i widget e i gli elementi interattivi
+        con cui può interagire l'utente.
+        :param WelcomeWindow: Oggetto contenitore degli elementi dell'interfaccia (self nel caso sia questa finestra)
+        :return: None
+        """
         WelcomeWindow.setObjectName("WelcomeWindow")
         WelcomeWindow.resize(882, 200)
         WelcomeWindow.setMinimumSize(QtCore.QSize(882, 200))
@@ -186,6 +202,12 @@ class WelcomeWindow(QtWidgets.QMainWindow):
         QtCore.QMetaObject.connectSlotsByName(WelcomeWindow)
 
     def retranslateUi(self, WelcomeWindow):
+        """
+        Funzione autogenerata al momento della creazione della classe a partire dal file .ui di QtDesigner
+        Inizializza il contenuto testuale di tutti gli elementi inizializzati in setupUI
+        :param WelcomeWindow: Oggetto contenitore degli elementi dell'interfaccia (self nel caso sia questa finestra)
+        :return: None
+        """
         _translate = QtCore.QCoreApplication.translate
         WelcomeWindow.setWindowTitle(_translate("WelcomeWindow", "Classificatore Coattiva"))
         self.label.setText(_translate("WelcomeWindow", "CLASSIFICATORE COATTIVA"))

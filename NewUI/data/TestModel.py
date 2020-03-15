@@ -9,7 +9,7 @@ class TestModel:
         self.enabledcolumns = enabledcolumns
         self.disabledcolumns = disabledcolumns
 
-    # Getter functions
+    """---------------------------------------------------Funzioni Getter-------------------------------------------"""
 
     def get_rows(self) -> int:
         return len(self.enabledcolumns)
@@ -19,6 +19,8 @@ class TestModel:
 
     def get_negative_label(self) -> int:
         return len(self.enabledcolumns.loc[(self.enabledcolumns.label == 0)])
+
+    """--------------------------------------------------Funzioni Setter per colonne--------------------------------"""
 
     def disablecolumns(self, columns: list):
         if set(columns).issubset(set(list(self.enabledcolumns.columns.values))):
@@ -33,6 +35,8 @@ class TestModel:
             self.disabledcolumns.drop(columns=columns, inplace=True)
         else:
             print("error: colonne non presenti")
+
+    """-------------------------------------------------Funzioni Business-------------------------------------------"""
 
     def attach_predictions(self, pred: list):
         # Aggiungo predizioni alla prima riga

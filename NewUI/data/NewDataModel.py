@@ -6,7 +6,7 @@ from utility.Enums import *
 
 class NewDataModel:
 
-    def __init__(self, type: PFPGEnum, filetype:NewFileEnum, columns: list, filename: str):
+    def __init__(self, type: PFPGEnum, filetype: NewFileEnum, columns: list, filename: str):
         try:
             self.original_df: pd.DataFrame = pd.read_csv(filename, low_memory=False)
         except Exception:
@@ -32,10 +32,12 @@ class NewDataModel:
         # Mantengo solo le colonne da utilizzare
         self.enabledcolumns = self.df[columns].copy()
 
-    # Getter functions
+    """---------------------------------------------------Funzioni Getter-------------------------------------------"""
 
     def get_rows(self) -> int:
         return len(self.enabledcolumns)
+
+    """-------------------------------------------------Funzioni Business-------------------------------------------"""
 
     def attach_predictions(self, pred: list):
         if self.filetype == NewFileEnum.NEW:
@@ -43,7 +45,6 @@ class NewDataModel:
         elif self.filetype == NewFileEnum.OLD:
             self.cleaned_df.insert(0, "predizione", pred)
         self.enabledcolumns.insert(0, "predizione", pred)
-
 
     def remove_predictions(self):
         if self.filetype == NewFileEnum.NEW:

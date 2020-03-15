@@ -22,6 +22,11 @@ class TracciatoDialog(QtWidgets.QDialog):
         self.setupUi(self)
 
     def setContent(self):
+        """
+        Imposta i contenuti del tableWidget a seconda dei parametri typepfpg e filetype.
+        Verrà inserita una riga nel tableWidget per ogni colonna/feature con le releative informazioni.
+        :return: None
+        """
         titlelist = []
         desclist = []
         if not self.filetype or self.filetype == NewFileEnum.OLD:
@@ -133,6 +138,13 @@ class TracciatoDialog(QtWidgets.QDialog):
             self.label_3.setText("Tipo di contribuenti: Persone Giuridiche")
 
     def setupUi(self, TracciatoDialog):
+        """
+        Funzione autogenerata al momento della creazione della classe a partire dal file .ui di QtDesigner
+        Inizializza l'interfaccia grafica della TracciatoDialog predisponendo tutti i widget e i gli elementi interattivi
+        con cui può interagire l'utente.
+        :param TracciatoDialog: Oggetto contenitore degli elementi dell'interfaccia (self nel caso sia questa finestra)
+        :return: None
+        """
         TracciatoDialog.setObjectName("TracciatoDialog")
         TracciatoDialog.resize(500, 400)
         TracciatoDialog.setMinimumSize(QtCore.QSize(500, 400))
@@ -209,16 +221,13 @@ class TracciatoDialog(QtWidgets.QDialog):
         self.setContent()
 
     def retranslateUi(self, TracciatoDialog):
+        """
+        Funzione autogenerata al momento della creazione della classe a partire dal file .ui di QtDesigner
+        Inizializza il contenuto testuale di tutti gli elementi inizializzati in setupUI
+        :param TracciatoDialog: Oggetto contenitore degli elementi dell'interfaccia (self nel caso sia questa finestra)
+        :return: None
+        """
         _translate = QtCore.QCoreApplication.translate
         TracciatoDialog.setWindowTitle(_translate("TracciatoDialog", "Tracciato"))
         self.label.setText(_translate("TracciatoDialog", "TRACCIATO"))
         self.label_newold.setText(_translate("TracciatoDialog", "Tipo di contribuenti: "))
-
-
-if __name__ == "__main__":
-    import sys
-
-    app = QtWidgets.QApplication(sys.argv)
-    TracciatoDialog = TracciatoDialog(PFPGEnum.PF)
-    TracciatoDialog.show()
-    sys.exit(app.exec_())

@@ -13,7 +13,6 @@ from view.ConverterWindow import *
 
 
 class LoadNewFile(QtWidgets.QDialog):
-    # inizializzazione
 
     def __init__(self, typepfpg: PFPGEnum, parent = None):
         # Inizializzazione con parent mainwindow
@@ -27,7 +26,7 @@ class LoadNewFile(QtWidgets.QDialog):
         self.type: NewFileEnum = NewFileEnum.NEW
         self.filename = ""
 
-    # funzioni setter
+    """------------------------------Funzioni Setter----------------------------------------------------------------"""
 
     def setType(self, type: NewFileEnum):
         self.type = type
@@ -35,22 +34,35 @@ class LoadNewFile(QtWidgets.QDialog):
     def setFileName(self, filename: str):
         self.filename = filename
 
-    # funzioni di business
+    """----------------------------Funzioni di business-------------------------------------------------------------"""
 
     def openFileNameDialog(self):
-        # Apre finesta per recupero file e lo passa al modello se corretto
+        """
+        Apre una finestra che permette all'utente di selezionare un file di tipo csv
+        :return: nome del file selezionato dall'utente
+        """
         options = QFileDialog.Options()
         fileName, _ = QFileDialog.getOpenFileName(self, "Carica File csv", "",
                                                   "CSV Files (*.csv)", options=options)
         return fileName
 
     def returnToMain(self):
-        # Mainwindow sempre visibile ma input bloccato
+        """
+        Invoca sul parent mainwindow la funzione di setup per la seizone Utilizza una volta caricati ed elaborati i dati
+        dell'utente dal modello, infine chiude la finestra.
+        :return: None
+        """
         self.mainwindow.useFileSetup()
         self.close()
 
-    # SLOTS
+    """-------------------------Funzioni SLOTS di bottoni presenti all'inizializzazione---------------------------- """
+
     def onClickedLoadFileButton(self):
+        """
+        Ottiene il nome di un file dall'utente, se questo è valido invoca la funzione del modello set_use_data per elaborare
+        i dati contenuti in tale file. Se l'elaborazione ha successo allora invoca la funzione returnToMain
+        :return: None
+        """
         filename = self.openFileNameDialog()
         if filename:
             text = "Attendi mentre i dati contenuti sul file selezionato vengono elaborati"
@@ -70,14 +82,29 @@ class LoadNewFile(QtWidgets.QDialog):
                 self.error_dialog.showMessage(str(e))
 
     def onClickedConverterButton(self):
+        """
+        Apre la finestra di tipo ConverterWindow
+        :return: None
+        """
         converter = ConverterWindow(self)
         converter.exec_()
 
     def onClickedTracciatoButton(self):
+        """
+        Apre una finestra di tipo TracciatoDialog
+        :return: None
+        """
         tracciato= TracciatoDialog(type=self.typepfpg, parent=self, filetype=self.type)
         tracciato.exec_()
 
     def setupUi(self, Dialog):
+        """
+        Funzione autogenerata al momento della creazione della classe a partire dal file .ui di QtDesigner
+        Inizializza l'interfaccia grafica della LoadNewFile predisponendo tutti i widget e i gli elementi interattivi
+        con cui può interagire l'utente.
+        :param Dialog: Oggetto contenitore degli elementi dell'interfaccia (self nel caso sia questa finestra)
+        :return: None
+        """
         Dialog.setObjectName("Dialog")
         Dialog.resize(500, 400)
         # FONT DI BASE
@@ -229,6 +256,12 @@ class LoadNewFile(QtWidgets.QDialog):
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):
+        """
+        Funzione autogenerata al momento della creazione della classe a partire dal file .ui di QtDesigner
+        Inizializza il contenuto testuale di tutti gli elementi inizializzati in setupUI
+        :param Dialog: Oggetto contenitore degli elementi dell'interfaccia (self nel caso sia questa finestra)
+        :return: None
+        """
         _translate = QtCore.QCoreApplication.translate
         Dialog.setWindowTitle(_translate("Dialog", "Caricamento File Utilizzo"))
         self.label_2.setText(_translate("Dialog", "CARICAMENTO FILE DI UTILIZZO"))

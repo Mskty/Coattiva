@@ -10,6 +10,10 @@ class NewColumnsDialog(QtWidgets.QDialog):
         self.setupUi(self)
 
     def setContent(self):
+        """
+        Imposta il contenuto del tableWidget aggiungendo una riga per ogni colonna/feature contenente le relative informazioni
+        :return: None
+        """
         self.tableWidget.insertRow(self.tableWidget.rowCount())
         self.tableWidget.setItem(0, 0, QTableWidgetItem("NuovoContribuente"))
         self.tableWidget.setItem(0, 1, QTableWidgetItem(
@@ -36,6 +40,13 @@ class NewColumnsDialog(QtWidgets.QDialog):
         self.tableWidget.resizeColumnsToContents()
 
     def setupUi(self, MetricheDialog):
+        """
+        Funzione autogenerata al momento della creazione della classe a partire dal file .ui di QtDesigner
+        Inizializza l'interfaccia grafica della NewColumnsDialog predisponendo tutti i widget e i gli elementi interattivi
+        con cui può interagire l'utente.
+        :param MetricheDialog: Oggetto contenitore degli elementi dell'interfaccia (self nel caso sia questa finestra)
+        :return: None
+        """
         MetricheDialog.setObjectName("MetricheDialog")
         MetricheDialog.resize(858, 400)
         MetricheDialog.setMinimumSize(QtCore.QSize(858, 400))
@@ -96,6 +107,12 @@ class NewColumnsDialog(QtWidgets.QDialog):
         self.setContent()
 
     def retranslateUi(self, MetricheDialog):
+        """
+        Funzione autogenerata al momento della creazione della classe a partire dal file .ui di QtDesigner
+        Inizializza il contenuto testuale di tutti gli elementi inizializzati in setupUI
+        :param MetricheDialog: Oggetto contenitore degli elementi dell'interfaccia (self nel caso sia questa finestra)
+        :return: None
+        """
         _translate = QtCore.QCoreApplication.translate
         MetricheDialog.setWindowTitle(_translate("MetricheDialog", "Informazioni sull'elaborazione'"))
         self.label.setText(_translate("MetricheDialog", "COLONNE GENERATE"))

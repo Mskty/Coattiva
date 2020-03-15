@@ -1,9 +1,12 @@
 import pandas as pd
-
 from PyQt5.QtCore import QAbstractTableModel, Qt
 
 
 class TableModel(QAbstractTableModel):
+    """
+    Classe modello che deriva QAbstractTableModel per gestire i dati all'interno delle QTableWiew presenti nella
+    mainwindow
+    """
 
     def __init__(self, data: pd.DataFrame):
         QAbstractTableModel.__init__(self)
@@ -26,13 +29,16 @@ class TableModel(QAbstractTableModel):
         if orientation == Qt.Horizontal and role == Qt.DisplayRole:
             return self.data.columns[col]
         # Horizontal header
-        if orientation ==Qt.Vertical and role == Qt.DisplayRole:
+        if orientation == Qt.Vertical and role == Qt.DisplayRole:
             return col
         return None
 
     def updatemodel(self):
-        # c'è stata un operazione che ha modificato la struttura dati sottostante nella variabile struttura, aggiorno
-        # il tablemodel per aggiornare la view e salvo la struttura precedente
+        """
+        c'è stata un operazione che ha modificato la struttura dati sottostante nella variabile struttura, aggiorno
+        il tablemodel per aggiornare la view e salvo la struttura precedente
+        :returns: None
+        """
         self.beginResetModel()
         self.endResetModel()
 

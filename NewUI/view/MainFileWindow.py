@@ -12,7 +12,6 @@ from view.tracciato import *
 
 
 class MainFileWindow(QtWidgets.QDialog):
-    # inizializzazione
 
     def __init__(self, parent = None):
         # Inizializzazione con parent mainwindow
@@ -25,7 +24,7 @@ class MainFileWindow(QtWidgets.QDialog):
         self.type: PFPGEnum = PFPGEnum.PF
         self.filename = ""
 
-    # funzioni setter
+    """------------------------------Funzioni Setter----------------------------------------------------------------"""
 
     def setType(self, type: PFPGEnum):
         self.type = type
@@ -33,32 +32,36 @@ class MainFileWindow(QtWidgets.QDialog):
     def setFileName(self, filename: str):
         self.filename = filename
 
-    # funzioni di business
+    """----------------------------Funzioni di business-------------------------------------------------------------"""
 
     def openFileNameDialog(self):
-        # Apre finesta per recupero file e lo passa al modello se corretto
+        """
+        Apre una finestra che permette all'utente di selezionare un file di tipo csv
+        :return: nome del file selezionato dall'utente
+        """
         options = QFileDialog.Options()
         fileName, _ = QFileDialog.getOpenFileName(self, "Carica File csv", "",
                                                   "CSV Files (*.csv)", options=options)
-        # DEBUG
-        if fileName:
-            print(fileName)
 
         return fileName
 
     def returnToMain(self):
-        # Mainwindow non visibile alla prima apertura dell'applicazione ma visibile una volta che era già stato aperto
-        # un file
+        """
+        Invoca sul parent mainwindow la funzione di setup iniziale una volta caricati ed elaborati i dati
+        dell'utente dal modello, infine chiude la finestra.
+        :return: None
+        """
         self.mainwindow.firstSetup()
-        if self.mainwindow.isVisible():
-            self.close()
-        else:
-            self.close()
-            self.mainwindow.show()
+        self.close()
 
-    # SLOTS
+    """-------------------------Funzioni SLOTS di bottoni presenti all'inizializzazione---------------------------- """
 
     def onClickedLoadFileButton(self):
+        """
+        Ottiene il nome di un file dall'utente, se questo è valido invoca la funzione del modello set_data per elaborare
+        i dati contenuti in tale file. Se l'elaborazione ha successo allora invoca la funzione returnToMain
+        :return: None
+        """
         filename = self.openFileNameDialog()
         if filename:
             text = "Attendi mentre i titoli di credito storici vengono puliti, aggregati e preparati all'utilizzo"
@@ -78,14 +81,29 @@ class MainFileWindow(QtWidgets.QDialog):
                 self.error_dialog.showMessage(str(e))
 
     def onClickedConverterButton(self):
+        """
+        Apre la finestra di tipo ConverterWindow
+        :return: None
+        """
         converter = ConverterWindow(self)
         converter.exec_()
 
     def onClickedTracciatoButton(self):
+        """
+        Apre una finestra di tipo TracciatoDialog
+        :return: None
+        """
         tracciato= TracciatoDialog(type=self.type, parent=self)
         tracciato.exec_()
 
     def setupUi(self, Dialog):
+        """
+        Funzione autogenerata al momento della creazione della classe a partire dal file .ui di QtDesigner
+        Inizializza l'interfaccia grafica della MainFileWindow predisponendo tutti i widget e i gli elementi interattivi
+        con cui può interagire l'utente.
+        :param Dialog: Oggetto contenitore degli elementi dell'interfaccia (self nel caso sia questa finestra)
+        :return: None
+        """
         Dialog.setObjectName("Dialog")
         Dialog.resize(500, 400)
         # FONT DI BASE
@@ -255,6 +273,12 @@ class MainFileWindow(QtWidgets.QDialog):
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):
+        """
+        Funzione autogenerata al momento della creazione della classe a partire dal file .ui di QtDesigner
+        Inizializza il contenuto testuale di tutti gli elementi inizializzati in setupUI
+        :param Dialog: Oggetto contenitore degli elementi dell'interfaccia (self nel caso sia questa finestra)
+        :return: None
+        """
         _translate = QtCore.QCoreApplication.translate
         Dialog.setWindowTitle(_translate("Dialog", "Classificatore Coattiva Benvenuto"))
         self.label.setText(_translate("Dialog", "BENVENUTO"))

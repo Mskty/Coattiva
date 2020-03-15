@@ -214,12 +214,6 @@ class MainWindow(QMainWindow):
         # SLOT
         self.combo_use.activated.connect(lambda: self.setOnClickUseCombo())
 
-    def enableUseCombo(self):
-        self.combo_use.setEnabled(True)
-
-    def disableUseCombo(self):
-        self.combo_use.setEnabled(False)
-
     """------------------------------------------GUI SETUPS--------------------------------------------------------"""
 
     def resetUI(self):
@@ -437,7 +431,7 @@ class MainWindow(QMainWindow):
         self.groupBox_2.setEnabled(False)
         self.groupBox_3.setEnabled(False)
 
-    """-------------------------Abilita disabilita contenuto delle scroll Area---------------------------------------"""
+    """-------------------------Abilita disabilita contenuto delle scroll areas-------------------------------------"""
 
     def enablescrolls(self):
         self.main_list_columns.widget().setEnabled(True)
@@ -446,6 +440,15 @@ class MainWindow(QMainWindow):
     def disablescrolls(self):
         self.main_list_columns.widget().setEnabled(False)
         self.main_list_split.widget().setEnabled(False)
+
+
+    """-------------------------Abilita disabilita contenuto delle combo boxes--------------------------------------"""
+
+    def enableUseCombo(self):
+        self.combo_use.setEnabled(True)
+
+    def disableUseCombo(self):
+        self.combo_use.setEnabled(False)
 
     """---------------------------------------Abilita disabilita bottoni--------------------------------------------"""
 
@@ -485,7 +488,7 @@ class MainWindow(QMainWindow):
 
     """ ----------------------------------------------Set testi delle labels--------------------------------------- """
 
-    # Tab main
+    # Tab Main
     def setlabelMainType(self, type: str):
         self.main_type.setText("Tipologia di titoli di credito: " + type)
 
@@ -498,25 +501,25 @@ class MainWindow(QMainWindow):
             "% positiva e {0:.2f}".format(negativelabel) +
             "% negativa, è possibile selezionare un algoritmo di sampling per equilibrarli.")
 
-    # Tab data
+    # Tab Data
     def setlabelsData(self, tot: int, pos: int, neg: int):
         self.label_data_total.setText(str(tot))
         self.label_data_positive.setText(str(pos))
         self.label_data_negative.setText(str(neg))
 
-    # Tab train
+    # Tab Train
     def setlabelsTrain(self, tot: int, pos: int, neg: int):
         self.label_train_total.setText(str(tot))
         self.label_train_positive.setText(str(pos))
         self.label_train_negative.setText(str(neg))
 
-    # Tab test
+    # Tab Test
     def setlabelsTest(self, tot: int, pos: int, neg: int):
         self.label_test_total.setText(str(tot))
         self.label_test_positive.setText(str(pos))
         self.label_test_negative.setText(str(neg))
 
-    # Tab risultati
+    # Tab Risultati
     def setlabelsRisultati(self, type: str, totallable: int, positivelabel: float, negativelabel: float, sampling: str,
                            scaling: str, algorithm: str, ignoredcolumns: list):
         self.results_typep.setText("Tipologia di titoli di credito: " + type)
@@ -557,14 +560,14 @@ class MainWindow(QMainWindow):
         self.test_recall.setText("{0:.2f}".format(rec) + "%")
         self.test_f1.setText("{0:.2f}".format(f1) + "%")
 
-    # Tab utilizza
+    # Tab Utilizza
     def setlabelUtilizzaType(self, type: str):
         self.use_type.setText("Tipologia di titoli di credito: " + type)
 
     def setlabelUtilizzaFilename(self, filename: str):
         self.use_filename.setText("File caricato: " + filename)
 
-    """----------------------------------------- Funzioni SLOTS di bottoni già presenti--------------------------- """
+    """-------------------------Funzioni SLOTS di bottoni presenti all'inizializzazione---------------------------- """
 
     def buttonTrainModel(self):
         """
@@ -827,6 +830,13 @@ class MainWindow(QMainWindow):
     # TODO ERROR MESSAGE
 
     def setupUi(self, MainWindow):
+        """
+        Funzione autogenerata al momento della creazione della classe a partire dal file .ui di QtDesigner
+        Inizializza l'interfaccia grafica della MainWindow predisponendo tutti i widget e i gli elementi interattivi
+        con cui può interagire l'utente.
+        :param MainWindow: Oggetto contenitore degli elementi dell'interfaccia (self nel caso sia questa finestra)
+        :return: None
+        """
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(900, 800)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
@@ -1597,7 +1607,8 @@ class MainWindow(QMainWindow):
         font.setPointSize(9)
         font.setBold(True)
         self.TabWidget.tabBar().setFont(font)
-        # Tab main
+
+        # Tab Main
         self.label_7.setFont(font)
         self.label_5.setFont(font)
         self.label.setFont(font)
@@ -1606,7 +1617,8 @@ class MainWindow(QMainWindow):
         self.main_button_reset.setFont(font)
         self.main_button_train.setFont(font)
         self.main_button_save.setFont(font)
-        # Tab data train test
+
+        # Tabs Data Train Test
         self.label_13.setFont(font)
         self.label_15.setFont(font)
         self.label_27.setFont(font)
@@ -1619,7 +1631,8 @@ class MainWindow(QMainWindow):
         self.label_test_total.setFont(font)
         self.label_test_positive.setFont(font)
         self.label_test_negative.setFont(font)
-        # Tab risultati
+
+        # Tab Risultati
         self.label_29.setFont(font)
         self.label_36.setFont(font)
         self.label_37.setFont(font)
@@ -1634,10 +1647,12 @@ class MainWindow(QMainWindow):
         self.label_49.setFont(font)
         self.label_50.setFont(font)
         self.label_46.setFont(font)
-        # Tab utilizza
+
+        # Tab Utilizza
         self.label_22.setFont(font)
         self.use_loadfile.setFont(font)
         self.use_apply.setFont(font)
+
         # Tabelle
         self.table_data.horizontalHeader().setFont(font)
         self.table_train.horizontalHeader().setFont(font)
@@ -1647,10 +1662,10 @@ class MainWindow(QMainWindow):
         # RetranslateUi
         self.retranslateUi(MainWindow)
 
-        # Set iniziale delle tabs
+        # Set di base della tab da visualizzare una volta aperto l'applicativo
         self.TabWidget.setCurrentIndex(0)
 
-        # Slots
+        # Connessione SLOTS alle funzioni
         self.sampling1.toggled.connect(lambda: self.model.set_sampling(SamplingEnum.NONE))
         self.sampling2.toggled.connect(lambda: self.model.set_sampling(SamplingEnum.UNDER))
         self.sampling3.toggled.connect(lambda: self.model.set_sampling(SamplingEnum.SMOTE))
@@ -1684,6 +1699,12 @@ class MainWindow(QMainWindow):
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
+        """
+        Funzione autogenerata al momento della creazione della classe a partire dal file .ui di QtDesigner
+        Inizializza il contenuto testuale di tutti gli elementi inizializzati in setupUI
+        :param MainWindow: Oggetto contenitore degli elementi dell'interfaccia (self nel caso sia questa finestra)
+        :return: None
+        """
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Classificatore Coattiva"))
         self.label_7.setText(_translate("MainWindow", "Gestione dati caricati da file"))

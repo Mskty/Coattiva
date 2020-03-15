@@ -15,7 +15,6 @@ import pandas as pd
 
 
 class ConverterWindow(QDialog):
-    # inizializzazione
 
     def __init__(self, parent=None):
         # Inizializzazione con parent mainwindow
@@ -24,47 +23,65 @@ class ConverterWindow(QDialog):
         self.setupUi(self)
 
         # variabili di business
-        self.xlsxfile=""
-        self.csvfile=""
+        self.xlsxfile = ""
+        self.csvfile = ""
 
     def openFileNameDialog(self):
-        # Apre finesta per recupero file e lo passa al modello se corretto
+        """
+        Apre una finestra che permette all'utente di selezionare un file di tipo xlsx
+        :return: nome del file selezionato dall'utente
+        """
         options = QFileDialog.Options()
         filename, _ = QFileDialog.getOpenFileName(self, "Seleziona File xlsx", "",
                                                   "Excel Files (*.xlsx)", options=options)
         return filename
 
     def openSaveDialog(self):
-        # Apre un dialog per ottenere un percorso su cui salvare un file
+        """
+        Apre una finestra che permette all'utente di selezionare un percorso di salvataggio per un file di tipo csv
+        :return: nome del percorso di salvataggio selezionato dall'utente
+        """
         options = QFileDialog.Options()
         filename, _ = QFileDialog.getSaveFileName(self, "Percorso File csv", "",
                                                   "Csv Files (*.csv)", options=options)
         return filename
 
     def onClickedButtonLoad(self):
+        """
+        Ottiene il nome di un file dall'utente, se questo è valido ed è già stato selezionato il percorso di
+        salvataggio permette all'utente di premere il pulsante di conversione a csv :return: None
+        """
         # Salvo file da convertire e scrivo il nome
-        filename=self.openFileNameDialog()
+        filename = self.openFileNameDialog()
         if filename:
-            self.xlsxfile=filename
-            self.label_file.setText("File da convertire .xlsx: "+filename)
+            self.xlsxfile = filename
+            self.label_file.setText("File da convertire .xlsx: " + filename)
             # Se anche l'altro è stato selezionato abilito il bottone
             if self.csvfile:
                 self.button_save.setEnabled(True)
 
     def onClickedButtonPath(self):
-        # Salvo il percorso di salvataggio del csv e scrivo il nome
+        """
+        Ottiene il percorso di salvataggio dall'utente, se questo è valido ed è già stato selezionato il file da
+        convertire permette all'utente di premere il pulsante di conversione e salvataggio :return:
+        """
         filename = self.openSaveDialog()
         if filename:
             self.csvfile = filename
-            self.label_percorso.setText("Percorso di salvataggio .csv: "+filename)
+            self.label_percorso.setText("Percorso di salvataggio .csv: " + filename)
             # Se anche l'altro è stato selezionato abilito il bottone
             if self.xlsxfile:
                 self.button_save.setEnabled(True)
 
     def onClickedButtonSave(self):
+        """
+        Converte il file selezionato dal formato xlsx a csv, se la conversione ha successo lo salva al percorso indicato
+        infine chiude la finestra
+        :return: None
+        """
         # Converto, salvo il file csv e chiudo la finestra
-        text="Attendi mentre il file viene convertito al formato csv"
-        dialog = WaitingDialog(self.mainwindow, text,self.mapToGlobal(self.rect().center()))
+        text = "Attendi mentre il file viene convertito al formato csv"
+        dialog = WaitingDialog(self.mainwindow, text, self.mapToGlobal(self.rect().center()))
         dialog.show()
         QtWidgets.QApplication.processEvents()
         try:
@@ -80,8 +97,14 @@ class ConverterWindow(QDialog):
             # Informo il dialog del fallimento
             dialog.success(False)
 
-
     def setupUi(self, ConverterWindow):
+        """
+        Funzione autogenerata al momento della creazione della classe a partire dal file .ui di QtDesigner
+        Inizializza l'interfaccia grafica della ConverterWindow predisponendo tutti i widget e i gli elementi interattivi
+        con cui può interagire l'utente.
+        :param ConverterWindow: Oggetto contenitore degli elementi dell'interfaccia (self nel caso sia questa finestra)
+        :return: None
+        """
         ConverterWindow.setObjectName("ConverterWindow")
         ConverterWindow.resize(500, 200)
         ConverterWindow.setMinimumSize(QtCore.QSize(500, 200))
@@ -145,6 +168,12 @@ class ConverterWindow(QDialog):
         QtCore.QMetaObject.connectSlotsByName(ConverterWindow)
 
     def retranslateUi(self, ConverterWindow):
+        """
+        Funzione autogenerata al momento della creazione della classe a partire dal file .ui di QtDesigner
+        Inizializza il contenuto testuale di tutti gli elementi inizializzati in setupUI
+        :param ConverterWindow: Oggetto contenitore degli elementi dell'interfaccia (self nel caso sia questa finestra)
+        :return: None
+        """
         _translate = QtCore.QCoreApplication.translate
         ConverterWindow.setWindowTitle(_translate("ConverterWindow", "Convertitore"))
         self.label.setText(_translate("ConverterWindow", "CONVERTITORE DA XLSX A CSV"))
@@ -153,14 +182,3 @@ class ConverterWindow(QDialog):
         self.button_load.setText(_translate("ConverterWindow", "Seleziona File"))
         self.button_path.setText(_translate("ConverterWindow", "Seleziona Percorso Salvataggio"))
         self.button_save.setText(_translate("ConverterWindow", "Converti e Salva"))
-
-
-if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    ConverterWindow = ConverterWindow()
-    ConverterWindow.show()
-
-    # chiusura programma
-    sys.exit(app.exec_())
-

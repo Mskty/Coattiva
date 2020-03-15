@@ -27,7 +27,7 @@ class TrainModel:
         self._categoricalpf = ["Telefono", "Deceduto", "CittadinanzaItaliana", "Estero", "NuovoContribuente"]
         self._categoricalpg = ["Telefono", "Cessata", "PEC", "Estero", "NuovoContribuente"]
 
-    # Set functions
+    """---------------------------------------------------Funzioni Setter-------------------------------------------"""
 
     def set_scaler(self, scaler: ScalingEnum):
         self.scaler = scaler
@@ -38,7 +38,7 @@ class TrainModel:
     def set_classifier(self, classifier: ClassifierEnum):
         self.classifier = classifier
 
-    # Getter functions
+    """---------------------------------------------------Funzioni Getter-------------------------------------------"""
 
     def get_rows(self) -> int:
         return len(self.enabledcolumns)
@@ -48,6 +48,8 @@ class TrainModel:
 
     def get_negative_label(self) -> int:
         return len(self.enabledcolumns.loc[(self.enabledcolumns.label == 0)])
+
+    """--------------------------------------------------Funzioni Setter per colonne--------------------------------"""
 
     def disablecolumns(self, columns: list):
         print(list(self.enabledcolumns.columns.values))
@@ -64,6 +66,8 @@ class TrainModel:
             self.disabledcolumns.drop(columns=columns, inplace=True)
         else:
             print("error: colonne non presenti")
+
+    """--------------------------------------------------Funzioni Business------------------------------------------"""
 
     def trainmodel(self) -> AlgorithmPipeline:
 
@@ -158,7 +162,3 @@ class TrainModel:
 
     def export_to_csv(self, export_file_path):
         self.enabledcolumns.to_csv(export_file_path, index=None, header=True)
-
-
-    def db_columnnames(self):
-        return self.enabledcolumns.columns.values
