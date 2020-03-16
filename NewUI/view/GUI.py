@@ -902,8 +902,6 @@ class MainWindow(QMainWindow):
         except:
             pass
 
-    # TODO ERROR MESSAGE
-
     def buttonTrainExport(self):
         """
         @PRE: è stato cliccato il bottone self.train_export
@@ -919,8 +917,6 @@ class MainWindow(QMainWindow):
         except:
             pass
 
-    # TODO ERROR MESSAGE
-
     def buttonTestExport(self):
         """
         @PRE: è stato cliccato il bottone self.test_export
@@ -935,8 +931,6 @@ class MainWindow(QMainWindow):
             self.model.export_testset(filepath)
         except:
             pass
-
-    # TODO ERROR MESSAGE
 
     def buttonTrainMatrix(self):
         """
@@ -1054,8 +1048,6 @@ class MainWindow(QMainWindow):
             self.model.export_usedata(filepath)
         except:
             pass
-
-    # TODO ERROR MESSAGE
 
     def setupUi(self, MainWindow):
         """
@@ -2086,9 +2078,6 @@ class MainWindow(QMainWindow):
 
 if __name__ == "__main__":
     import sys
-    import warnings
-
-    warnings.filterwarnings("ignore")
 
     # Instanziazione app e mainwindow
     app = QtWidgets.QApplication(sys.argv)
