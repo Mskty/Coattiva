@@ -24,10 +24,6 @@ from view.WelcomeWindow import *
 
 class MainWindow(QMainWindow):
 
-    # Funzioni proprie della mainui
-
-    # Contiene le variabili model
-
     def __init__(self):
         # Inizializzazione
         super().__init__()
@@ -52,11 +48,16 @@ class MainWindow(QMainWindow):
         # Variabile di stato
         self.opened = False
 
-    """ Funzioni """
-
     """-------------------------------------------------SCROLLARES------------------------------------------------"""
 
     def clearScrollArea(self, layout: QtWidgets.QVBoxLayout):
+        """
+        @PRE: nessuna
+        Elimina dal QVBoxLayout del parametro passato layout tutti i widget presenti, ripristinando il layout della
+        ScrollArea allo stato iniziale vuoto.
+        :param layout: layuout di una ScrollArea
+        :return: None
+        """
         # PER ELIMINARE I WIDGET DA UN LAYOUT NELLA SCROLLAREA
         for i in reversed(range(layout.count())):
             widgetToRemove = layout.itemAt(i).widget()
@@ -66,13 +67,21 @@ class MainWindow(QMainWindow):
             widgetToRemove.setParent(None)
 
     def onClickedColumnCheckbox(self):
+        """
+        @PRE è stata cliccata una checkbox all'interno di self.main_list_columns_layout
+        @PRE self.main_list_columns è abilitato
+        Abilita o disabilita la colonna corrispondente al testo della checkbox cliccata dalle tabelle self.datatable e
+        self.traintable, self.testable (se presenti) utilizzando i rispettivi metodi di self.model
+        :return: None
+        """
         # Abilita o disabilita la colonna nelle tabelle del model dopo aver premuto su una checkbox
+        # Ottengo la checkbox che è stata cliccata
         checkbox = self.sender()
         if checkbox.isChecked():
             self.model.enablecolumn(checkbox.text())
         else:
             self.model.disablecolumn(checkbox.text())
-        # Refresh modelli
+        # Refresh modelli per visualizzare le modifiche
         self.datatable.updatemodel()
         print("update data")
         try:
@@ -87,19 +96,33 @@ class MainWindow(QMainWindow):
             pass
 
     def add_checkbox_columns(self, column: str):
+        """
+        @PRE: è stata invocata la funzione self.firstSetup
+        Aggiunge al layout della ScrollArea self.main_list_columns una checkbox checkata rappresentativa del nome della
+        colonna passato attraverso il parametro column, inoltre connette tale checkbox alla funzione SLOT
+        self.onClickedColumnCheckbox.
+        :param column: nome di una colonna stringa
+        :return: None
+        """
         # Aggiunge checkbox al layout della scrollview main_list_columns
         checkbox = QtWidgets.QCheckBox(column)
+        # Imposto la checkbox come checkata
         checkbox.setCheckState(QtCore.Qt.Checked)
+        # Collego la funzione SLOT alla checkbox
         checkbox.toggled.connect(lambda: self.onClickedColumnCheckbox())
         self.main_list_columns_layout.addWidget(checkbox)
 
     def onClickedSplitRadio(self):
         """
-        Fa generale al modello le partizioni del dataset train e test come selezionato dall'utente dopodichè le utilizza
-        per creare ed abilita tabelle train e test, creando i rispettivi TableModel e setta le label per quelle tabelle
+        @PRE: è stato cliccato un RadioButton all'interno della ScrollArea self.columns.splits
+        @PRE: self.main_list_splits è abilitato
+        Fa generale al modello le partizioni del dataset train e test come selezionato dall'utente
+        dopodichè le utilizza per creare ed  abilita tabelle self.traintable e self.testtable (se presente),
+        creando i rispettivi TableModel e setta le label per quelle tabelle,
         inoltre abilita la parte sottostante di comandi nella schermata principale (Addestramento modello)
-        :return:
+        :return: None
         """
+        # Ottengo il RadioButton che è stato cliccato
         radio: QtWidgets.QRadioButton = self.sender()
         if radio.isChecked():
             date = radio.objectName()
@@ -136,10 +159,21 @@ class MainWindow(QMainWindow):
             self.enableMainButtonTrain()
 
     def add_radio_split(self, ruolo: str, esempi: int):
-        # Aggiunge radio button al layout della scrollview main_list_columns
+        """
+        @PRE: è stata invocata la funzione self.firstSetup
+        Aggiunge al layout della ScrollArea self.main_list_splits un RadioButton non checkato rappresentativo dello
+        split che si vuole selezionare tra trainset e testset, inoltre connette tale RadioButton alla funzione SLOT
+        self.onClickedSplitRadio
+        :param ruolo: stringa rappresentante la data di un ruolo
+        :param esempi: intero rappresentante il numero di titoli di credito aggregati contenuti dalla prima data
+                       presente nei dati storici fino a quella contenuta nel parametro ruolo
+        :return: None
+        """
+        # Aggiunge radio button al layout della ScrollView main_list_columns
         totali = self.model.data.get_rows()
         train = esempi
         test = totali - esempi
+        # Scrivo il testo che accompagna il RadioButton
         if test > 0:
             radio = QtWidgets.QRadioButton(
                 "Fino a ruolo: " + ruolo + "\nEsempi per training: " + str(train) + "\nEsempi per test: " + str(test))
@@ -147,14 +181,21 @@ class MainWindow(QMainWindow):
             radio = QtWidgets.QRadioButton(
                 "Fino a ruolo: " + ruolo + "\nEsempi per training: " + str(train) + "\nTest set vuoto \n(migliori "
                                                                                     "performance)")
-            # utilizzo l'objectname per salvare il dato del ruolo
+        # utilizzo l'objectname per salvare il dato del ruolo
         radio.setObjectName(ruolo)
+        # Collego la funzione SLOT al RadioButton
         radio.toggled.connect(lambda: self.onClickedSplitRadio())
         self.main_list_split_layout.addWidget(radio)
 
     """-------------------------------------------------COMBOBOXES------------------------------------------------"""
 
     def setOnClickDataCombo(self):
+        """
+        @PRE: è stato selezionato un valore tra quelli presenti nella ComboBox self.combo_data
+        In base al valore selezionato nella ComboBox imposta il parametro data di self.datatable per visualizzare nella
+        tabella il corretto DataFrame presente in self.model.data
+        :return: None
+        """
         # Imposta il corretto modello di tabella dati quando viene cambiata la selezione
         text = self.combo_data.currentText()
         if text == "Dati Originali":
@@ -167,13 +208,18 @@ class MainWindow(QMainWindow):
         self.datatable.updatemodel()
 
     def setDataCombo(self):
+        """
+        @PRE: è stata invocata la funzione self.firstSetup
+        Imposta i valori contenuti nella ComboBox self.combo_data e collega la collega alla funzione SLOT
+        self.onClickDataCombo
+        :return: None
+        """
         # Imposta il contenuto e slots della combobox nella parte dati
         self.combo_data.clear()
         names = ["Dati Originali", "Dati Aggregati", "Dati Preparati"]
         self.combo_data.addItems(names)
         # Size
-        width = self.combo_use.minimumSizeHint().width()
-        self.combo_use.setMinimumWidth(width)
+        self.combo_data.setMinimumWidth(102)
         # Imposto come default l'opzione preparati
         index = self.combo_data.findText("Dati Preparati")
         self.combo_data.setCurrentIndex(index)
@@ -182,6 +228,12 @@ class MainWindow(QMainWindow):
         self.combo_data.activated.connect(lambda: self.setOnClickDataCombo())
 
     def setOnClickUseCombo(self):
+        """
+        @PRE: è stato selezionato un valore tra quelli presenti nella ComboBox self.combo_use
+        In base al valore selezionato nella ComboBox imposta il parametro data di self.usetable per visualizzare nella
+        tabella il corretto DataFrame presente in self.model.usedata
+        :return: None
+        """
         # Imposta il corretto modello di tabella utilizza quando viene cambiata la selezione
         text = self.combo_use.currentText()
         if text == "Dati Originali":
@@ -194,6 +246,12 @@ class MainWindow(QMainWindow):
         self.usetable.updatemodel()
 
     def setUseCombo(self):
+        """
+        @PRE: è stata invocata la funzione self.useFileSetup
+        Imposta i valori contenuti nella ComboBox self.combo_use e collega la collega alla funzione SLOT
+        self.onClickUseCombo
+        :return: None
+        """
         # Imposta il contenuto e slots della combobox nella parte utilizza
         self.combo_use.clear()
         # Controllo di che tipo sono i dati caricati
@@ -205,8 +263,7 @@ class MainWindow(QMainWindow):
 
         self.combo_use.addItems(names)
         # Size
-        width = self.combo_use.minimumSizeHint().width()
-        self.combo_use.setMinimumWidth(width)
+        self.combo_use.setMinimumWidth(102)
         # Imposto come default l'opzione preparati
         index = self.combo_use.findText("Dati Preparati")
         self.combo_use.setCurrentIndex(index)
@@ -217,8 +274,13 @@ class MainWindow(QMainWindow):
     """------------------------------------------GUI SETUPS--------------------------------------------------------"""
 
     def resetUI(self):
-        """ Resetta solamente gli elementi ui allo stato in cui dovrebbero essere all'apertura dell'applicazione
-            in modalità addestramento lasciando inalterate le variabili di modello"""
+        """
+        @PRE: è stata invocata la funzione self.firstSetup
+        Resetta soltanto gli elementi della UI allo stato in cui dovrebbero essere all'apertura dell'applicazione
+        in modalità addestramento lasciando inalterate le variabili di modello, chiamando varie funzioni
+        per abilitarli o disabilitarli.
+        :return: None
+        """
         # Radios (prima operazione perchè setchecked da problemi chiamando il segnale)
         self.sampling1.setChecked(True)
         self.scaling1.setChecked(True)
@@ -241,12 +303,27 @@ class MainWindow(QMainWindow):
         self.disableUseCombo()
         self.combo_use.clear()
 
+        # Reset contenuti tab Utilizza:
+        self.table_use.setModel(None)
+        self.setlabelUtilizzaFilename("nessuno")
+
     def firstSetup(self):
-        """ Esegue il setup inziale della GUI una volta caricato il file di addestramento nella firstwindow avendo quindi
-        già generato il dataset all'interno del modello.
+        """
+        @PRE: è stata invocata la funzione self.openFirstWindow o self.openLoadMainFileWindow
+        @PRE: è stato caricato un file contentente i titoli storici dall'utente attraverso la finestra FirstWindow
+              e i dati contenuti sono stati caricati ed elaborati nell'oggetto Model contenuto in self.model
+        Esegue il setup inziale della GUI una volta caricato il file di addestramento nella firstwindow avendo quindi
+        già generato il dataset all'interno del modello (self.model).
         Crea quindi la tabella data con rispettivo TableModel nella view.
         Popola infine le scrollview con le checkbox per le colonne e i possibili split dei dati in train e test
-        Serve anche come reset nel caso venga caricato un nuovo file premento il pulsante 'Caricamento nuovo file'"""
+        attraverso le relative funzioni
+        Serve anche come reset nel caso venga caricato un nuovo file premento il pulsante 'Caricamento nuovo file'
+        :return: None
+        """
+
+        """
+        Questa funzione esegue il setup inziale dell'applicativo in modalità ADDESTRAMENTO
+        """
 
         # Imposto la variabile di stato per l'apertura su true
         self.opened = True
@@ -263,7 +340,7 @@ class MainWindow(QMainWindow):
         self.setlabelMainType(type)
         filename = self.model.get_datafilename()
         self.setlabelMainFilename(filename)
-        # settaggio della label ratio
+        # Settaggio della label ratio
         datatext = self.model.get_data_info()
         total: int = datatext[0]
         positive_perc: float = (datatext[1] / total) * 100
@@ -284,7 +361,6 @@ class MainWindow(QMainWindow):
         self.clearScrollArea(self.main_list_columns_layout)
         # Popolo il layout
         columnlist = self.model.get_column_names()
-        print(columnlist)
         for i in columnlist:
             self.add_checkbox_columns(i)
         self.main_list_columns.widget().adjustSize()
@@ -311,7 +387,17 @@ class MainWindow(QMainWindow):
             self.main_list_split.setMinimumWidth(self.splitnwidgetsize)
 
     def useSetup(self):
-        """Esegue il setup della GUI di utilizzo aperta tramite il caricamento di un modello già addestrato"""
+        """
+        @PRE: è stato caricato un file contentente un classificare addestrato dall'utente attraverso la finestra WelcomeWindow
+              e tale classificatore è stato deserializzato e caricato nell'oggetto Model self.model
+        Esegue il setup inziale della GUI una volta caricato un file di classificatore nella WelcomeWindow avendo quindi
+        già deserializzato un oggetto di tipo AlgorithmPipeline nel modello (self.model).
+        Rende quindi utilizzabile solo la tab Utilizza disabilitando tutte le altre attraverso le rispettive funzioni
+        :return: None
+        """
+        """
+         Questa funzione esegue il setup inziale dell'applicativo in modalità UTILIZZA, quindi con classificatore già addestrato
+        """
         # Disabilito tutte le tabs tranne utilizza
         self.disableMain()
         self.disableData()
@@ -331,7 +417,18 @@ class MainWindow(QMainWindow):
         self.setlabelUtilizzaType(self.model.get_algorithmtype())
 
     def useFileSetup(self):
-        """Esegue il setup della GUI di utilizzo una volta caricato il file di utilizzo tramite l'apposita finestra"""
+        """
+        @PRE: è stata invocata la funzione self.openLoadNewFileWindow
+        @PRE: è stato caricato un file contentente i titoli storici o recenti dall'utente attraverso la finestra LoadNewFile
+              e i dati contenuti sono stati caricati ed elaborati nell'oggetto Model contenuto in self.model
+        Esegue il setup della tab Utilizza una volta caricato in self.model il file dall'utente tramite  la finestra
+        LoadNewFile.
+        Viene generata la tabella self.usetable su cui visualizzare i dati caricati dall'utente ed elaborati nel modello.
+        Viene abilitata la possibilità di ottenere predizioni su tali dati ed esportarli in formato csv tramite
+        gli appositi bottoni.
+        Infine viene impostata la ComboBox per visualizzare il file caricato nei diversi stati dell'elaborazione.
+        :return: None
+        """
         # Imposto la tabella per la visualizzazione del file caricato, vengono considerate le solo colonne elaborate
         self.usetable = TableModel(self.model.usedata.enabledcolumns)
         self.table_use.setModel(self.usetable)
@@ -339,7 +436,6 @@ class MainWindow(QMainWindow):
         filename = self.model.get_use_datafilename()
         self.setlabelUtilizzaFilename(filename)
         # Abilito il bottone per esportare i dati caricati
-
         # Abilito il bottone per l'utilizzo del modello sui nuovi dati e la combobox
         self.enableUseApply()
         self.enableUseExport()
@@ -350,36 +446,58 @@ class MainWindow(QMainWindow):
     """--------------------------------------------------APERTURA FINESTRE-------------------------------------------"""
 
     def openWelcomeWindow(self):
+        """
+        @PRE: nessuna
+        Visualizza la schermata inziale di avvio applicativo WelcomeWindow
+        :return: None
+        """
         # apertura schermata di selezione modalità di utilizzo con passaggio della mainwindow come parent
         window = WelcomeWindow(self)
         self.hide()
         window.show()
 
     def openFirstWindow(self):
+        """
+        @PRE: è stato premuto il pulsante per accedere alla modalità ADDESTRAMENTO dalla WelcomeWindow
+        Visualizza la schermata inziale di avvio applicativo in modalità ADDESTRAMENTO FirstWindow
+        :return: None
+        """
         # apertura schermata inziale di addestramento con passaggio della mainwindow come parent
         window = FirstWindow(self)
         self.hide()
         window.show()
 
     def openMainFileWindow(self):
+        """
+        @PRE: è stata invocata la funzione self.firstSetup oppure self.useSetup
+        Visualizza la finestra MainFileWindow
+        :return: None
+        """
         # apertura schermata di caricamento di nuovo file con passaggio della mainwindow come parent
         dialog = MainFileWindow(self)
         dialog.exec_()
-        if not self.opened:
-            # Se era la prima apertura della applicazione e chiudo il dialog chiudo tutto
-            sys.exit()
 
     def openLoadNewFileWindow(self):
+        """
+        @PRE: è stata invocata la funzione self.buttonTrainModel
+        Visualizza la finestra LoadNewFile
+        :return: None
+        """
         # apertura schermata nuovo file per utilizzo
         dialog = LoadNewFile(self.model.workingalgorithm.type, self)
         dialog.exec_()
 
     def openSaveDialog(self):
+        """
+        @PRE: nessuna
+        Apre una finestra che permette all'utente di selezionare un percorso di salvataggio per un file di tipo csv
+        :return: nome del percorso di salvataggio selezionato dall'utente
+        """
         # Apre un dialog per ottenere un percorso su cui salvare un file
         options = QFileDialog.Options()
-        fileName, _ = QFileDialog.getSaveFileName(self, "Crea/Salva File csv", "",
+        filename, _ = QFileDialog.getSaveFileName(self, "Crea/Salva File csv", "",
                                                   "Csv Files (*.csv)", options=options)
-        return fileName
+        return filename
 
     """----------------------------------------Abilita disabilita tabs-----------------------------------------------"""
 
@@ -440,7 +558,6 @@ class MainWindow(QMainWindow):
     def disablescrolls(self):
         self.main_list_columns.widget().setEnabled(False)
         self.main_list_split.widget().setEnabled(False)
-
 
     """-------------------------Abilita disabilita contenuto delle combo boxes--------------------------------------"""
 
@@ -571,11 +688,13 @@ class MainWindow(QMainWindow):
 
     def buttonTrainModel(self):
         """
-        Addestra l'algoritmo sul training set chiamando il metodo del modello
+        @PRE: è stato cliccato il bottone self.main_button_train
+        @PRE: è stato generato un trainset attraverso l'invocazione della funzione self.onClickedSplitRadio
+        Addestra l'algoritmo sul training set chiamando il metodo del modello (self.model)
         Aggiunge la colonna predizioni sulle tabelle chiamando il modello e facendo l'update dei TableModel
         Aggiunge tutti i dati necessari sulla tab Risultati
         Le operazioni riguardanti il testset vengono fatte solo se questo è presente
-        :return:
+        :return: None
         """
 
         # Apertura finestra di attesa
@@ -583,6 +702,7 @@ class MainWindow(QMainWindow):
         waitdialog = WaitingDialog(self, text, self.mapToGlobal(self.rect().center()))
         waitdialog.show()
         QtWidgets.QApplication.processEvents()
+
         # Addestramento modello e setup ui risultati
         self.model.train_algorithm()
 
@@ -595,7 +715,6 @@ class MainWindow(QMainWindow):
         # Aggiorno le label nel caso ci sia stato undersampling o oversampling
         traininfo = self.model.get_train_info()
         self.setlabelsTrain(traininfo[0], traininfo[1], traininfo[2])
-
 
         # Labels fisse Tab risultati
         tipo = self.model.get_traintype()
@@ -660,10 +779,22 @@ class MainWindow(QMainWindow):
         waitdialog.success(True)
 
     def buttonLoadNewTrainFile(self):
+        """
+        @PRE: è stato cliccato il bottone self.main_button_file
+        apre la finestra MainFileWindow attraverso l'apposito metodo
+        :return: None
+        """
         # Chiama la mainfilewindow
         self.openMainFileWindow()
 
     def buttonReset(self):
+        """
+        @PRE: è stato cliccato il bottone self.main_button_reset
+        Riporta l'applicativo in uno stato identico a quello in cui si trovata al termine dell'esecuzione della funzione
+        self.firstSetup.
+        per resettare il modello (self.model) invoca la sua funzione reset_settings
+        :return: None
+        """
         # Reset: abilita tutte le colonne, disabilita train e test set, blocca le box
         # Reset radio boxes ( prima cosa perchè il setchecked chiama il segnale)
         self.sampling1.setChecked(True)
@@ -680,6 +811,10 @@ class MainWindow(QMainWindow):
         self.traintable: TableModel = None
         self.testtable: TableModel = None
         self.usetable: TableModel = None
+
+        # Reset contenuti tab Utilizza:
+        self.table_use.setModel(None)
+        self.setlabelUtilizzaFilename("nessuno")
 
         # Reset tabs
         self.disableTrain()
@@ -724,6 +859,13 @@ class MainWindow(QMainWindow):
         self.main_list_split.setMinimumWidth(self.splitnwidgetsize)
 
     def buttonSave(self):
+        """
+        @PRE: è stato cliccato il bottone self.main_button_save
+        Permette all'utente di salvare il classificatore addestrato su file .sav.
+        Apre un FileDialog per selezionare la posizione in cui salvare il file, se la posizione è valida allora invoca
+        la funzione del modello per serializzare il classificatore addestrato e salvarlo alla posizione indicata.
+        :return: None
+        """
         # chiama un dialog di salvataggio per ottere il path di salvataggio poi invoca la funzione del modello
         options = QFileDialog.Options()
         filename, _ = QFileDialog.getSaveFileName(self, "Salvataggio del modello addestrato", "",
@@ -736,11 +878,23 @@ class MainWindow(QMainWindow):
             dialog.success(True)
 
     def buttonDataPreprocessInfo(self):
+        """
+        @PRE: è stato cliccato il bottone self.data_preprocess_info
+        Visualizza una finestra informativa di tipo NewColumnsDialog
+        :return: None
+        """
         # chiama NewColumnsDialog per ottenere informazioni sulle colonne aggiunte
         dialog = NewColumnsDialog()
         dialog.exec_()
 
     def buttonDataExport(self):
+        """
+        @PRE: è stato cliccato il bottone self.data_export
+        Permette all'utente di salvare su file csv i dati presenti nella tabella self.datatable
+        chiama la funzione self.openSaveDialog per ottenere il percorso di salvataggio del file csv, poi invoca la
+        funzione del modello (self.model) per generare il file csv con i dati
+        :return: None
+        """
         # chiama opensave dialog per ottere il path di salvataggio poi invoca la funzione del modello per salvare
         filepath = self.openSaveDialog()
         try:
@@ -751,6 +905,13 @@ class MainWindow(QMainWindow):
     # TODO ERROR MESSAGE
 
     def buttonTrainExport(self):
+        """
+        @PRE: è stato cliccato il bottone self.train_export
+        Permette all'utente di salvare su file csv i dati presenti nella tabella self.traintable
+        chiama la funzione self.openSaveDialog per ottenere il percorso di salvataggio del file csv, poi invoca la
+        funzione del modello (self.model) per generare il file csv con i dati
+        :return: None
+        """
         # chiama opensave dialog per ottere il path di salvataggio poi invoca la funzione del modello per salvare
         filepath = self.openSaveDialog()
         try:
@@ -761,6 +922,13 @@ class MainWindow(QMainWindow):
     # TODO ERROR MESSAGE
 
     def buttonTestExport(self):
+        """
+        @PRE: è stato cliccato il bottone self.test_export
+        Permette all'utente di salvare su file csv i dati presenti nella tabella self.testtable
+        chiama la funzione self.openSaveDialog per ottenere il percorso di salvataggio del file csv, poi invoca la
+        funzione del modello (self.model) per generare il file csv con i dati
+        :return: None
+        """
         # chiama opensave dialog per ottere il path di salvataggio poi invoca la funzione del modello per salvare
         filepath = self.openSaveDialog()
         try:
@@ -771,39 +939,92 @@ class MainWindow(QMainWindow):
     # TODO ERROR MESSAGE
 
     def buttonTrainMatrix(self):
+        """
+        @PRE: è stato cliccato il bottone self.button_train_matrix
+        Visualizza a schermo il grafico della confusion matrix per il trainset utilizzando il rispettivo metodo del
+        modello
+        :return: None
+        """
         # grafico conf matrix train
         self.model.get_confusion_matrix_train()
 
     def buttonTrainRoc(self):
+        """
+        @PRE: è stato cliccato il bottone self.button_train_auc
+        Visualizza a schermo il grafico della curva roc-auc per il trainset utilizzando il rispettivo metodo del
+        modello
+        :return: None
+        """
         # grafico roc train
         self.model.get_auc_curve_train()
 
     def buttonTrainPrc(self):
+        """
+        @PRE: è stato cliccato il bottone self.button_train_prc
+        Visualizza a schermo il grafico della curva precision-recall per il trainset utilizzando il rispettivo metodo
+        del modello
+        :return: None
+        """
         # grafico prc train
         self.model.get_prc_curve_train()
 
     def buttonTestMatrix(self):
+        """
+        @PRE: è stato cliccato il bottone self.button_test_matrix
+        Visualizza a schermo il grafico della confusion matrix per il testset utilizzando il rispettivo metodo del
+        modello
+        :return: None
+        """
         # grafico conf matrix train
         self.model.get_confusion_matrix_test()
 
     def buttonTestRoc(self):
+        """
+        @PRE: è stato cliccato il bottone self.button_test_auc
+        Visualizza a schermo il grafico della curva roc-auc per il testset utilizzando il rispettivo metodo del
+        modello
+        :return: None
+        """
         # grafico roc train
         self.model.get_auc_curve_test()
 
     def buttonTestPrc(self):
+        """
+        @PRE: è stato cliccato il bottone self.button_test_prc
+        Visualizza a schermo il grafico della curva precision-recall per il testset utilizzando il rispettivo metodo del
+        modello
+        :return: None
+        """
         # grafico prc train
         self.model.get_prc_curve_test()
 
     def buttonResultsInfo(self):
+        """
+        @PRE: è stato cliccato il bottone self.results_info
+        Vissualizza una finestra informativa di tipo MetricheDialog
+        :return: None
+        """
         # Apertura scheda info metriche
         dialog = MetricheDialog()
         dialog.exec_()
 
     def buttonUseLoadFile(self):
+        """
+        @PRE: è stato cliccato il bottone self.use_loadfile
+        Permette all'utente di caricare un file csv su cui ottenere predizioni dal classificatore addestrato attraverso
+        la finestra visualizzata dalla funzione self.openLoadNewFileWindow
+        :return: None
+        """
         # apri finestra LoadNewFile
         self.openLoadNewFileWindow()
 
     def buttonUseApply(self):
+        """
+        @PRE: è stato cliccato il bottone self.use_apply
+        Genera le predizioni e le aggiunge ai dati presenti nella tabella self.usetable utilizzando il classificatore
+        addestrato attraverso i metodi del modello(self.model).
+        :return: None
+        """
         # Riporta i risultati del modello sulla tabella del file di utilizzo
         # Dialog di attesa
         text = "Attendi mentre il modello effettua predizioni sui dati inseriti"
@@ -816,10 +1037,17 @@ class MainWindow(QMainWindow):
         self.usetable.updatemodel()
         # Informo il dialog del successo
         dialog.success(True)
-        # Mi disabilito
+        # Mi disabilito in quanto le predizioni sono già state aggiunte
         self.disableUseApply()
 
     def buttonUseExport(self):
+        """
+        @PRE: è stato cliccato il bottone self.use_export
+        Permette all'utente di salvare su file csv i dati presenti nella tabella self.usetable
+        chiama la funzione self.openSaveDialog per ottenere il percorso di salvataggio del file csv, poi invoca la
+        funzione del modello (self.model) per generare il file csv con i dati
+        :return: None
+        """
         # chiama opensave dialog per ottere il path di salvataggio poi invoca la funzione del modello per salvare
         filepath = self.openSaveDialog()
         try:
@@ -1151,6 +1379,9 @@ class MainWindow(QMainWindow):
         self.combo_data = QtWidgets.QComboBox(self.Data)
         spacerItem_data = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_box.addItem(spacerItem_data)
+        self.combo_data_label = QtWidgets.QLabel(self.Data)
+        self.combo_data_label.setObjectName("combo_data_label")
+        self.horizontalLayout_box.addWidget(self.combo_data_label)
         self.combo_data.setObjectName("combo_data")
         self.horizontalLayout_box.addWidget(self.combo_data)
 
@@ -1173,6 +1404,9 @@ class MainWindow(QMainWindow):
         self.horizontalLayout.addWidget(self.data_preprocess_info)
         spacerItem14 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem14)
+        self.label_data_export=QtWidgets.QLabel(self.Data)
+        self.label_data_export.setObjectName("label_data_export")
+        self.horizontalLayout.addWidget(self.label_data_export)
         self.data_export = QtWidgets.QPushButton(self.Data)
         self.data_export.setObjectName("data_export")
         self.horizontalLayout.addWidget(self.data_export)
@@ -1226,6 +1460,9 @@ class MainWindow(QMainWindow):
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         spacerItem15 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_2.addItem(spacerItem15)
+        self.label_train_export = QtWidgets.QLabel(self.Train)
+        self.label_train_export.setObjectName("label_train_export")
+        self.horizontalLayout_2.addWidget(self.label_train_export)
         self.train_export = QtWidgets.QPushButton(self.Train)
         self.train_export.setObjectName("train_export")
         self.horizontalLayout_2.addWidget(self.train_export)
@@ -1279,6 +1516,9 @@ class MainWindow(QMainWindow):
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
         spacerItem16 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_3.addItem(spacerItem16)
+        self.label_test_export = QtWidgets.QLabel(self.Test)
+        self.label_test_export.setObjectName("label_test_export")
+        self.horizontalLayout_3.addWidget(self.label_test_export)
         self.test_export = QtWidgets.QPushButton(self.Test)
         self.test_export.setObjectName("test_export")
         self.horizontalLayout_3.addWidget(self.test_export)
@@ -1579,6 +1819,9 @@ class MainWindow(QMainWindow):
         self.horizontalLayout_8.addWidget(self.use_apply)
         spacerItem34 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_8.addItem(spacerItem34)
+        self.combo_use_label = QtWidgets.QLabel(self.Utilizza)
+        self.combo_use_label.setObjectName("combo_use_label")
+        self.horizontalLayout_8.addWidget(self.combo_use_label)
         self.combo_use = QtWidgets.QComboBox(self.Utilizza)
         self.combo_use.setObjectName("combo_use")
         self.horizontalLayout_8.addWidget(self.combo_use)
@@ -1592,6 +1835,9 @@ class MainWindow(QMainWindow):
         self.horizontalLayout_4.setObjectName("horizontalLayout_4")
         spacerItem35 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_4.addItem(spacerItem35)
+        self.label_use_export = QtWidgets.QLabel(self.Utilizza)
+        self.label_use_export.setObjectName("label_use_export")
+        self.horizontalLayout_4.addWidget(self.label_use_export)
         self.use_export = QtWidgets.QPushButton(self.Utilizza)
         self.use_export.setObjectName("use_export")
         self.horizontalLayout_4.addWidget(self.use_export)
@@ -1758,6 +2004,7 @@ class MainWindow(QMainWindow):
         self.label_18.setText(_translate("MainWindow", "Numero di titoli con label Negativa: "))
         self.label_data_negative.setText(_translate("MainWindow", "nessuno"))
         self.data_preprocess_info.setText(_translate("MainWindow", "Informazioni Colonne Aggiuntive"))
+        self.label_data_export.setText(_translate("MainWindow", "Premi per esportare i dati Preparati in file .csv: "))
         self.data_export.setText(_translate("MainWindow", "Esporta"))
         self.TabWidget.setTabText(self.TabWidget.indexOf(self.Data), _translate("MainWindow", "Data"))
         self.label_15.setText(_translate("MainWindow", "Informazioni sui dati di addestramento in-sample:"))
@@ -1767,6 +2014,8 @@ class MainWindow(QMainWindow):
         self.label_train_positive.setText(_translate("MainWindow", "nessuno"))
         self.label_21.setText(_translate("MainWindow", "Numero di titoli con label Negativa:"))
         self.label_train_negative.setText(_translate("MainWindow", "nessuno"))
+        self.label_train_export.setText(_translate("MainWindow", "Premi per esportare i dati della tabella in file "
+                                                                 ".csv: "))
         self.train_export.setText(_translate("MainWindow", "Esporta"))
         self.TabWidget.setTabText(self.TabWidget.indexOf(self.Train), _translate("MainWindow", "Train"))
         self.label_27.setText(_translate("MainWindow", "Informazioni sui dati di test out-of-sample:"))
@@ -1776,6 +2025,8 @@ class MainWindow(QMainWindow):
         self.label_test_positive.setText(_translate("MainWindow", "nessuno"))
         self.label_25.setText(_translate("MainWindow", "Numero di titoli con label Negativa:"))
         self.label_test_negative.setText(_translate("MainWindow", "nessuno"))
+        self.label_test_export.setText(
+            _translate("MainWindow", "Premi per esportare i dati della tabella in file .csv: "))
         self.test_export.setText(_translate("MainWindow", "Esporta"))
         self.TabWidget.setTabText(self.TabWidget.indexOf(self.Test), _translate("MainWindow", "Test"))
         self.label_29.setText(
@@ -1824,13 +2075,19 @@ class MainWindow(QMainWindow):
         self.use_filename.setText(_translate("MainWindow", "File caricato: nessuno"))
         self.use_loadfile.setText(_translate("MainWindow", "Carica File"))
         self.use_apply.setText(_translate("MainWindow", "Elabora"))
+        self.label_use_export.setText(
+            _translate("MainWindow", "Premi per esportare i dati della tabella in file .csv: "))
         self.use_export.setText(_translate("MainWindow", "Esporta"))
+        self.combo_data_label.setText(_translate("MainWindow", "Selezione quale versione dei dati visualizzare nella tabella: "))
+        self.combo_use_label.setText(
+            _translate("MainWindow", "Selezione quale versione dei dati visualizzare nella tabella: "))
         self.TabWidget.setTabText(self.TabWidget.indexOf(self.Utilizza), _translate("MainWindow", "Utilizza"))
 
 
 if __name__ == "__main__":
     import sys
     import warnings
+
     warnings.filterwarnings("ignore")
 
     # Instanziazione app e mainwindow

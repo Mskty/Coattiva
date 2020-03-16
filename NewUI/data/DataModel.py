@@ -114,7 +114,7 @@ class DataModel:
         classificati come positivi (true), e quanti come negativi (false). L'idea è che ciascuna delle
         date dei ruoli può essere utilizzata per splittare i dati storici in training set e test set,
         vengono dunque riportate le possibili composizioni dei training set ad ogni data di ruolo scelta.
-        :return: results, un dataframe contenenti numero titoli e label (positive e negative) per ogni data di ruolo
+        :return: results, un dataframe dataframe da 4 colonne: ruolo, nesempi, true, false
         """
         # Ricavo i ruoli
         ruoli = self.df.DataCaricoTitolo.unique()
