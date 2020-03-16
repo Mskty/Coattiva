@@ -6,6 +6,8 @@ class TableModel(QAbstractTableModel):
     """
     Classe modello che deriva QAbstractTableModel per gestire i dati all'interno delle QTableWiew presenti nella
     mainwindow
+    PARAMETRI:
+    :param self.data: pandas Dataframe contenente i dati da visualizzare nella tabella
     """
 
     def __init__(self, data: pd.DataFrame):
@@ -35,6 +37,7 @@ class TableModel(QAbstractTableModel):
 
     def updatemodel(self):
         """
+        @PRE: nessuna
         c'è stata un operazione che ha modificato la struttura dati sottostante nella variabile struttura, aggiorno
         il tablemodel per aggiornare la view e salvo la struttura precedente
         :returns: None

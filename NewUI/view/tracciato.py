@@ -23,6 +23,7 @@ class TracciatoDialog(QtWidgets.QDialog):
 
     def setContent(self):
         """
+        @PRE: nessuna
         Imposta i contenuti del tableWidget a seconda dei parametri typepfpg e filetype.
         Verrà inserita una riga nel tableWidget per ogni colonna/feature con le releative informazioni.
         :return: None

@@ -52,6 +52,12 @@ class TrainModel:
     """--------------------------------------------------Funzioni Setter per colonne--------------------------------"""
 
     def disablecolumns(self, columns: list):
+        """
+        @PRE: nessuna
+        Sposta da self.enabledcolumns a self.disabledcolumns le colonne il cui nome è contenuto nel parametro columns.
+        :param columns: lista di nomi di colonne da spostare
+        :return: None
+        """
         print(list(self.enabledcolumns.columns.values))
         print(columns)
         if set(columns).issubset(set(list(self.enabledcolumns.columns.values))):
@@ -61,6 +67,12 @@ class TrainModel:
             print("error: colonne non presenti")
 
     def enablecolumns(self, columns: list):
+        """
+        @PRE: nessuna
+        Sposta da self.disabledcolumns a self.enabledcolumns le colonne il cui nome è contenuto nel parametro columns.
+        :param columns: lista di nomi di colonne da spostare
+        :return: None
+        """
         if set(columns).issubset(set(list(self.disabledcolumns.columns.values))):
             self.enabledcolumns[columns] = self.disabledcolumns[columns]
             self.disabledcolumns.drop(columns=columns, inplace=True)
@@ -70,6 +82,26 @@ class TrainModel:
     """--------------------------------------------------Funzioni Business------------------------------------------"""
 
     def trainmodel(self) -> AlgorithmPipeline:
+        """
+        @PRE: nessuna
+        Genera e ritorna un oggetto di tipo AlgorithmPipeline con le seguenti specifiche:
+        Viene istanziato un classificatore a seconda del tipo specificato in self.classifier
+        Il classificatore viene addestrato sui dati contenuti in self.enabledcolumns con sampling specificato in
+            self.sampler. Se self.sampler non è SamplingEnum.NONE allora self.enabledcolumns viene aggiornato con i dati
+            su cui è stato effettuato sampling
+        Viene istanziato uno scaler a seconda del tipo specificato su self.scaler. Tale scaler, se self.scaler non è
+            ScalerEnum.NONE viene addestrato ed applicato su self.enabledcolumns per le colonne non contenute in
+            self.categorical_pf o self.categorical_pg a seconda di self.type
+        Il classificatore viene addestrato sui dati post sampling e post scaling in modo da produrre un modello
+            addestrato.
+        AlgorithmScaler viene costruito con i parametri:
+            classificatore addestrato
+            scaler addestrato
+            columnstoscale per indicare quali colonne devono essere elaborate dallo scaler
+            columnlist contenente tutte le colonne utilizzate dal classificatore
+            self.type per indicare il tipo di titoli trattati dal classificatore
+        :return:
+        """
 
         trainset = self.enabledcolumns.copy()
 
@@ -126,7 +158,7 @@ class TrainModel:
             trainset.drop(columns=categorical, inplace=True)
             # Variabile con le colonne da scalare
             columnstoscale = list(trainset.columns.values)
-            # Fit e transform
+            # Fit e transform scaler
             scaler.fit(trainset.values)
             scaled_features_trainset = scaler.transform(trainset.values)
             # Ricostruzione trainset
@@ -154,11 +186,28 @@ class TrainModel:
         return AlgorithmPipeline(classifier,scaler,columnstoscale,columnlist,self.type)
 
     def attach_predictions(self, pred: list):
-        # Aggiungo predizioni alla prima riga
+        """
+        @PRE: nessuna
+        Aggiunge la lista di predizioni contenute nel parametro pred a self.enabledcolumns tramite la nuova colonna
+        "predizione"
+        :param pred: lista di booleani della stessa lunghezza del numero di righe di self.enabledcolumns
+        :return: None
+        """
         self.enabledcolumns.insert(0, "predizione", pred)
 
     def remove_predictions(self):
+        """
+        @PRE: è stata invocata la funzione self.attach_predictions
+        Rimuove la colonna "predizione" seguendo la logica già esposta nella funzione attach_predictions
+        :return:
+        """
         self.enabledcolumns.drop(columns="predizione", inplace=True)
 
     def export_to_csv(self, export_file_path):
+        """
+        @PRE: nessuna
+        Esporta i dati del dataframe self.enabledcolumns su file csv nel percorso indicato
+        :param export_file_path: percorso di salvataggio del file csv
+        :return: None
+        """
         self.enabledcolumns.to_csv(export_file_path, index=None, header=True)

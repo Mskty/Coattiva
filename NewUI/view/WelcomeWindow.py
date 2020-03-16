@@ -20,6 +20,7 @@ class WelcomeWindow(QtWidgets.QMainWindow):
 
     def openFileNameDialog(self):
         """
+        PRE: nessuna
         Apre una finestra che permette all'utente di selezionare un file di tipo sav contenente un modello addestrato
         :return: nome del file selezionato dall'utente
         """
@@ -33,6 +34,7 @@ class WelcomeWindow(QtWidgets.QMainWindow):
 
     def onClickedButtonAddestramento(self):
         """
+        @PRE: è stato premuto il pulsante button_addestramento
         Chiude la finestra e invoca la funzione del parent mainwindow che permette di visualizzare la finestra di primo
         accesso per la modalitò addestramento
         :return: None
@@ -42,6 +44,7 @@ class WelcomeWindow(QtWidgets.QMainWindow):
 
     def onClickedButtonUtilizza(self):
         """
+        @PRE: è stato premuto il pulsante button_utilizza
         Ottiene il nome di un file dall'utente, se questo è valido invoca la funzione del modello algorithm_from_file per
         caricare nell'applicativo il modello addestrato contenuto in tale file.
         Se l'elaborazione ha successo allora invoca la funzione returnToMain

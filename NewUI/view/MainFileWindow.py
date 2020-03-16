@@ -36,6 +36,7 @@ class MainFileWindow(QtWidgets.QDialog):
 
     def openFileNameDialog(self):
         """
+        @PRE: nessuna
         Apre una finestra che permette all'utente di selezionare un file di tipo csv
         :return: nome del file selezionato dall'utente
         """
@@ -47,6 +48,7 @@ class MainFileWindow(QtWidgets.QDialog):
 
     def returnToMain(self):
         """
+        @PRE: è stata invocata la funzione self.onClickedLoadFileButton
         Invoca sul parent mainwindow la funzione di setup iniziale una volta caricati ed elaborati i dati
         dell'utente dal modello, infine chiude la finestra.
         :return: None
@@ -58,6 +60,7 @@ class MainFileWindow(QtWidgets.QDialog):
 
     def onClickedLoadFileButton(self):
         """
+        @PRE: è stato premuto il pulsante button_loadfile
         Ottiene il nome di un file dall'utente, se questo è valido invoca la funzione del modello set_data per elaborare
         i dati contenuti in tale file. Se l'elaborazione ha successo allora invoca la funzione returnToMain
         :return: None
@@ -82,6 +85,7 @@ class MainFileWindow(QtWidgets.QDialog):
 
     def onClickedConverterButton(self):
         """
+        @PRE: è stato premuto il pulsante converter
         Apre la finestra di tipo ConverterWindow
         :return: None
         """
@@ -90,6 +94,7 @@ class MainFileWindow(QtWidgets.QDialog):
 
     def onClickedTracciatoButton(self):
         """
+        @PRE: è stato premuto il pulsante tracciato
         Apre una finestra di tipo TracciatoDialog
         :return: None
         """

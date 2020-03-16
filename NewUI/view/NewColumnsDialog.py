@@ -11,6 +11,7 @@ class NewColumnsDialog(QtWidgets.QDialog):
 
     def setContent(self):
         """
+        @PRE: nessuna
         Imposta il contenuto del tableWidget aggiungendo una riga per ogni colonna/feature contenente le relative informazioni
         :return: None
         """

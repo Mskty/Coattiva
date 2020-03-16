@@ -24,6 +24,7 @@ class WaitingDialog(QtWidgets.QDialog):
 
     def success(self, success: bool):
         """
+        @PRE: nessuna
         Funzione da chiamare al termine dell'elaborazione.
         Modifica il testo della finestra a seconda del fallimento o successo dell'operazione, infine aggiunge un bottone
         per chiudere la finestra una volta informato l'utente dello stato dell'operazione.

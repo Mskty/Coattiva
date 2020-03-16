@@ -19,6 +19,7 @@ class MetricheDialog(QtWidgets.QDialog):
 
     def setContent(self):
         """
+        @PRE: nessuna
         Imposta il contenuto del tableWidget aggiungendo una riga per ogni metrica contenente le relative informazioni
         :return: None
         """

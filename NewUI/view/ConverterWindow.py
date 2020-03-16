@@ -28,6 +28,7 @@ class ConverterWindow(QDialog):
 
     def openFileNameDialog(self):
         """
+        @PRE: nessuna
         Apre una finestra che permette all'utente di selezionare un file di tipo xlsx
         :return: nome del file selezionato dall'utente
         """
@@ -38,6 +39,7 @@ class ConverterWindow(QDialog):
 
     def openSaveDialog(self):
         """
+        @PRE: nessuna
         Apre una finestra che permette all'utente di selezionare un percorso di salvataggio per un file di tipo csv
         :return: nome del percorso di salvataggio selezionato dall'utente
         """
@@ -48,6 +50,7 @@ class ConverterWindow(QDialog):
 
     def onClickedButtonLoad(self):
         """
+        @PRE: è stato cliccato il bottone button_load
         Ottiene il nome di un file dall'utente, se questo è valido ed è già stato selezionato il percorso di
         salvataggio permette all'utente di premere il pulsante di conversione a csv :return: None
         """
@@ -62,6 +65,7 @@ class ConverterWindow(QDialog):
 
     def onClickedButtonPath(self):
         """
+        @ PRE: è stato cliccato il bottone button_path
         Ottiene il percorso di salvataggio dall'utente, se questo è valido ed è già stato selezionato il file da
         convertire permette all'utente di premere il pulsante di conversione e salvataggio :return:
         """
@@ -75,6 +79,7 @@ class ConverterWindow(QDialog):
 
     def onClickedButtonSave(self):
         """
+        @ PRE: è stato cliccato il bottone button_save
         Converte il file selezionato dal formato xlsx a csv, se la conversione ha successo lo salva al percorso indicato
         infine chiude la finestra
         :return: None

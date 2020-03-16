@@ -11,9 +11,6 @@ from sklearn.metrics import plot_confusion_matrix
 
 class AlgorithmPipeline:
 
-    # Classificatore già addestrato su training set
-    # Scaler già addestrato su training set
-
     def __init__(self, classifier=None, scaler=None, columnstoscale: list = None, columnlist: list = None,
                  type: PFPGEnum = None):
         self.classifier = classifier
@@ -23,6 +20,12 @@ class AlgorithmPipeline:
         self.type: PFPGEnum = type
 
     def predict(self, dataset: pd.DataFrame):
+        """
+        @PRE: self.classifier not None
+        Effettua scaling (se scaler è presente) e predice i risultati di ogni riga di dataset con classifier.predict
+        :param dataset: pandas Dataframe con features compatibili con classifier e scaler
+        :return: numpy array a 1 dimensione con le predizioni per ogni riga di dataset
+        """
         dataset = dataset.copy()
 
         # Applicazione scaler su colonne non categoriche (columnstoscale) se presente
@@ -44,6 +47,13 @@ class AlgorithmPipeline:
         return self.classifier.predict(X)
 
     def metrics(self, dataset: pd.DataFrame) -> Score:
+        """
+        @PRE: nessuna
+        calcola e ritorna 5 metriche dal dataset su cui sono state effettuate le predizioni e in cui erano presenti
+        i valori reali (nella colonna label). I valori delle metriche vengono salvati in un oggetto di tipo Score
+        :param dataset: pandas Dataframe contenente le colonne label e predizione
+        :return: oggetto Score contenente le 5 metriche
+        """
         accuracy = accuracy_score(dataset["label"].values, dataset["predizione"].values)
         precision = precision_score(dataset["label"].values, dataset["predizione"].values)
         recall = recall_score(dataset["label"].values, dataset["predizione"].values)
@@ -52,6 +62,13 @@ class AlgorithmPipeline:
         return Score(accuracy, precision, recall, f1, roc_auc)
 
     def plot_roc_curve(self, dataset: pd.DataFrame):
+        """
+        @PRE: self.classifier not None
+        Genera una figura matplotlib contenente il grafico roc-auc curve per i risultati delle predizioni
+        ottenute sui dati contenuti nel parametro dataset.
+        Per visualizzare il grafico una volta lanciata la funzione occorre invocare la funzione plt.show()
+        :return: None
+        """
         # fa comparire il grafico della roc_curve
         dataset = dataset.copy()
 
@@ -78,7 +95,14 @@ class AlgorithmPipeline:
         ax.legend(loc='lower right')
 
     def plot_precision_recall(self, dataset: pd.DataFrame):
-        # fa comparire il grafico della precision vs recall con threshold della decision function (default 0)
+        """
+        @PRE: self.classifier not None
+        Genera una figura matplotlib contenente il grafico precision-recall curve per i risultati delle predizioni
+        ottenute sui dati contenuti nel parametro dataset.
+        Per visualizzare il grafico una volta lanciata la funzione occorre invocare la funzione plt.show()
+        :param dataset: pandas Dataframe con features compatibili con classifier e scaler
+        :return: None
+        """
         dataset = dataset.copy()
 
         # Applicazione scaler su colonne non categoriche (columnstoscale) se presente
@@ -106,7 +130,14 @@ class AlgorithmPipeline:
         ax.legend(loc='lower right')
 
     def plot_confusion_matrix(self, dataset: pd.DataFrame):
-        # da comparire il grafico della confusion matrix
+        """
+        @PRE: self.classifier not None
+        Genera una figura matplotlib contenente il grafico confusion matrix per i risultati delle predizioni
+        ottenute sui dati contenuti nel parametro dataset.
+        Per visualizzare il grafico una volta lanciata la funzione occorre invocare la funzione plt.show()
+        :param dataset: pandas Dataframe con features compatibili con classifier e scaler
+        :return: None
+        """
         dataset = dataset.copy()
 
         # Applicazione scaler su colonne non categoriche (columnstoscale) se presente
@@ -133,12 +164,23 @@ class AlgorithmPipeline:
                xlabel="Risultati predetti")
 
     def serialize(self, filename=None):
-        # Serializza il modello attualmente addestrato in un file
+        """
+        @PRE: self.classifier not None, self.columnlist not None, self.type not None
+        Serializza il modello salvandolo alla destinazione specificata su filename, che deve essere di tipo .sav
+        :param filename: percorso di salvataggio .sav del modello
+        :return: None
+        """
         modlist = [self.classifier, self.scaler, self.columnstoscale, self.columnlist, self.type]
         s = pickle.dump(modlist, open(filename, 'wb'))
 
     def deserialize(self, filename=None):
-        # Carica un modello già addestrato in precedenza da file, deve essere già stato creato l'oggetto
+        """
+        @PRE: nessuna
+        Carica un modello già addestrato dal file .sav specificato dal parametro filename.
+        L'oggetto AlgorithmPipeline deve giò essere stato creato prima di invocare questo metodo
+        :param filename: file .sav da cui caricare il modello
+        :return:
+        """
         modlist_loaded = pickle.load(open(filename, 'rb'))
         self.classifier = modlist_loaded[0]
         self.scaler = modlist_loaded[1]

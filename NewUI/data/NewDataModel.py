@@ -40,6 +40,14 @@ class NewDataModel:
     """-------------------------------------------------Funzioni Business-------------------------------------------"""
 
     def attach_predictions(self, pred: list):
+        """
+        @PRE: nessuna
+        Aggiunge la lista di predizioni contenute nel parametro pred a self.enabledcolumns tramite la nuova colonna
+        "predizione", Le aggiunge nel medesimo modo anche a a self.original_df se l'oggetto NewDataModel contiene
+        dati recenti, mentre le aggiunge a self.cleaned_df se invece si riferisce a dati storici elaborati
+        :param pred: lista di booleani della stessa lunghezza del numero di righe di self.enabledcolumns
+        :return: None
+        """
         if self.filetype == NewFileEnum.NEW:
             self.original_df.insert(0, "predizione", pred)
         elif self.filetype == NewFileEnum.OLD:
@@ -47,6 +55,11 @@ class NewDataModel:
         self.enabledcolumns.insert(0, "predizione", pred)
 
     def remove_predictions(self):
+        """
+        @PRE: è stata invocata la funzione attach_predictions
+        Rimuove la colonna "predizione" seguendo la logica già esposta nella funzione attach_predictions
+        :return:
+        """
         if self.filetype == NewFileEnum.NEW:
             self.original_df.drop(columns="predizione", inplace=True)
         elif self.filetype == NewFileEnum.OLD:
@@ -54,13 +67,32 @@ class NewDataModel:
         self.enabledcolumns.drop(columns="predizione", inplace=True)
 
     def export_to_csv(self, export_file_path):
+        """
+        @PRE: nessuna
+        Esporta i dati del dataframe self.enabledcolumns su file csv nel percorso indicato
+        :param export_file_path: percorso di salvataggio del file csv
+        :return: None
+        """
         self.enabledcolumns.to_csv(export_file_path, index=None, header=True)
 
     def export_full_to_csv(self, export_file_path):
+        """
+        @PRE: nessuna
+        Esporta i dati del dataframe self.original_df o self.cleaned_df ( a seconda di self.filetype)
+        su file csv nel percorso indicato
+        :param export_file_path: percorso di salvataggio del file csv
+        :return: None
+        """
         if self.filetype == NewFileEnum.NEW:
             self.original_df.to_csv(export_file_path, index=None, header=True)
         elif self.filetype == NewFileEnum.OLD:
             self.cleaned_df.to_csv(export_file_path, index=None, header=True)
 
     def export_just_predictions_to_csv(self, export_file_path):
-        self.df["predizione"].to_csv(export_file_path, index=None, header=True)
+        """
+        @PRE: è stata invocata la funzione self.attach_predictions
+        Esporta la sola colonna predizione di self.enabledcolumns su file csv nel percorso indicato
+        :param export_file_path: percorso di salvataggio del file csv
+        :return: None
+        """
+        self.enabledcolumns["predizione"].to_csv(export_file_path, index=None, header=True)

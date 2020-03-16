@@ -40,7 +40,11 @@ class DataModel:
         return list(self.enabledcolumns.columns.values)
 
     def get_columnsnames(self) -> list:
-        # Ritorna la lista dei nomi delle colonne che sarà possibile disabilitare
+        """
+        @PRE: nessuna
+        Ritorna la lista dei nomi delle colonne che sarà possibile disabilitare attraverso la funzione disablecolumns
+        :return: names, lista dei nomi delle colonne che sarà possibile disabilitare
+        """
         names = list(self.df.columns.values)
         # Rimuovo label e DataCaricoTitolo perchè non disattivabili (e sono due colonne sempre presenti
         # nell'elaborazione)
@@ -62,6 +66,12 @@ class DataModel:
     """--------------------------------------------------Funzioni Setter per colonne--------------------------------"""
 
     def disablecolumns(self, columns: list):
+        """
+        @PRE nessuna
+        Sposta da self.enabledcolumns a self.disabledcolumns le colonne il cui nome è contenuto nel parametro columns.
+        :param columns: lista di nomi di colonne da spostare
+        :return: None
+        """
         if set(columns).issubset(set(list(self.df.columns.values))):
             self.disabledcolumns[columns] = self.enabledcolumns[columns]
             self.enabledcolumns.drop(columns=columns, inplace=True)
@@ -69,6 +79,12 @@ class DataModel:
             print("error: colonne non presenti")
 
     def enablecolumns(self, columns: list):
+        """
+        @PRE nessuna
+        Sposta da self.disabledcolumns a self.enabledcolumns le colonne il cui nome è contenuto nel parametro columns.
+        :param columns: lista di nomi di colonne da spostare
+        :return: None
+        """
         if set(columns).issubset(set(list(self.disabledcolumns.columns.values))):
             self.enabledcolumns[columns] = self.disabledcolumns[columns]
             self.disabledcolumns.drop(columns=columns, inplace=True)
@@ -76,6 +92,12 @@ class DataModel:
             print("error: colonne non presenti")
 
     def enableallcolumns(self):
+        """
+        @PRE nessuna
+        Resetta la situazione delle colonne all'inizializzazione dell'oggetto.
+        Spsota tutte le colonne presenti in self.disabledcolumns in self.enabledcolumns eccetto DataCaricoTitolo
+        :return: None
+        """
         self.enabledcolumns = self.df.copy()
         self.enabledcolumns.drop(columns="DataCaricoTitolo", inplace=True)
         self.disabledcolumns = pd.DataFrame()
@@ -85,13 +107,14 @@ class DataModel:
 
     def train_test_splitter_possibilities(self) -> pd.DataFrame:
         """
+        @PRE: nessuna
         Dato il dataframe dei dati storici preparati ritorna un nuovo dataframe dove ogni riga
         rappresenta la data di un ruolo presente nei dati storici. Ogni riga riporta, per quella data
         quanti crediti appartengono a quel ruolo e tutti i precedenti (nesempi), quanti di questi sono
         classificati come positivi (true), e quanti come negativi (false). L'idea è che ciascuna delle
         date dei ruoli può essere utilizzata per splittare i dati storici in training set e test set,
         vengono dunque riportate le possibili composizioni dei training set ad ogni data di ruolo scelta.
-        :return: un dataframe contenenti numero titoli e label (positive e negative) per ogni data di ruolo
+        :return: results, un dataframe contenenti numero titoli e label (positive e negative) per ogni data di ruolo
         """
         # Ricavo i ruoli
         ruoli = self.df.DataCaricoTitolo.unique()
@@ -121,6 +144,7 @@ class DataModel:
 
     def train_test_splitter(self, dates):
         """
+        @PRE: è stata invocata la funzione self.train_test_splitter_possibilities
         Suddivide il dataframe dei dati storici aggregati e preparati in training set e test set, dove il training set
         sarà composto di tutti i titoli con campo DataCaricoTitolo uguale ad uno dei valori presenti nella lista dates
         :param dates: lista di date
@@ -153,7 +177,8 @@ class DataModel:
 
     def export_to_csv(self, export_file_path):
         """
-        Esporta i dati del dataframe elaborato su file csv nel percorso indicato
+        @PRE: nessuna
+        Esporta i dati del dataframe elaborato self.df su file csv nel percorso indicato
         :param export_file_path: percorso di salvataggio del file csv
         :return: None
         """
