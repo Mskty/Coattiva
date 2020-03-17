@@ -10,6 +10,30 @@ from sklearn.metrics import plot_confusion_matrix
 
 
 class AlgorithmPipeline:
+    """
+    Classe che rappresenta un classificatore addestrato applicabile su dati preprocessati. Contiene un oggetto classificatore
+    addestrato che si occupa di produrre predizioni sui dati di input e può contenere un oggetto scaler, se utilizzato
+    durante l'addestramento del classificatore, che si occupa di normalizzare i valori delle features/colonne numeriche
+    dei dati per cui bisogna fornire una predizione.
+    PARAMETRI:
+    self.classifier: oggetto derivato dalla classe sklearn.base.BaseEstimator, un classificatore su cui è stato invocato
+                     il metodo .fit() per addestrarlo e che può quindi produrre predizioni su nuovi dati con .pred()
+    self.scaler: oggetto di tipo sklearn.preprocessing.StandardScaler oppure sklearn.preprocessing.MinMaxScaler su cui
+                 è stato invocato il metodo .fit() per determinare i parametri di normalizzazione e può quindi normalizzare
+                 nuovi dati con .transform(). Può essere None
+    self.columnstoscal: lista di stringhe contenente il nome delle colonne/features che dovranno essere normalizzare dallo
+                        scaler. Può essere None
+    self.columnlist: lista di stringhe contenente il nome di tutte le colonne/features che sono state utilizzate per addestrare
+                     il classificatore.
+    self.type: valore di tipo PFPGEnum rappresentante il tipo di dati su cui è stato addestrato il classificatore
+
+    """
+
+    """
+    @PRE nella descrizione dei metodi si riferisce alla precondizione che deve essere soddisfatta prima dell'invocazione
+        di tale metodo da parte dell'utente, tra le precondizioni è sempre considerata soddisfatta la creazione dell'oggetto
+        e l'invocazione di __init__
+    """
 
     def __init__(self, classifier=None, scaler=None, columnstoscale: list = None, columnlist: list = None,
                  type: PFPGEnum = None):

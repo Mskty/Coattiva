@@ -5,6 +5,35 @@ from utility.Enums import *
 
 
 class NewDataModel:
+    """
+    Classe che rappresenta i dati caricati dall'utente (storici o recenti) su cui è possibile ottenere predizioni da un
+    classsificatore addestrato sul traininngset. I dati sono gestiti utilizzando Dataframes della libreria pandas.
+    Vengono esposti metodi aggiungere e rimuovere le predizioni effettuate sui dati ed esportare su file csv i risultati.
+    Durante l'inizializzazione degli oggetti i dati vengono caricati da un file .csv e sottoposti a operazioni di
+    pulizia e preprocessamento utilizzando oggetti di tipo StoricCleaner e StoricPreprocesser se si trattano di dati
+    storici, mentre vengono effettuate solo operazioni di preprocesamento se si tratta di dati Recenti, attraverso un
+    oggetto di tipo RecentPreprocesser.
+    PARAMETRI:
+    self.original_df: oggetto di tipo pandas.Dataframe contenente i dati originali caricati da file .csv
+    self.type: Valore di tipo PFPGEnum rappresentante il tipo di dati contenuti in self.original_df
+    self.filetype: Valore di tipo NewFileEnum rappresentante il tipo di file csv caricato
+    self.columns: lista di stringhe rappresentanti i nomi delle colonne/features che verranno mantenute dopo
+                  le operazioni di pulizia e preprocessamento per essere utilizzabile da un modello addestrato solamente
+                  su tali features.
+    self.cleaned_df: oggetto di tipo pandas.Dataframe conentene i dati ottenuti dopo la pulizia di quelli contenuti in
+                     self.original_df, parametro presente solo se i dati caricati fanno riferimento a dati storici
+    self.df: oggetto di tipo pandas.Dataframe contenente i dati ottenuti dopo il preprocessamento di quelli contenuti in
+             self.original_df se si tratta di dati recenti o self.cleaned_df se si tratta di dati storici
+    self.enabledcolumns: oggetto di tipo pandas.Dataframe contenente i dati presenti in self.df ma mantenendo solo
+                         alcune colonne/features. Tali colonne saranno quelle su cui cui è stato addestrato il classificatore
+                         e sono quelle contenute nella lista columns
+    """
+
+    """
+    @PRE nella descrizione dei metodi si riferisce alla precondizione che deve essere soddisfatta prima dell'invocazione
+        di tale metodo da parte dell'utente, tra le precondizioni è sempre considerata soddisfatta la creazione dell'oggetto
+        e l'invocazione di __init__
+    """
 
     def __init__(self, type: PFPGEnum, filetype: NewFileEnum, columns: list, filename: str):
         try:
@@ -12,8 +41,8 @@ class NewDataModel:
         except Exception:
             print("no file passed")
         self.type: PFPGEnum = type
-        self.filetype = filetype
-        self.columns = columns
+        self.filetype: NewFileEnum = filetype
+        self.columns: list = columns
 
         # Se dati storici allora eseguo anche la pulizia altrimenti solo preparazione
         if self.filetype == NewFileEnum.OLD:

@@ -3,6 +3,25 @@ from utility.Enums import *
 
 
 class TestModel:
+    """
+    Classe che rappresenta i dati del testset che verranno utilizzati come out-of-sample per valutare le performance del classificatore
+    addestrato. I dati presenti sono gestiti utilizzando Dataframes della libreria pandas. Vengono esposti metodi per
+    modificare la struttura dei DataFrames attraverso la rimozione e aggiunta di colonne e metodi per
+    aggiungere e rimuovere le predizioni effettuate sui dati ed esportare su file csv i risultati.
+    PARAMETRI:
+    self.type: Valore di tipo PFPGEnum rappresentante il tipo di dati contenuti in self.enabledcolumns e self.disabledcolumns
+    self.enabledcolumns: oggetto di tipo pandas.Dataframe contenente le colonne/features dei dati che saranno utilizzate
+                         dal classificatore addestrato per predire i dati contenuti nel testset
+    self.enabledcolumns: oggetto di tipo pandas.Dataframe contenente le colonne/features dei dati che sono attualmente
+                         disattivate e non verranno quindi utilizzate dal classificatore addestrato per predire i dati
+                         ontenuti nel testset
+    """
+
+    """
+    @PRE nella descrizione dei metodi si riferisce alla precondizione che deve essere soddisfatta prima dell'invocazione
+        di tale metodo da parte dell'utente, tra le precondizioni è sempre considerata soddisfatta la creazione dell'oggetto
+        e l'invocazione di __init__
+    """
 
     def __init__(self, type: PFPGEnum, enabledcolumns: pd.DataFrame, disabledcolumns: pd.DataFrame):
         self.type: PFPGEnum = type

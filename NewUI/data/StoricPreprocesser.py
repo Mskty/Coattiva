@@ -3,10 +3,27 @@ from utility.Enums import *
 
 
 class StoricPreprocesser:
+    """
+    Classe che espone metodi per effettuare preoprocessamento su dati riferiti a titoli storici precedentemente puliti
+    ed aggregati salvati poi su un oggetto di tipo Dataframe pandas.
+    Lo scopo di tali operazioni è diestrarre ulteriori informazioni dai dati puliti da utilizzare nella classificazione.
+    Espone metodi per trattare le diverse fasi del preprocessamento per tali dati,
+    per effettuare l'intera operazione di preprocesamento in ordine è necessario invocare il metodo self.prepare().
+    che ritornerà al chiamante il Dataframe contentente i dati preparati.
+    PARAMETRI:
+    self.__df: oggetto di tipo pandas.Dataframe conentene i dati puliti ed aggregati da processare
+    self.__type: Valore di tipo PFPGEnum rappresentante il tipo di dati contenuti in self.__df
+    """
+
+    """
+    @PRE nella descrizione dei metodi si riferisce alla precondizione che deve essere soddisfatta prima dell'invocazione
+        di tale metodo da parte dell'utente, tra le precondizioni è sempre considerata soddisfatta la creazione dell'oggetto
+        e l'invocazione di __init__
+    """
 
     def __init__(self, type: PFPGEnum, df: pd.DataFrame):
-        self.__type = type
         self.__df = df.copy()
+        self.__type = type
 
     def NuovoContribuente(self, df: pd.DataFrame):
         # Colonna NuovoContribuente Strategia: viene aggiunta l'informazione, per ogni credito, se il contribuente

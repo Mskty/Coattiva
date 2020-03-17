@@ -7,6 +7,31 @@ from data.StoricPreprocesser import *
 
 
 class DataModel:
+    """
+    Classe che rappresenta i dati storici originali da cui è possibile generare un trainset e testset. I dati presenti
+    sono gestiti utilizzando Dataframes della libreria pandas. Vengono esposti metodi per modificare la struttura dei
+    Dataframes e costruire oggetti di tipo TrainModel e TestModel rappresentanti rispettivamente i dati contenuti nel
+    trainset e quelli contenuti nel testset. Durante l'inizializzazione degli oggetti i dati vengono caricati da un file
+    .csv e sottoposti a operazioni di pulizia e preprocessamento utilizzando oggetti di tipo StoricCleaner e
+    StoricPreprocesser.
+    PARAMETRI:
+    self.original_df: oggetto di tipo pandas.Dataframe contenente i dati originali caricati da file .csv
+    self.type: Valore di tipo PFPGEnum rappresentante il tipo di dati contenuti in self.original_df
+    self.cleaned_df: oggetto di tipo pandas.Dataframe conentene i dati ottenuti dopo la pulizia di quelli contenuti in
+                     self.original_df
+    self.df: oggetto di tipo pandas.Dataframe contenente i dati ottenuti dopo il preprocessamento di quelli contenuti in
+             self.cleaned_df
+    self.enabledcolumns: oggetto di tipo pandas.Dataframe contenente i dati presenti in self.df ma mantenendo solo
+                         alcune colonne/features. Tali colonne saranno quelle su cui poi andrà addestrato il classificatore
+    self.disabledcolumns: oggetto di tipo pandas.Dataframe contenente i dati presenti in self.df ma manenendo solo
+                          le colonne/features che non sono presenti in self.enabledcolumns
+
+    """
+    """
+    @PRE nella descrizione dei metodi si riferisce alla precondizione che deve essere soddisfatta prima dell'invocazione
+        di tale metodo da parte dell'utente, tra le precondizioni è sempre considerata soddisfatta la creazione dell'oggetto
+        e l'invocazione di __init__
+    """
 
     def __init__(self, type: PFPGEnum, data: pd.DataFrame = None, filename: str = None):
         try:

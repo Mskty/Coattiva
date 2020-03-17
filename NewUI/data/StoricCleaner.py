@@ -3,10 +3,35 @@ from utility.Enums import *
 
 
 class StoricCleaner:
+    """
+    Classe che espone metodi per effettuare la pulizia ed aggregazione di dati riferiti a titoli storici
+    forniti da un utente a partire da file che rispetti il rispettivo tracciato e salvati poi su un oggetto
+    di tipo Dataframe pandas.
+    Lo scopo di tali operazioni è eliminare gli errori rilevati all'interno del file (prodotto da un estrazione da
+    database). ciò viene fatto controllando
+    la validità di diverse informazioni recuperate dall'estrazione riferite all'effettivo periodo in cui i titoli
+    di credito erano attuali (ad esempio viene calcolata l'età corretta alla data di carico). Inoltre aggrega
+    i titoli, risolvendo le problematiche di conflitti in dati anagrafici dati dalla duplicazione delle anagrafiche
+    per stessi contribuenti nel database da cui sono stati estratti i dati. L'aggregazione dei titoli
+    viene effettuata creano un unico titoli di credito da molti, nel caso dovessero esserci, con gli stessi valori nei campi
+    idAnagrafica-DataCaricoTitolo-DataPrimaNotifica.
+    Espone metodi per trattare le diverse fasi della pulizia per i dati storici, sia per persone fisiche che giuridiche,
+    per effettuare l'intera operazione di pulzia in corretto ordine è necessario invocare il metodo self.clean(), che
+    ritornerà al chiamante il Dataframe contenente i dati puliti ed aggregati.
+    PARAMETRI:
+    self.__df: oggetto di tipo pandas.Dataframe conentene i dati recenti da processare
+    self.__type: Valore di tipo PFPGEnum rappresentante il tipo di dati contenuti in self.__df che dovranno essere
+                 considerati per le operazioni di pulizia ed aggregazione
+    """
+    """
+    @PRE nella descrizione dei metodi si riferisce alla precondizione che deve essere soddisfatta prima dell'invocazione
+        di tale metodo da parte dell'utente, tra le precondizioni è sempre considerata soddisfatta la creazione dell'oggetto
+        e l'invocazione di __init__
+    """
 
     def __init__(self, type: PFPGEnum, df: pd.DataFrame):
         self.__type = type
-        # Mantengo solo i titoli corretti
+        # Mantengo solo i titoli riferiti al tipo di personalità passato
         if self.__type == PFPGEnum.PF:
             self.__df = df[df.TipoPersonalità == "PF"].copy()
         elif self.__type == PFPGEnum.PG:

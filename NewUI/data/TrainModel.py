@@ -7,8 +7,35 @@ from utility.Enums import *
 
 class TrainModel:
     """
-    Contiene il dataframe di addestramento,
-    espone metodo per ritornare AlgorithmPipeline: un modello addestrato solamente sulle colonne enabledcolumns
+    Classe che rappresenta i dati del trainingset che verranno utilizzati come in-sample per addestrare un classificatore.
+    I dati presenti sono gestiti utilizzando Dataframes della libreria pandas.
+    Vengono esposti metodi per modificare la struttura dei DataFrames attraverso la rimozione e aggiunta di colonne
+    , per produrre un oggetto AlgorithmPipeline rappresentante il classificatore addestrato sui dati del training set e
+    infine metodi per aggiungere e rimuovere le predizioni effettuate sui dati ed esportare su file csv i risultati.
+    PARAMETRI:
+    self.type: Valore di tipo PFPGEnum rappresentante il tipo di dati contenuti in self.enabledcolumns e self.disabledcolumns
+    self.enabledcolumns: oggetto di tipo pandas.Dataframe contenente le colonne/features dei dati che saranno utilizzate
+                         dal classificatore addestrato per predire i dati contenuti nel testset
+    self.enabledcolumns: oggetto di tipo pandas.Dataframe contenente le colonne/features dei dati che sono attualmente
+                         disattivate e non verranno quindi utilizzate dal classificatore addestrato per predire i dati
+                         ontenuti nel testset
+    self.scaler: Valore di tipo ScalingEnum rappresentante il tipo di scaling dei dati utilizzato dal classificatore
+    self.sampler: Valore di tipo SamplingEnum rappresentate il tipo di sampling che sarà utilizzato durante l'addestramento
+                  del classificatore sui dati del trainingset
+    self.classifier: Valore di tipo ClassifierEnum rappresentante il tipo di algoritmo di apprendimento utilizzato per
+                     addestrare il classificatore
+    self._categoricalpf: parametro preimpostato, lista di valori stringa contenente i nomi delle colonne/features categoriche
+                         per dati appartenenti a PERSONE FISICHE i cui valori non dovranno quindi essere sottoposti
+                         a normalizzazione dallo scaler
+    self._categoricalpg: parametro preimpostato, lista di valori stringa contenente i nomi delle colonne/features categoriche
+                         per dati appartenenti a PERSONE GIURIDICHE i cui valori non dovranno quindi essere sottoposti
+                         a normalizzazione dallo scaler
+    """
+
+    """
+    @PRE nella descrizione dei metodi si riferisce alla precondizione che deve essere soddisfatta prima dell'invocazione
+        di tale metodo da parte dell'utente, tra le precondizioni è sempre considerata soddisfatta la creazione dell'oggetto
+        e l'invocazione di __init__
     """
 
     def __init__(self, type: PFPGEnum, enabledcolumns: pd.DataFrame, disabledcolumns: pd.DataFrame):
@@ -18,12 +45,12 @@ class TrainModel:
         self.enabledcolumns = enabledcolumns
         self.disabledcolumns = disabledcolumns
 
-        # Per addestramento
+        # Per addestramento, valori di default
         self.scaler: ScalingEnum = ScalingEnum.NONE
         self.sampler: SamplingEnum = SamplingEnum.NONE
         self.classifier: ClassifierEnum= ClassifierEnum.LOGISTIC
 
-        # colonne categoriche apparte label
+        # colonne categoriche apparte label (che sarà già stata rimossa al momento dello scaling)
         self._categoricalpf = ["Telefono", "Deceduto", "CittadinanzaItaliana", "Estero", "NuovoContribuente"]
         self._categoricalpg = ["Telefono", "Cessata", "PEC", "Estero", "NuovoContribuente"]
 

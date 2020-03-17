@@ -7,6 +7,35 @@ from data.AlgorithmPipeline import *
 
 
 class Model:
+    """
+    Classe che rappresenta la logica di business dell'applicativo. Coordina le operazioni tra i modelli rappresentanti
+    i dati originali caricati dall'utente (DataModel), il trainingset (TrainModel), il testset (TestModel) e i nuovi
+    dati su cui produrre predizioni (NewDataModel). Espone metodi permettere all'utente di caricare o salvare daati,
+    per modificare le proprietò di tali modelli, generare trainset e testset (attraverso DataModel), addestrare un
+    classificatore predittivo con un oggetto di tipo AlgorithmPipeline(attraverso TrainModel) e utilizzarlo per ottenere
+    predizioni e grafici, nonchè esportare i risultati su file. Fornisce un unico punto di accesso per le classi contenute
+    nel package view per comunicare ed effettuare operazioni sui dati sottostanti salvati nei modelli sopra elencati.
+    PARAMETRI:
+    self.datafilename: valore stringa contenente il nome del file csv utilizzato per originare un oggetto di tipo DataModel
+    self.use_datafilename: valore stringa contenente il nome del file csv utilizzato per originare un oggetto di tipo NewDataModel
+    self.data: oggetto di tipo DataModel, è None alla creazione dell'oggetto
+    self.train: oggetto di tipo TrainModel generato a partire da self.data. è None alla creazione dell'oggetto
+    self.test: oggetto di tipo TestModel generato a partire da self.data. è None alla creazione dell'oggetto
+    self.usedata: oggetto di tipo NewDataModel, è None alla creazione dell'oggetto
+    self.columns: lista di stringhe contenente i nomi delle colonne/features abilitabili o disabilitabili dall'utente
+                  per i dati presenti in self.data, self.train e self.test, è vuota alla creazione dell'oggetto
+    self.traintestsplit: Oggetto di tipo pandas Dataframe contenente le informazioni su come splittare i dati contenuti
+                         in self.data per generare un trainset e testset. Viene generato a partire da self.data,
+                         è None alla creazione dell'oggetto
+    self.workingalgorithm: oggetto di tipo AlgorithmPipeline, viene generato da self.train, è None alla creazione dell'oggetto
+    """
+
+    """
+    @PRE nella descrizione dei metodi si riferisce alla precondizione che deve essere soddisfatta prima dell'invocazione
+        di tale metodo da parte dell'utente, tra le precondizioni è sempre considerata soddisfatta la creazione dell'oggetto
+        e l'invocazione di __init__
+    """
+
     def __init__(self):
 
         self.datafilename: str = ""

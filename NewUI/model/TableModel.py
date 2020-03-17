@@ -7,7 +7,7 @@ class TableModel(QAbstractTableModel):
     Classe modello che deriva QAbstractTableModel per gestire i dati all'interno delle QTableWiew presenti nella
     mainwindow
     PARAMETRI:
-    :param self.data: pandas Dataframe contenente i dati da visualizzare nella tabella
+    self.data: oggetto di tipo pandas Dataframe contenente i dati da visualizzare nella tabella
     """
 
     def __init__(self, data: pd.DataFrame):
