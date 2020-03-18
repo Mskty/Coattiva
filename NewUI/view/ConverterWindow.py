@@ -6,12 +6,12 @@
 #
 # WARNING! All changes made in this file will be lost!
 
+import pandas as pd
+
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QFileDialog, QDialog
 
 from view.WaitingDialog import *
-
-import pandas as pd
 
 
 class ConverterWindow(QDialog):

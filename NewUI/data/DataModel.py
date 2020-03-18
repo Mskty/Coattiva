@@ -1,4 +1,4 @@
-from utility.funzioni import *
+from utility.Imports import *
 from utility.Enums import *
 from data.TrainModel import *
 from data.TestModel import *

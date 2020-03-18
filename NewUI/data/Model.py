@@ -1,4 +1,4 @@
-from utility.funzioni import *
+from utility.Imports import *
 from data.DataModel import *
 from data.TrainModel import *
 from data.TestModel import *
@@ -67,7 +67,7 @@ class Model:
         Questa funzione deve essere la prima ad essere invocata per utilizzare l'applicativo in modalità ADDESTRAMENTO
         """
 
-        # Inzizializza o resetta i parametri del modello a partire da un nuovo file di dati storici
+        # Inzializza o resetta i parametri del modello a partire da un nuovo file di dati storici
         self.data = DataModel(type, filename=filename)  # fa già pulizia e preparazione
         self.datafilename = filename
         # Ottengo i nomi delle colonne

@@ -1,6 +1,7 @@
 from imblearn.under_sampling import RandomUnderSampler
+from imblearn.over_sampling import SMOTE
 
-from utility.funzioni import *
+from utility.Imports import *
 from data.AlgorithmPipeline import *
 from utility.Enums import *
 
@@ -41,14 +42,14 @@ class TrainModel:
     def __init__(self, type: PFPGEnum, enabledcolumns: pd.DataFrame, disabledcolumns: pd.DataFrame):
 
         # label sempre enabled
-        self.type :PFPGEnum = type
+        self.type: PFPGEnum = type
         self.enabledcolumns = enabledcolumns
         self.disabledcolumns = disabledcolumns
 
         # Per addestramento, valori di default
         self.scaler: ScalingEnum = ScalingEnum.NONE
         self.sampler: SamplingEnum = SamplingEnum.NONE
-        self.classifier: ClassifierEnum= ClassifierEnum.LOGISTIC
+        self.classifier: ClassifierEnum = ClassifierEnum.LOGISTIC
 
         # colonne categoriche apparte label (che sarà già stata rimossa al momento dello scaling)
         self._categoricalpf = ["Telefono", "Deceduto", "CittadinanzaItaliana", "Estero", "NuovoContribuente"]
@@ -192,25 +193,95 @@ class TrainModel:
             scaled_trainset = pd.DataFrame(scaled_features_trainset, index=trainset.index, columns=trainset.columns)
             trainset = pd.concat([scaled_trainset, categorical_trainset], axis=1, sort=False)
 
-        # Instanziazione classificatore
-        if self.classifier == ClassifierEnum.LOGISTIC:
-            classifier = skl.linear_model.LogisticRegression(solver="lbfgs", max_iter=10000)
-        elif self.classifier == ClassifierEnum.SVC:
-            classifier = svm.SVC(kernel="rbf", gamma="scale")
-        elif self.classifier == ClassifierEnum.TREE:
-            classifier = skl.tree.DecisionTreeClassifier()
-        elif self.classifier == ClassifierEnum.FOREST:
-            classifier = RandomForestClassifier(n_estimators=100)
-        elif self.classifier == ClassifierEnum.XGB:
-            classifier = xgb.XGBClassifier()
+        # Instanziazione algoritmo di apprendimento (valori iperparametri ottimali ottenuti dallo studio con grid
+        # search), gli iperparametri ottimali per alcuni algoritmi sono risultati differenti per titoli riferiti a
+        # Persone Fisiche e Persone Giuridiche
 
+        # PERSONE FISICHE
+        if self.type == PFPGEnum.PF:
+            if self.classifier == ClassifierEnum.LOGISTIC:
+                classifier = skl.linear_model.LogisticRegression(C=100, class_weight='balanced', dual=False,
+                                                                 fit_intercept=True, intercept_scaling=1, l1_ratio=None,
+                                                                 max_iter=1000, multi_class='auto', n_jobs=None,
+                                                                 penalty='l1',
+                                                                 random_state=None, solver='liblinear', tol=0.0001,
+                                                                 verbose=0,
+                                                                 warm_start=False)
+            elif self.classifier == ClassifierEnum.SVC:
+                classifier = svm.SVC(C=1, break_ties=False, cache_size=200, class_weight='balanced', coef0=0.0,
+                                     decision_function_shape='ovr', degree=3, gamma=0.1, kernel='rbf',
+                                     max_iter=-1, probability=True, random_state=None, shrinking=True,
+                                     tol=0.001, verbose=False)
+            elif self.classifier == ClassifierEnum.TREE:
+                classifier = skl.tree.DecisionTreeClassifier(ccp_alpha=0.0, class_weight='balanced', criterion='gini',
+                                                             max_depth=10, max_features=None, max_leaf_nodes=100,
+                                                             min_impurity_decrease=0.0, min_impurity_split=None,
+                                                             min_samples_leaf=4, min_samples_split=8,
+                                                             min_weight_fraction_leaf=0.0, presort='deprecated',
+                                                             random_state=None, splitter='random')
+            elif self.classifier == ClassifierEnum.FOREST:
+                classifier = RandomForestClassifier(bootstrap=True, ccp_alpha=0.0, class_weight='balanced',
+                                                    criterion='entropy', max_depth=14, max_features='auto',
+                                                    max_leaf_nodes=None, max_samples=None,
+                                                    min_impurity_decrease=0.0, min_impurity_split=None,
+                                                    min_samples_leaf=1, min_samples_split=2,
+                                                    min_weight_fraction_leaf=0.0, n_estimators=500,
+                                                    n_jobs=-1, oob_score=False, random_state=None, verbose=0,
+                                                    warm_start=False)
+            elif self.classifier == ClassifierEnum.XGB:
+                classifier = xgb.XGBClassifier(base_score=0.5, booster='gbtree', colsample_bylevel=1,
+                                               colsample_bynode=1, colsample_bytree=0.4, gamma=1.0,
+                                               learning_rate=0.1, max_delta_step=0, max_depth=4,
+                                               min_child_weight=10, missing=None, n_estimators=100, n_jobs=1,
+                                               nthread=None, objective='binary:logistic', random_state=0,
+                                               reg_alpha=0, reg_lambda=1, scale_pos_weight=2, seed=None,
+                                               silent=None, subsample=1, verbosity=1)
+        # PERSONE GIURIDICHE
+        elif self.type == PFPGEnum.PG:
+            if self.classifier == ClassifierEnum.LOGISTIC:
+                classifier = skl.linear_model.LogisticRegression(C=100, class_weight='balanced', dual=False,
+                                                                 fit_intercept=True, intercept_scaling=1, l1_ratio=None,
+                                                                 max_iter=1000, multi_class='auto', n_jobs=None,
+                                                                 penalty='l2',
+                                                                 random_state=None, solver='liblinear', tol=0.0001,
+                                                                 verbose=0,
+                                                                 warm_start=False)
+            elif self.classifier == ClassifierEnum.SVC:
+                classifier = svm.SVC(C=1, break_ties=False, cache_size=200, class_weight='balanced', coef0=0.0,
+                                     decision_function_shape='ovr', degree=3, gamma='scale', kernel='rbf',
+                                     max_iter=-1, probability=True, random_state=None, shrinking=True,
+                                     tol=0.001, verbose=False)
+            elif self.classifier == ClassifierEnum.TREE:
+                classifier = skl.tree.DecisionTreeClassifier(ccp_alpha=0.0, class_weight='balanced', criterion='gini',
+                                                             max_depth=14, max_features=None, max_leaf_nodes=10,
+                                                             min_impurity_decrease=0.0, min_impurity_split=None,
+                                                             min_samples_leaf=4, min_samples_split=4,
+                                                             min_weight_fraction_leaf=0.0, presort='deprecated',
+                                                             random_state=None, splitter='random')
+            elif self.classifier == ClassifierEnum.FOREST:
+                classifier = RandomForestClassifier(bootstrap=False, ccp_alpha=0.0, class_weight='balanced',
+                                                    criterion='entropy', max_depth=10, max_features='sqrt',
+                                                    max_leaf_nodes=None, max_samples=None,
+                                                    min_impurity_decrease=0.0, min_impurity_split=None,
+                                                    min_samples_leaf=1, min_samples_split=2,
+                                                    min_weight_fraction_leaf=0.0, n_estimators=200,
+                                                    n_jobs=-1, oob_score=False, random_state=None, verbose=0,
+                                                    warm_start=False)
+            elif self.classifier == ClassifierEnum.XGB:
+                classifier = xgb.XGBClassifier(base_score=0.5, booster='gbtree', colsample_bylevel=1,
+                                               colsample_bynode=1, colsample_bytree=0.4, gamma=1.0,
+                                               learning_rate=0.1, max_delta_step=0, max_depth=4,
+                                               min_child_weight=10, missing=None, n_estimators=100, n_jobs=1,
+                                               nthread=None, objective='binary:logistic', random_state=0,
+                                               reg_alpha=0, reg_lambda=1, scale_pos_weight=2, seed=None,
+                                               silent=None, subsample=1, verbosity=1)
         # Addestramento classificatore
         X = trainset.values
         Y = label_column.values
         classifier = classifier.fit(X, Y)
 
         # Ritorno pipeline
-        return AlgorithmPipeline(classifier,scaler,columnstoscale,columnlist,self.type)
+        return AlgorithmPipeline(classifier, scaler, columnstoscale, columnlist, self.type)
 
     def attach_predictions(self, pred: list):
         """

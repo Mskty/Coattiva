@@ -1,7 +1,7 @@
 from data.StoricCleaner import *
 from data.RecentPreprocesser import *
 from data.TracciatoCheck import *
-from utility.funzioni import *
+from utility.Imports import *
 from utility.Enums import *
 
 
