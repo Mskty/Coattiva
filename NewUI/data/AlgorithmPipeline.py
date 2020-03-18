@@ -206,8 +206,14 @@ class AlgorithmPipeline:
         :return:
         """
         modlist_loaded = pickle.load(open(filename, 'rb'))
-        self.classifier = modlist_loaded[0]
-        self.scaler = modlist_loaded[1]
-        self.columnstoscale = modlist_loaded[2]
-        self.columnlist = modlist_loaded[3]
-        self.type = modlist_loaded[4]
+        try:
+            # Se viene sollevata un eccezione all'interno di queste operazioni vuol dire che il file passato
+            # Non fa riferimento ad un classificatore precedentemente addestrato da questo applicativo
+            self.classifier = modlist_loaded[0]
+            self.scaler = modlist_loaded[1]
+            self.columnstoscale = modlist_loaded[2]
+            self.columnlist = modlist_loaded[3]
+            self.type = modlist_loaded[4]
+        except Exception:
+            raise ValueError("Errore: \n Il file caricato non contiene un classificatore addestrato in questo "
+                             "applicativo")

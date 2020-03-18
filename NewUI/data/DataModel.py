@@ -4,6 +4,7 @@ from data.TrainModel import *
 from data.TestModel import *
 from data.StoricCleaner import *
 from data.StoricPreprocesser import *
+from data.TracciatoCheck import *
 
 
 class DataModel:
@@ -33,22 +34,34 @@ class DataModel:
         e l'invocazione di __init__
     """
 
-    def __init__(self, type: PFPGEnum, data: pd.DataFrame = None, filename: str = None):
+    def __init__(self, type: PFPGEnum, filename: str):
+        self.original_df: pd.DataFrame = pd.read_csv(filename, low_memory=False)
+        # Controllo che aderisca al tracciato
         try:
-            self.original_df: pd.DataFrame = pd.read_csv(filename, low_memory=False)
-        except Exception:
-            print("no file passed")
-        if data is not None:
-            self.original_df: pd.DataFrame = data
+            checker = TracciatoCheck(type,NewFileEnum.OLD,self.original_df)
+            # Lancia errore ValueError se non aderisce
+            checker.checkcolumns()
+        except ValueError as e:
+            # Gestione eccezione nella view
+            raise e
+
         self.type: PFPGEnum = type
 
         # Pulizia dei dati
-        cleaner = StoricCleaner(self.type, self.original_df)
-        self.cleaned_df = cleaner.clean()
+        try:
+            cleaner = StoricCleaner(self.type, self.original_df)
+            self.cleaned_df = cleaner.clean()
+        except Exception:
+            raise ValueError("C'è stato un errore nella pulizia dei dati storici, controlla che i valori nel file"
+                             "corrispondano alle indicazioni del tracciato")
 
         # Preparazione dei dati
-        preprocesser = StoricPreprocesser(self.type, self.cleaned_df)
-        self.df = preprocesser.prepare()
+        try:
+            preprocesser = StoricPreprocesser(self.type, self.cleaned_df)
+            self.df = preprocesser.prepare()
+        except Exception:
+            raise ValueError("C'è stato un errore nella preparazione dei dati storici, controlla che i valori nel file"
+                             "corrispondano alle indicazioni del tracciato")
 
         # Inizializzazione colonne abilitate e disabilitate
         self.enabledcolumns = self.df.copy()

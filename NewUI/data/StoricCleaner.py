@@ -8,13 +8,17 @@ class StoricCleaner:
     forniti da un utente a partire da file che rispetti il rispettivo tracciato e salvati poi su un oggetto
     di tipo Dataframe pandas.
     Lo scopo di tali operazioni è eliminare gli errori rilevati all'interno del file (prodotto da un estrazione da
-    database). ciò viene fatto controllando
+    database).
+    Ciò viene fatto controllando
     la validità di diverse informazioni recuperate dall'estrazione riferite all'effettivo periodo in cui i titoli
     di credito erano attuali (ad esempio viene calcolata l'età corretta alla data di carico). Inoltre aggrega
     i titoli, risolvendo le problematiche di conflitti in dati anagrafici dati dalla duplicazione delle anagrafiche
     per stessi contribuenti nel database da cui sono stati estratti i dati. L'aggregazione dei titoli
     viene effettuata creano un unico titoli di credito da molti, nel caso dovessero esserci, con gli stessi valori nei campi
     idAnagrafica-DataCaricoTitolo-DataPrimaNotifica.
+    Vengono trattati tutti gli errori rilevati nella fase di analisi dei dati presenti nell'estrazione del database,
+    non possono però venire trattati errori dati da una mancata adesione al tracciato fornito del file caricato da cui
+    è stato generato il DataFrame passato a questa classe.
     Espone metodi per trattare le diverse fasi della pulizia per i dati storici, sia per persone fisiche che giuridiche,
     per effettuare l'intera operazione di pulzia in corretto ordine è necessario invocare il metodo self.clean(), che
     ritornerà al chiamante il Dataframe contenente i dati puliti ed aggregati.

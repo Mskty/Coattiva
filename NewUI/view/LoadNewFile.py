@@ -109,12 +109,14 @@ class LoadNewFile(QtWidgets.QDialog):
             dialog.show()
             QtWidgets.QApplication.processEvents()
             try:
+                # Può lanciare eccezione ValuError
                 self.mainwindow.model.set_use_data(self.type, filename)
+
                 # informo il dialog del successo
                 dialog.success(True)
                 # nessuna eccezione ritorno alla main
                 self.returnToMain()
-            except Exception as e:
+            except ValueError as e:
                 # Informo il dialog del fallimento
                 dialog.success(False)
                 # Stampa eccezione

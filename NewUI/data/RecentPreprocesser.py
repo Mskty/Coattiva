@@ -56,10 +56,11 @@ class RecentPreprocesser:
 
         # DROPPO LE COLONNE CHE NON  VERRANNO PIU UTILIZZATE
         df.drop(columns=["IndirizzoResidenza", "Provincia"], inplace=True)
-        # tolgo label se presetnte (non dovrebbe)
+
+        # tolgo label se presetnte (DEBUG)
         if "label" in list(df.columns.values):
             df.drop(columns="label", inplace=True)
-        # tolgo datacaricotitolo se presente (non dovrebbe)
+        # tolgo datacaricotitolo se presente (DEBUG)
         if "DataCaricoTitolo" in list(df.columns.values):
             df.drop(columns="DataCaricoTitolo", inplace=True)
 

@@ -1,5 +1,6 @@
 from data.StoricCleaner import *
 from data.RecentPreprocesser import *
+from data.TracciatoCheck import *
 from utility.funzioni import *
 from utility.Enums import *
 
@@ -36,27 +37,46 @@ class NewDataModel:
     """
 
     def __init__(self, type: PFPGEnum, filetype: NewFileEnum, columns: list, filename: str):
-        try:
-            self.original_df: pd.DataFrame = pd.read_csv(filename, low_memory=False)
-        except Exception:
-            print("no file passed")
+        self.original_df: pd.DataFrame = pd.read_csv(filename, low_memory=False)
         self.type: PFPGEnum = type
         self.filetype: NewFileEnum = filetype
         self.columns: list = columns
+        # Controllo che aderisca al tracciato
+        try:
+            checker = TracciatoCheck(type, self.filetype, self.original_df)
+            # Lancia errore ValueError se non aderisce
+            checker.checkcolumns()
+        except ValueError as e:
+            # Gestione eccezione nella view
+            raise e
 
         # Se dati storici allora eseguo anche la pulizia altrimenti solo preparazione
         if self.filetype == NewFileEnum.OLD:
             # Pulizia dei dati
-            cleaner = StoricCleaner(self.type, self.original_df)
-            self.cleaned_df = cleaner.clean()
+            try:
+                cleaner = StoricCleaner(self.type, self.original_df)
+                self.cleaned_df = cleaner.clean()
+            except Exception:
+                raise ValueError("C'è stato un errore nella pulizia dei dati storici, controlla che i valori nel file"
+                                 "corrispondano alle indicazioni del tracciato")
             # Preprocessamento
             # Usa RecentPreprocesser non storic in quanto non deve mantenere label e DataCaricoTitolo come in DataModel
-            preprocesser = RecentPreprocesser(self.type, self.cleaned_df)
-            self.df = preprocesser.prepare()
+            try:
+                preprocesser = RecentPreprocesser(self.type, self.cleaned_df)
+                self.df = preprocesser.prepare()
+            except Exception:
+                raise ValueError(
+                    "C'è stato un errore nella preparazione dei dati storici, controlla che i valori nel file"
+                    "corrispondano alle indicazioni del tracciato")
         elif self.filetype == NewFileEnum.NEW:
             # Preprocessamento
-            preprocesser = RecentPreprocesser(self.type, self.original_df)
-            self.df = preprocesser.prepare()
+            try:
+                preprocesser = RecentPreprocesser(self.type, self.original_df)
+                self.df = preprocesser.prepare()
+            except Exception:
+                raise ValueError(
+                    "C'è stato un errore nella preparazione dei dati, controlla che i valori nel file"
+                    "corrispondano alle indicazioni del tracciato")
 
         # Mantengo solo le colonne da utilizzare
         self.enabledcolumns = self.df[columns].copy()

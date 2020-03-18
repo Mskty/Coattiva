@@ -80,14 +80,16 @@ class WelcomeWindow(QtWidgets.QMainWindow):
             dialog = WaitingDialog(self.mainwindow, text, self.mapToGlobal(self.rect().center()))
             dialog.show()
             try:
+                # Può lanciare errore di tipo ValueError
                 self.mainwindow.model.algorithm_from_file(filename)
+
                 # informo il dialog del successo
                 dialog.success(True)
                 # nessuna eccezione ritorno alla main
                 self.mainwindow.useSetup()
                 self.close()
                 self.mainwindow.show()
-            except Exception as e:
+            except ValueError as e:
                 # Informo il dialog del fallimento
                 dialog.success(False)
                 # Stampa eccezione
