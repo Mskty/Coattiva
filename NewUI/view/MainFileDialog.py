@@ -8,7 +8,7 @@
 
 from view.GUI import *
 from view.WaitingDialog import *
-from view.tracciato import *
+from view.TracciatoDialog import *
 
 
 class MainFileWindow(QtWidgets.QDialog):

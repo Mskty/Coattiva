@@ -11,7 +11,7 @@ from PyQt5.QtWidgets import QFileDialog, QMainWindow
 
 from model.TableModel import *
 from utility.utility import *
-from view.MainFileWindow import *
+from view.MainFileDialog import *
 
 
 class MainWindow(QMainWindow):

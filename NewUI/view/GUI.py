@@ -12,8 +12,8 @@ from PyQt5.QtWidgets import QMainWindow, QFileDialog
 from data.Model import *
 from model.TableModel import *
 from view.FirstWindow import *
-from view.MainFileWindow import *
-from view.LoadNewFile import *
+from view.MainFileDialog import *
+from view.LoadNewFileDialog import *
 from view.WaitingDialog import *
 from view.MetricheDialog import *
 from view.NewColumnsDialog import *
