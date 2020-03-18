@@ -10,11 +10,28 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 
 
 class WaitingDialog(QtWidgets.QDialog):
+    """
+    Finestra che permette la visualizzazione all'utente di un messaggio d'attesa durante l'esecuzione di operazioni
+    particolarmente onerose in termini di tempo come il caricamento di un file di dati storici che deve essere elaborato
+    oppure l'addestramento di un classificatore predittivo su tali dati all'interno dell'applicativo. Fornisce
+    la possibilità, una volta termianta l'operazione di invocare il metodo success per comunciare all'utente il successo
+    o fallimento di tale operazione, permettendo di chiudere la finestra di dialogo.
+    PARAMETRI:
+    self.text: valore stringa rappresentante il testo da visualizzare nella finestra durante l'attesa che l'operazione
+               onerosa termini la sua esecuzione. Tale valore è fornito alla creazione della finestra.
+    """
 
-    def __init__(self, parent=None, text=None, position=None):
+    """
+        @PRE nella descrizione dei metodi si riferisce alla precondizione che deve essere soddisfatta prima dell'invocazione
+             di tale metodo da parte dell'utente, tra le precondizioni è sempre considerata soddisfatta la creazione dell'oggetto
+             e l'invocazione di __init__
+        """
+
+    def __init__(self, parent, text=None, position=None):
         # Inizializzazione con parent
         super().__init__(parent)
         self.setupUi(self)
+        self.text = text
         if text is not None:
             self.label.setText(text)
         if position is not None:

@@ -13,6 +13,24 @@ from utility.Enums import *
 
 
 class TracciatoDialog(QtWidgets.QDialog):
+    """
+
+    Finestra di dialogo la cui apertura viene effettuata da un oggetto di classe FirstWindow, LoadNewFile o MainFileWindow.
+    Fornisce all'utente la possibilità di visualizzare il tracciato che deve essere seguito da un file .csv
+    che si intende caricare su cui poi saranno eseguite delle operazioni dall'applicativo, sia per l'utilizzo di tale
+    file per addestrare il classificatore.
+    PARAMETRI:
+    self.typepfpg: Valore di tipo PFPGEnum rappresentante il tipo dei titoli di credito a cui dovrà fare riferiemnto
+                   il tracciato visualizzato. Tale valore è fornito alla creazione della finestra
+    self.filetype: Valore di tipo NewFileEnum rappresentante il tipo del file (dati recenti o storici) a cui dovrà fare
+                   riferimento il tracciato visualizzato. Tale valore è fornito alla creazione della finestra
+    """
+
+    """
+            @PRE nella descrizione dei metodi si riferisce alla precondizione che deve essere soddisfatta prima dell'invocazione
+                 di tale metodo da parte dell'utente, tra le precondizioni è sempre considerata soddisfatta la creazione dell'oggetto
+                 e l'invocazione di __init__
+    """
 
     def __init__(self, type: PFPGEnum, parent=None, filetype: NewFileEnum = None):
         # Inizializzazione con parent

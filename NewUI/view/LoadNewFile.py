@@ -13,6 +13,42 @@ from view.ConverterWindow import *
 
 
 class LoadNewFile(QtWidgets.QDialog):
+    """
+    Finestra la cui apertura viene effettuata da un oggetto di classe MainWindow. Fornsice all'utente la possibilitò
+    di caricare nel modello (oggetto di classe Model posseduto dall'oggetto MainWindow) un file .csv contenente i
+    dati dei titoli di credito su cui ottenere predizioni da un classificatore addestrato nell'applicativo su dati
+    storici precedentemente caricati. I dati caricabili possono essere dei dati recenti di titoli di credito aggregati
+    la cui forma su file deve aderire al rispettivo tracciato, oppure dei dati storici di titoli di credito come da
+    estrazione da database, seguendo le stesse regole elencate per il loro caricamento nelle classi MainFileWindow
+    e FirstWindow. Il file caricato, se corretto. Il tipo di personalitò a cui sono riferiti i titoli di credito è
+    passato all'apertura della finestra, e deve essere coerente con i dati su cui è stato precedentemente addestrato
+    il classificatore all'interno dell'applicativo.
+    Presenta la  possibilitò di indicare il tipo di file che si desidera utilizzare attraverso RadioButtons (dati recenti
+    oppure dati storici) e poi caricare il file che, se corretto, permette di ritornare alla finestra MainWindow.
+    Fornisce inoltre la possibilità attraerso l'apertura di due finestre aggiuntive di convertire un file da excel a .csv
+    attraverso  una finestra di tipo ConverterWindow e di visualizzare informazioni sul tracciato che devono seguire
+    i file caricabili attraverso una finestra di tipo TracciatoDialog.
+    PARAMETRI:
+    self.mainwindow: oggetto di tipo MainWindow da cui viene generata la finestra e che presenta il parametro
+                     mainwindow.model da cui è possibile caricare ed elaborare il nuovo file .csv
+    self.error_dialog: oggetto di tipo QtWidgets.QErrorMessage che si occupa di visualizzare una finestra che riporta
+                       all'utente un messaggio di errore nel caso venga caricato un file errato, ovvero che non segua
+                       il tracciato
+    self.typepfpg: Valore di tipo PFPGEnum rappresentante il tipo dei titoli di credito che dovranno essere contenuti
+                    nel file caricato dall'utente. Tale valore è fornito alla creazione della finestra
+    self.type: Valore di tipo NewFileEnum rappresentante il tipo del file che dovrà essere caricato dall'utente.
+               Il valore di default è NewFileEnum.NEW in quanto all'apertura della finestra
+               è selezionato il bottone radio rappresentate il caricamento di un file riferito a titoli di credito
+               recenti ed aggregati
+    self.filename: Valore stringa che rappresenta il percorso di salvataggio del file .csv caricato, inzialmente
+                   stringa vuota.
+    """
+
+    """
+            @PRE nella descrizione dei metodi si riferisce alla precondizione che deve essere soddisfatta prima dell'invocazione
+                 di tale metodo da parte dell'utente, tra le precondizioni è sempre considerata soddisfatta la creazione dell'oggetto
+                 e l'invocazione di __init__
+    """
 
     def __init__(self, typepfpg: PFPGEnum, parent = None):
         # Inizializzazione con parent mainwindow

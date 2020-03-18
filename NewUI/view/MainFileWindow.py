@@ -12,8 +12,37 @@ from view.tracciato import *
 
 
 class MainFileWindow(QtWidgets.QDialog):
+    """
+    Finestra di dialogo la cui apertura viene effettuata da un oggetto di classe MainWindow durante l'utilizzo dell'
+    applicativo in MODALITA' ADDESTRAMENTO.  Fornisce all'utente la possibilità di
+    caricare nel modello (oggetto di classe Model posseduto dall'oggetto MainWindow) un nuovo file .csv contentente i dati
+    dei titoli di credito storici non puliti (come da estrazione dal database) da cui poi permettere di effettuare
+    operazioni per addestrare un classificatore predittivo ed utilizzarlo nella finestra MainWindow, andando a sostituire
+    i dati caricati all'apertura dell'applicativo attraverso la finestra di tipo FirstWindow.
+    Presenta la  possibilitò di indicare il tipo di titoli di credito che si desidera utilizzare attraverso RadioButtons (Persone
+    Fisiche o Giuridiche) e poi caricare il file che, se corretto, permette di ritornare alla finestra MainWindow.
+    Fornisce inoltre la possibilità attraerso l'apertura di due finestre aggiuntive di convertire un file da excel a .csv
+    attraverso  una finestra di tipo ConverterWindow e di visualizzare informazioni sul tracciato che devono seguire
+    i file caricabili attraverso una finestra di tipo TracciatoDialog.
+    PARAMETRI:
+    self.mainwindow: oggetto di tipo MainWindow da cui viene generata la finestra e che presenta il parametro
+                     mainwindow.model da cui è possibile caricare ed elaborare il nuovo file .csv
+    self.error_dialog: oggetto di tipo QtWidgets.QErrorMessage che si occupa di visualizzare una finestra che riporta
+                       all'utente un messaggio di errore nel caso venga caricato un file errato, ovvero che non segua
+                       il tracciato
+    self.type: Valore di tipo PFPGEnum rappresentante il tipo dei titoli di credito che dovranno essere contenuti
+               nel file caricato dall'utente. Il valore di default è PFPGEnum.PF in quanto all'apertura della finestra
+               è selezionato il bottone radio rappresentate titoli di credito appartenenti a persone fisiche
+    self.filename: valore stringa che rappresenta il percorso di salvataggio del file .csv caricato, inzialmente
+                   stringa vuota.
+    """
 
-    def __init__(self, parent = None):
+    """
+            @PRE nella descrizione dei metodi si riferisce alla precondizione che deve essere soddisfatta prima dell'invocazione
+                 di tale metodo da parte dell'utente, tra le precondizioni è sempre considerata soddisfatta la creazione dell'oggetto
+                 e l'invocazione di __init__
+    """
+    def __init__(self, parent):
         # Inizializzazione con parent mainwindow
         super().__init__(parent)
         self.mainwindow = parent

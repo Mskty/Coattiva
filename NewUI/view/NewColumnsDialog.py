@@ -3,6 +3,20 @@ from PyQt5.QtWidgets import QTableWidgetItem
 
 
 class NewColumnsDialog(QtWidgets.QDialog):
+    """
+        Finestra di dialogo la cui apertura viene effettuata da un oggetto di classe MainWindow durante l'utilizzo dell'
+        applicativo in MODALITA' ADDESTRAMENTO. Fornisce all'utente la possibilità di visualizzare informazioni all'interno
+        di una tabella sulle nuove colonne/features generate durante l'elaborazione dei dati dei titoli di credito storici
+        una volta puliti ed aggregati per estrarre ulteriori informazioni dai dati originari e migliorare le performance
+        del classificatore predittivo durante l'addestramento.
+        PARAMETRI: nessuno
+    """
+
+    """
+            @PRE nella descrizione dei metodi si riferisce alla precondizione che deve essere soddisfatta prima dell'invocazione
+                 di tale metodo da parte dell'utente, tra le precondizioni è sempre considerata soddisfatta la creazione dell'oggetto
+                 e l'invocazione di __init__
+    """
 
     def __init__(self, parent=None):
         # Inizializzazione con parent

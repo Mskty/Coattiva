@@ -10,8 +10,32 @@ from view.GUI import *
 
 
 class WelcomeWindow(QtWidgets.QMainWindow):
+    """
+    Finestra la cui apertura viene effettuata da un oggetto di classe MainWindow e che si presenta all'utente come
+    prima finestra all'apertura dell'applicativo. Fornisce all'utente la possbilità di accedere alle funzionalità dell'
+    applicativo secondo due modalità:
+    MODALITA' ADDESTRAMENTO: permette di accedere alla finestra FirstWindow dove sarà possibile caricare un file .csv
+                             contenente dati riferiti a titoli di credito storici da cui addestrare poi all'interno
+                             della schermata principale un classificatore con cui poi predire risultati su nuovi dati.
+    MODALITA' UTILIZZO: permette di accedere direttamente alla finestra MainWindow una volta caricato un file .sav
+                        rappresentante un classificatore addestrato precedentemente all'interno dell'applicativo. Una
+                        volta caricato il classificatore sarà possibile utilizzarlo direttamente nell'apposita sezione
+                        della finestra principale per ottenere predizioni su nuovi dati caricati dall'utente.
+    PARAMETRI:
+    self.mainwindow: oggetto di tipo MainWindow da cui viene generata la finestra e che presenta il parametro
+                     mainwindow.model da cui è possibile caricare il classificatore addestrato da file .sav
+    self.error_dialog: oggetto di tipo QtWidgets.QErrorMessage che si occupa di visualizzare una finestra che riporta
+                       all'utente un messaggio di errore nel caso venga caricato un file errato, ovvero non contenente
+                       un classificatore addestrato precedentemente dall'applicativo
+    """
 
-    def __init__(self, parent=None):
+    """
+        @PRE nella descrizione dei metodi si riferisce alla precondizione che deve essere soddisfatta prima dell'invocazione
+             di tale metodo da parte dell'utente, tra le precondizioni è sempre considerata soddisfatta la creazione dell'oggetto
+             e l'invocazione di __init__
+    """
+
+    def __init__(self, parent):
         # Inizializzazione con parent mainwindow
         super().__init__()
         self.mainwindow = parent

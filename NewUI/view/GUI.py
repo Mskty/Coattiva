@@ -5,8 +5,6 @@
 # Created by: PyQt5 UI code generator 5.9.2
 #
 # WARNING! All changes made in this file will be lost!
-import threading
-
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtGui import QStandardItemModel
 from PyQt5.QtWidgets import QMainWindow, QFileDialog
@@ -23,6 +21,71 @@ from view.WelcomeWindow import *
 
 
 class MainWindow(QMainWindow):
+    """
+    Classe che racchiude la finestra principale per l'utilizzo della parte di interfaccia grafica dell'applicativo.
+    Viene instanziata all'inizio dell'esecuzione e racchiude un parametro che permette di accedere ai metodi della
+    parte di modello attraverso un oggetto di tipo Model (parametro self.model).
+    Presenta funzionalità per l'apertura delle finestre di Benvenuto (WelcomeWindow), di caricamentro dei dati storici
+    (self.FirstWindow alla prima apertura e self.MainFileWindow se si vuole cambiare il file caricato una volta che era
+    già stato selezionato) e di caricamento del file su cui effettuare le predizioni una volta addestrato il classificatore
+    (la finestra LoadNewFile), nonche alcune finestre informative per l'utente (NewColumnsDialog e MetricheDialog).
+    Gestisce gran parte delle operazioni eseguibili dall'operativo, al di fuori del caricamento dei file.
+    L'accesso dell'utente a questa finestra puà essere effettuato in due modalità a seconda di quanto scelto nella
+    finestra di benvenuto:
+    MODALITA' ADDESTRAMENTO
+    In questa modalità la classe fornisce all'utente la possibilità, una volta caricato ed elaborato il file contenente
+    i titoli di credito storici, di selezionare come partizionarlo in training set e test set e rimuovere alcune colonne
+    /features dall'addestramento del classificatore. Una volta partizionati i dati inziali vengono abilitati i bottoni
+    radio che permettono di selezioanre alcune specifiche per l'addestramento del classificatore tra cui l'utilizzo
+    di sampling sui dati per equilibrare la presenza di esempi positivi e negativi, l'utilizzo di due diverse tipologie
+    di scaler per normalizzare i valori dei dati durante l'addestramento e utilizzo del classificatore e infine
+    selezionare uno tra cinque algoritmi di apprendimento per addestrare e generare il classificatore. Una volta selezionate
+    tali specifiche è possibile addestrare il classificatore tramite l'apposito pulsante. Al termine dell'addestramento
+    verrà sbloccata la Tab Risultati in cui l'utente può visualizzare un recap delle performance del classificatore su
+    training set e test set, anche attraverso grafici, inoltre verrà aggiunta alle tabelle nelle sezioni Train e Test
+    una nuova colonna 'Predizione' contentente l'output del classificatore per ogni riga presente nelle tabelle.
+    (nel caso venga utilizzato nell'addestramento un algoritmo di sampling allora la tabella nella sezione di train verrà
+    aggiornata rappresentando il nuovo training set che è stato utilizzato per addestrare il classificatore)
+    Viene inoltre abilitata la Tab Utilizza che permette di caricare un nuovo file di dati su cui ottenere le predizioni
+    da parte del classificatore addestrato, anche tali dati saranno visualizzabili su una tabella nella rispettiva sezione.
+    Per ogni tabella presente è possibile esportare in file .csv i contenuti (incluse le predizioni se prodotte) tramite
+    l'apposito pulsante sottostante.
+    E' possibile premere il pulsante reset, oppure caricare un nuovo file per l'addestramento, se si vuole addestrare
+    un classificatore con specifiche diverse.
+    E' infine fornita la possibilitò di salvare il classificatore già addestrato in un file .sav premendo il pulsante
+    apposito nella sezione Main della finestra.
+    MODALITA' UTILIZZO
+    In questa modalità la finestra espone unicamente le funzionalità presenti nella Tab Utilizza, come sono state descritte
+    nella precedente modalità. Per accedere a questa modalità è necessario caricare un file .sav dalla finestra di Benvenuto
+    contentente un classificatore già addestrato salvato precedentemente all'interno dell'applicativo.
+
+    PRAMETRI:
+    self.model: oggetto di classe Model che fornisce alla classe e a tutta la parte view la possibilità di eseguire
+                operazioni sui dati gestiti dalle classi del package data. Viene inizializzato all'avvio dell'applicativo
+    self.datatable: oggetto di classe TableModel che costituisce il modello che permette la gestione e la visualizzazione
+                    dei dati all'interno del QTableView presente nella Tab Data  (self.table_data), inzialmente assume
+                    il valore NONE in quanto i dati verranno caricati successivamente alla creazione dell'oggetto Mainwindow
+    self.traintable: oggetto di classe TableModel che costituisce il modello che permette la gestione e la visualizzazione
+                    dei dati all'interno del QTableView presente nella Tab Train  (self.table_train), inzialmente assume
+                    il valore NONE in quanto i dati del training set verranno generati successivamente alla creazione
+                    dell'oggetto Mainwindow
+    self.testtable: oggetto di classe TableModel che costituisce il modello che permette la gestione e la visualizzazione
+                    dei dati all'interno del QTableView presente nella Tab Test  (self.table_test), inzialmente assume
+                    il valore NONE in quanto i dati del test set verranno generati successivamente alla creazione
+                    dell'oggetto Mainwindow
+    self.usetable: oggetto di classe TableModel che costituisce il modello che permette la gestione e la visualizzazione
+                    dei dati all'interno del QTableView presente nella Tab Utilizza (self.table_use), inzialmente assume
+                    il valore NONE in quanto i nuovi dati da predire verranno caricati successivamente alla creazione
+                    dell'oggetto MainWindow
+    self.splitwidgetsize: variabile utilizzata per la gestione della larghezza della ScrollArea self.mainlistsplit
+                          che conterrà i bottoni radio per generare trainingset e testset. Inizialmente None perchè tali
+                          bottoni verranno gennerati successivamente alla creazione dell'oggetto MainWindow
+    self.columnswidgetsize: variabile utilizzata per la gestione della larghezza della ScrollArea self.mainlistcolumn
+                            che conterrà le checkbox per escludere delle colonne/features dall'addestramento del
+                            classificatore. Inizialmente None perchè tali
+                            checkbox verranno gennerate successivamente alla creazione dell'oggetto MainWindow
+
+    """
 
     def __init__(self):
         # Inizializzazione
@@ -39,14 +102,8 @@ class MainWindow(QMainWindow):
         self.usetable: TableModel = None
 
         # Variabile larghezza scrollareas
-        self.splitnwidgetsize = None
+        self.splitwidgetsize = None
         self.columnwidgetsize = None
-
-        # Dialog di errore
-        self.error_dialog = QtWidgets.QErrorMessage(self)
-
-        # Variabile di stato
-        self.opened = False
 
     """-------------------------------------------------SCROLLARES------------------------------------------------"""
 
@@ -325,9 +382,6 @@ class MainWindow(QMainWindow):
         Questa funzione esegue il setup inziale dell'applicativo in modalità ADDESTRAMENTO
         """
 
-        # Imposto la variabile di stato per l'apertura su true
-        self.opened = True
-
         # Resetto le tab e i modelli nel caso siano popolati
         self.resetUI()
         self.datatable: TableModel = None
@@ -379,12 +433,12 @@ class MainWindow(QMainWindow):
         for i in range(len(ruoli)):
             self.add_radio_split(ruoli[i], nesempi[i])
         self.main_list_split.widget().adjustSize()
-        if self.splitnwidgetsize is None:
+        if self.splitwidgetsize is None:
             self.main_list_split.setMinimumWidth(self.main_list_split.widget().width() + 30)
             # Salvo larghezza iniziale widget per reset
-            self.splitnwidgetsize = self.main_list_split.minimumWidth()
+            self.splitwidgetsize = self.main_list_split.minimumWidth()
         else:
-            self.main_list_split.setMinimumWidth(self.splitnwidgetsize)
+            self.main_list_split.setMinimumWidth(self.splitwidgetsize)
 
     def useSetup(self):
         """
@@ -856,7 +910,7 @@ class MainWindow(QMainWindow):
         for i in range(len(ruoli)):
             self.add_radio_split(ruoli[i], nesempi[i])
         self.main_list_split.widget().adjustSize()
-        self.main_list_split.setMinimumWidth(self.splitnwidgetsize)
+        self.main_list_split.setMinimumWidth(self.splitwidgetsize)
 
     def buttonSave(self):
         """
@@ -2079,11 +2133,12 @@ class MainWindow(QMainWindow):
 if __name__ == "__main__":
     import sys
 
-    # Instanziazione app e mainwindow
+    # Instanziazione app
     app = QtWidgets.QApplication(sys.argv)
+    # Instanziazione oggetto MainWindow che funge da centro dell'interfaccia grafica da cui chiamare le altre finestre
     mainwindow = MainWindow()
 
-    # Avvio esecuzione UI
+    # Avvio esecuzione UI a partire dal metodo di mainwindow per aprire la schermata di benvenuto
     mainwindow.openWelcomeWindow()
 
     # chiusura programma

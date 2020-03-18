@@ -15,11 +15,28 @@ import pandas as pd
 
 
 class ConverterWindow(QDialog):
+    """
+    Finestra di dialogo la cui apertura viene effettuata da un oggetto di classe FirstWindow, LoadNewFile o MainFileWindow.
+    Permette all'utente di caricare un file excel .xlsx e convertirlo nel corrispettivo file
+    .csv senza perdita di informazioni. Viene fornita la possibilita di selezionare il file .xlsx da convertire attraverso
+    una finestra default della librearia Qt che permette di utilizzare il file system nativo del sistema operativo e di
+    selezionare il path o file di salvataggio .csv con lo stesso sistema. Per effettuare la conversione viene utilizzata
+    una funzionalitò presente nelle libreria pandas che carica i dati del file .xlsx in un oggetto Dataframe e poi
+    serializza tale oggetto in un file .csv nel path selezionato precedentemente.
+    PARAMETRI:
+    self.xlsxfile: valore stringa che rappresenta il percorso del file .xlsx da convertire, inizialmente stringa vuota.
+    self.csvfile: valore stringa che rappresenta il percorso di salvataggio del file .csv convertito, inzialmente stringa vuota.
+    """
 
-    def __init__(self, parent=None):
-        # Inizializzazione con parent mainwindow
+    """
+        @PRE nella descrizione dei metodi si riferisce alla precondizione che deve essere soddisfatta prima dell'invocazione
+            di tale metodo da parte dell'utente, tra le precondizioni è sempre considerata soddisfatta la creazione dell'oggetto
+            e l'invocazione di __init__
+    """
+
+    def __init__(self, parent):
+        # Inizializzazione con parent
         super().__init__(parent)
-        self.mainwindow = parent
         self.setupUi(self)
 
         # variabili di business

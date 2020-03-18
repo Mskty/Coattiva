@@ -11,8 +11,21 @@ from PyQt5.QtWidgets import QTableWidgetItem
 
 
 class MetricheDialog(QtWidgets.QDialog):
+    """
+    Finestra di dialogo la cui apertura viene effettuata da un oggetto di classe MainWindow durante l'utilizzo dell'
+    applicativo in MODALITA' ADDESTRAMENTO. Fornisce all'utente la possibilità di visualizzare informazioni all'interno
+    di una tabella sulle metriche utilizzate per valutare le performance di un classificatore adddestrato sui dati
+    dei titoli di credito storici.
+    PARAMETRI: nessuno
+    """
 
-    def __init__(self, parent=None):
+    """
+            @PRE nella descrizione dei metodi si riferisce alla precondizione che deve essere soddisfatta prima dell'invocazione
+                 di tale metodo da parte dell'utente, tra le precondizioni è sempre considerata soddisfatta la creazione dell'oggetto
+                 e l'invocazione di __init__
+    """
+
+    def __init__(self, parent):
         # Inizializzazione con parent
         super().__init__(parent)
         self.setupUi(self)
