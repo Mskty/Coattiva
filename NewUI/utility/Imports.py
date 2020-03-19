@@ -19,3 +19,7 @@ from sklearn.metrics import confusion_matrix, accuracy_score, pairwise, precisio
 from sklearn import preprocessing
 from sklearn import tree
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
+
+"""
+File contenente gli import utilizzati in un numero delle classsi presenti nell'applicativo
+"""

@@ -1,0 +1,10 @@
+idAnagrafica,AnnoNascita,TipoPersonalità,Telefono,IndirizzoResidenza,Cap,CittadinanzaItaliana,Deceduto,DecedutoDataInfo,Cessata,CessataDataInfo,PEC,DataCaricoTitolo,DataEmissioneTitolo,TipoCredito,ValoreTitolo,Pagato120Giorni,DataPrimaNotifica,DataPagamentoTotale,NumeroTitoliAperti,DovutoTitoliAperti,ImportoTitoliAperti,NumeroTitoliSaldati,ImportoTitoliSaldati,NumeroTitoliRecenti,TotaleTitoliRecenti,DataNascita
+1,1,PG,1,"31031, TV",31031,1,0,,0,0,1,2015-01-01,2015-01-01,Tariffa Rifiuti,50,50,2015-02-01,2015-03-01,0,0,0,0,0,1,40,1970-01-01
+1,1,PG,1,"31031, TV",31031,1,0,,0,0,1,2015-01-01,2015-01-01,Tariffa Rifiuti,40,10,2015-02-01,2018-01-01,0,0,0,0,0,1,50,1970-01-01
+2,1,PG,1,"31056, PD",31056,1,0,,0,0,1,2015-01-01,2015-01-01,Tariffa Rifiuti,50,0,2015-02-01,2018-03-01,2,100,100,5,200,2,100,1960-01-01
+2,1,PG,1,"31056, PD",31056,1,0,,0,0,1,2015-01-01,2015-01-01,Tariffa Rifiuti,50,0,2015-02-01,2018-03-01,2,100,100,5,200,2,100,1960-01-01
+2,1,PG,0,"31042, EE",31042,1,0,,0,0,0,2018-01-01,2015-01-01,Tariffa Rifiuti,100,30,2018-02-01,2018-03-01,5,250,250,5,200,0,0,1960-01-01
+2,1,PG,1,"31056, PD",31056,1,0,,0,0,1,2015-01-01,2015-01-01,Tariffa Rifiuti,50,0,2015-02-01,2018-03-01,2,100,100,5,200,2,100,1960-01-01
+3,1,PG,0,"31050, MU",31050,0,0,,1,2017-01-03,0,2018-01-01,2015-01-01,Tariffa Rifiuti,30,0,2018-02-01,,1,50,70,0,0,1,40,1945-01-01
+3,1,PG,0,"31050, MU",31050,0,0,,1,2017-01-03,0,2018-01-01,2015-01-01,Tariffa Rifiuti,40,0,2018-02-01,,1,50,70,0,0,1,30,1945-01-01
+4,1,PG,1,"31059, TV",31059,1,0,,0,0,1,2018-01-01,2015-01-01,Tariffa Rifiuti,20,20,2018-02-01,2018-03-01,0,0,0,10,1000,0,0,1985-01-01
